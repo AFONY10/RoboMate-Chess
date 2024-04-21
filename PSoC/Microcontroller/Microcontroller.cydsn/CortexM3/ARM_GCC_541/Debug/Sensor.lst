@@ -1,0 +1,2841 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Sensor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.sensorPrintTest,"ax",%progbits
+  20              		.align	2
+  21              		.global	sensorPrintTest
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	sensorPrintTest, %function
+  25              	sensorPrintTest:
+  26              	.LFB65:
+  27              		.file 1 "Sensor.c"
+   1:Sensor.c      **** /* ========================================
+   2:Sensor.c      ****  *
+   3:Sensor.c      ****  * Copyright YOUR COMPANY, THE YEAR
+   4:Sensor.c      ****  * All Rights Reserved
+   5:Sensor.c      ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:Sensor.c      ****  *
+   7:Sensor.c      ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:Sensor.c      ****  * WHICH IS THE PROPERTY OF your company.
+   9:Sensor.c      ****  *
+  10:Sensor.c      ****  * ========================================
+  11:Sensor.c      **** */
+  12:Sensor.c      **** 
+  13:Sensor.c      **** #include "Sensor.h"
+  14:Sensor.c      **** 
+  15:Sensor.c      **** 
+  16:Sensor.c      **** void sensorScan()
+  17:Sensor.c      **** {
+  18:Sensor.c      ****     sensorReset();
+  19:Sensor.c      ****     for (int i = 0; i < 64; i++) 
+  20:Sensor.c      ****     {
+  21:Sensor.c      ****         if(sensorSignal_Read()==1)
+  22:Sensor.c      ****         {
+  23:Sensor.c      ****             CyDelayUs(scan_validation_delay_us);
+  24:Sensor.c      ****             if(sensorSignal_Read()==1)
+  25:Sensor.c      ****             {
+  26:Sensor.c      ****                 squareReg[i] = sensorSignal_Read(); //Læs sensorSignal for plads i på skakbrætte
+  27:Sensor.c      ****             }
+  28:Sensor.c      ****         }
+  29:Sensor.c      ****         else if(sensorSignal_Read()==0 )
+  30:Sensor.c      ****         {
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 2
+
+
+  31:Sensor.c      ****             CyDelayUs(scan_validation_delay_us);
+  32:Sensor.c      ****             if(sensorSignal_Read()==0)
+  33:Sensor.c      ****             {
+  34:Sensor.c      ****                 squareReg[i] = sensorSignal_Read(); //Læs sensorSignal for plads i på skakbrætte
+  35:Sensor.c      ****             }
+  36:Sensor.c      ****         }   
+  37:Sensor.c      ****         
+  38:Sensor.c      ****         if(i<63)
+  39:Sensor.c      ****         {
+  40:Sensor.c      ****             sensorClk_Write(1); //Clock høj
+  41:Sensor.c      ****             CyDelayUs(sensor_Clk_delay_us); //Clock Delay
+  42:Sensor.c      ****             sensorClk_Write(0); //Clock lav
+  43:Sensor.c      ****             CyDelayUs(sensor_Clk_delay_us);
+  44:Sensor.c      ****         }
+  45:Sensor.c      ****     }
+  46:Sensor.c      **** }
+  47:Sensor.c      **** 
+  48:Sensor.c      **** 
+  49:Sensor.c      **** void sensorPrintTest()
+  50:Sensor.c      **** {
+  28              		.loc 1 50 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+  33              		.cfi_def_cfa_offset 32
+  34              		.cfi_offset 4, -32
+  35              		.cfi_offset 5, -28
+  36              		.cfi_offset 6, -24
+  37              		.cfi_offset 7, -20
+  38              		.cfi_offset 8, -16
+  39              		.cfi_offset 9, -12
+  40              		.cfi_offset 10, -8
+  41              		.cfi_offset 14, -4
+  42              	.LVL0:
+  43              	.LBB2:
+  51:Sensor.c      ****     //Her bruges fremgangsmåden fra UARTArrayPrintTest() til at udskrive arrayet på UART
+  52:Sensor.c      ****     uint8_t row1=0, row2=0, row3=0, row4=0, 
+  53:Sensor.c      ****             row5=0, row6=0, row7=0, row8=0;
+  54:Sensor.c      ****     
+  55:Sensor.c      ****     for(int i = 0; i < 8; i++) {
+  44              		.loc 1 55 0
+  45 0004 0023     		movs	r3, #0
+  46              	.LBE2:
+  53:Sensor.c      ****     
+  47              		.loc 1 53 0
+  48 0006 1C46     		mov	r4, r3
+  49 0008 1D46     		mov	r5, r3
+  50 000a 1E46     		mov	r6, r3
+  51 000c 1F46     		mov	r7, r3
+  52:Sensor.c      ****             row5=0, row6=0, row7=0, row8=0;
+  52              		.loc 1 52 0
+  53 000e 9846     		mov	r8, r3
+  54 0010 9946     		mov	r9, r3
+  55 0012 9A46     		mov	r10, r3
+  56 0014 1846     		mov	r0, r3
+  57              	.LBB3:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 3
+
+
+  58              		.loc 1 55 0
+  59 0016 4BE0     		b	.L2
+  60              	.LVL1:
+  61              	.L3:
+  56:Sensor.c      ****         row1 |= squareReg[i] << (7 - i);
+  62              		.loc 1 56 0 discriminator 3
+  63 0018 3549     		ldr	r1, .L7
+  64 001a 11F803E0 		ldrb	lr, [r1, r3]	@ zero_extendqisi2
+  65 001e C3F10702 		rsb	r2, r3, #7
+  66 0022 0EFA02FE 		lsl	lr, lr, r2
+  67 0026 4EEA0000 		orr	r0, lr, r0
+  68              	.LVL2:
+  69 002a C0B2     		uxtb	r0, r0
+  70              	.LVL3:
+  57:Sensor.c      ****         row2 |= squareReg[i + 8] << (7 - i);
+  71              		.loc 1 57 0 discriminator 3
+  72 002c 03F1080E 		add	lr, r3, #8
+  73 0030 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+  74 0034 0EFA02FE 		lsl	lr, lr, r2
+  75 0038 4EEA0A0A 		orr	r10, lr, r10
+  76              	.LVL4:
+  77 003c 5FFA8AFA 		uxtb	r10, r10
+  78              	.LVL5:
+  58:Sensor.c      ****         row3 |= squareReg[i + 16] << (7 - i);
+  79              		.loc 1 58 0 discriminator 3
+  80 0040 03F1100E 		add	lr, r3, #16
+  81 0044 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+  82 0048 0EFA02FE 		lsl	lr, lr, r2
+  83 004c 4EEA0909 		orr	r9, lr, r9
+  84              	.LVL6:
+  85 0050 5FFA89F9 		uxtb	r9, r9
+  86              	.LVL7:
+  59:Sensor.c      ****         row4 |= squareReg[i + 24] << (7 - i);
+  87              		.loc 1 59 0 discriminator 3
+  88 0054 03F1180E 		add	lr, r3, #24
+  89 0058 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+  90 005c 0EFA02FE 		lsl	lr, lr, r2
+  91 0060 4EEA0808 		orr	r8, lr, r8
+  92              	.LVL8:
+  93 0064 5FFA88F8 		uxtb	r8, r8
+  94              	.LVL9:
+  60:Sensor.c      ****         row5 |= squareReg[i + 32] << (7 - i);
+  95              		.loc 1 60 0 discriminator 3
+  96 0068 03F1200E 		add	lr, r3, #32
+  97 006c 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+  98 0070 0EFA02FE 		lsl	lr, lr, r2
+  99 0074 4EEA0707 		orr	r7, lr, r7
+ 100              	.LVL10:
+ 101 0078 FFB2     		uxtb	r7, r7
+ 102              	.LVL11:
+  61:Sensor.c      ****         row6 |= squareReg[i + 40] << (7 - i);
+ 103              		.loc 1 61 0 discriminator 3
+ 104 007a 03F1280E 		add	lr, r3, #40
+ 105 007e 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+ 106 0082 0EFA02FE 		lsl	lr, lr, r2
+ 107 0086 4EEA0606 		orr	r6, lr, r6
+ 108              	.LVL12:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 4
+
+
+ 109 008a F6B2     		uxtb	r6, r6
+ 110              	.LVL13:
+  62:Sensor.c      ****         row7 |= squareReg[i + 48] << (7 - i);
+ 111              		.loc 1 62 0 discriminator 3
+ 112 008c 03F1300E 		add	lr, r3, #48
+ 113 0090 11F80EE0 		ldrb	lr, [r1, lr]	@ zero_extendqisi2
+ 114 0094 0EFA02FE 		lsl	lr, lr, r2
+ 115 0098 4EEA0505 		orr	r5, lr, r5
+ 116              	.LVL14:
+ 117 009c EDB2     		uxtb	r5, r5
+ 118              	.LVL15:
+  63:Sensor.c      ****         row8 |= squareReg[i + 56] << (7 - i);
+ 119              		.loc 1 63 0 discriminator 3
+ 120 009e 03F1380E 		add	lr, r3, #56
+ 121 00a2 11F80E10 		ldrb	r1, [r1, lr]	@ zero_extendqisi2
+ 122 00a6 01FA02F2 		lsl	r2, r1, r2
+ 123 00aa 1443     		orrs	r4, r4, r2
+ 124              	.LVL16:
+ 125 00ac E4B2     		uxtb	r4, r4
+ 126              	.LVL17:
+  55:Sensor.c      ****         row1 |= squareReg[i] << (7 - i);
+ 127              		.loc 1 55 0 discriminator 3
+ 128 00ae 0133     		adds	r3, r3, #1
+ 129              	.LVL18:
+ 130              	.L2:
+  55:Sensor.c      ****         row1 |= squareReg[i] << (7 - i);
+ 131              		.loc 1 55 0 is_stmt 0 discriminator 1
+ 132 00b0 072B     		cmp	r3, #7
+ 133 00b2 B1DD     		ble	.L3
+ 134 00b4 0023     		movs	r3, #0
+ 135              	.LVL19:
+ 136 00b6 00E0     		b	.L4
+ 137              	.LVL20:
+ 138              	.L5:
+ 139              	.LBE3:
+ 140              	.LBB4:
+  64:Sensor.c      ****     }
+  65:Sensor.c      ****     
+  66:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 141              		.loc 1 66 0 is_stmt 1 discriminator 3
+ 142 00b8 0133     		adds	r3, r3, #1
+ 143              	.LVL21:
+ 144              	.L4:
+ 145              		.loc 1 66 0 is_stmt 0 discriminator 1
+ 146 00ba 3F2B     		cmp	r3, #63
+ 147 00bc FCDD     		ble	.L5
+ 148              	.LBE4:
+  67:Sensor.c      ****     {
+  68:Sensor.c      ****         // Print Arrayet som ascii art på UART
+  69:Sensor.c      ****     }
+  70:Sensor.c      **** 
+  71:Sensor.c      ****     //Echo back modtagne bytes - uden lille L(startChar)
+  72:Sensor.c      ****     UART_1_WriteTxData(row1);
+ 149              		.loc 1 72 0 is_stmt 1
+ 150 00be FFF7FEFF 		bl	UART_1_WriteTxData
+ 151              	.LVL22:
+  73:Sensor.c      ****     UART_1_WriteTxData(row2);
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 5
+
+
+ 152              		.loc 1 73 0
+ 153 00c2 5046     		mov	r0, r10
+ 154 00c4 FFF7FEFF 		bl	UART_1_WriteTxData
+ 155              	.LVL23:
+  74:Sensor.c      ****     UART_1_WriteTxData(row3);
+ 156              		.loc 1 74 0
+ 157 00c8 4846     		mov	r0, r9
+ 158 00ca FFF7FEFF 		bl	UART_1_WriteTxData
+ 159              	.LVL24:
+  75:Sensor.c      ****     UART_1_WriteTxData(row4);
+ 160              		.loc 1 75 0
+ 161 00ce 4046     		mov	r0, r8
+ 162 00d0 FFF7FEFF 		bl	UART_1_WriteTxData
+ 163              	.LVL25:
+  76:Sensor.c      ****     UART_1_WriteTxData(row5);
+ 164              		.loc 1 76 0
+ 165 00d4 3846     		mov	r0, r7
+ 166 00d6 FFF7FEFF 		bl	UART_1_WriteTxData
+ 167              	.LVL26:
+  77:Sensor.c      ****     UART_1_WriteTxData(row6);
+ 168              		.loc 1 77 0
+ 169 00da 3046     		mov	r0, r6
+ 170 00dc FFF7FEFF 		bl	UART_1_WriteTxData
+ 171              	.LVL27:
+  78:Sensor.c      ****     UART_1_WriteTxData(row7);
+ 172              		.loc 1 78 0
+ 173 00e0 2846     		mov	r0, r5
+ 174 00e2 FFF7FEFF 		bl	UART_1_WriteTxData
+ 175              	.LVL28:
+  79:Sensor.c      ****     UART_1_WriteTxData(row8);
+ 176              		.loc 1 79 0
+ 177 00e6 2046     		mov	r0, r4
+ 178 00e8 FFF7FEFF 		bl	UART_1_WriteTxData
+ 179              	.LVL29:
+ 180 00ec BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 181              	.LVL30:
+ 182              	.L8:
+ 183              		.align	2
+ 184              	.L7:
+ 185 00f0 00000000 		.word	squareReg
+ 186              		.cfi_endproc
+ 187              	.LFE65:
+ 188              		.size	sensorPrintTest, .-sensorPrintTest
+ 189              		.section	.text.updateLastSquareReg,"ax",%progbits
+ 190              		.align	2
+ 191              		.global	updateLastSquareReg
+ 192              		.thumb
+ 193              		.thumb_func
+ 194              		.type	updateLastSquareReg, %function
+ 195              	updateLastSquareReg:
+ 196              	.LFB67:
+  80:Sensor.c      **** }
+  81:Sensor.c      **** 
+  82:Sensor.c      **** 
+  83:Sensor.c      **** void initSensor()
+  84:Sensor.c      **** {
+  85:Sensor.c      ****     sensorReset();
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 6
+
+
+  86:Sensor.c      ****     sensorScan();
+  87:Sensor.c      ****     updateLastSquareReg();
+  88:Sensor.c      ****     newPos = -1; liftPos = -1; deadLiftPos = -1; //Nulstil positioner
+  89:Sensor.c      **** }
+  90:Sensor.c      **** 
+  91:Sensor.c      **** void updateLastSquareReg()
+  92:Sensor.c      **** {
+ 197              		.loc 1 92 0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 0
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201              		@ link register save eliminated.
+ 202              	.LVL31:
+ 203              	.LBB5:
+  93:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 204              		.loc 1 93 0
+ 205 0000 0023     		movs	r3, #0
+ 206 0002 04E0     		b	.L10
+ 207              	.LVL32:
+ 208              	.L11:
+  94:Sensor.c      ****     {
+  95:Sensor.c      ****         lastSquareReg[i] = squareReg[i]; // loader seneste squareReg over i lastSquareReg
+ 209              		.loc 1 95 0 discriminator 3
+ 210 0004 034A     		ldr	r2, .L12
+ 211 0006 D15C     		ldrb	r1, [r2, r3]	@ zero_extendqisi2
+ 212 0008 034A     		ldr	r2, .L12+4
+ 213 000a D154     		strb	r1, [r2, r3]
+  93:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 214              		.loc 1 93 0 discriminator 3
+ 215 000c 0133     		adds	r3, r3, #1
+ 216              	.LVL33:
+ 217              	.L10:
+  93:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 218              		.loc 1 93 0 is_stmt 0 discriminator 1
+ 219 000e 3F2B     		cmp	r3, #63
+ 220 0010 F8DD     		ble	.L11
+ 221              	.LBE5:
+  96:Sensor.c      ****     }
+  97:Sensor.c      **** }
+ 222              		.loc 1 97 0 is_stmt 1
+ 223 0012 7047     		bx	lr
+ 224              	.L13:
+ 225              		.align	2
+ 226              	.L12:
+ 227 0014 00000000 		.word	squareReg
+ 228 0018 00000000 		.word	lastSquareReg
+ 229              		.cfi_endproc
+ 230              	.LFE67:
+ 231              		.size	updateLastSquareReg, .-updateLastSquareReg
+ 232              		.section	.text.sensorReset,"ax",%progbits
+ 233              		.align	2
+ 234              		.global	sensorReset
+ 235              		.thumb
+ 236              		.thumb_func
+ 237              		.type	sensorReset, %function
+ 238              	sensorReset:
+ 239              	.LFB72:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 7
+
+
+  98:Sensor.c      **** 
+  99:Sensor.c      **** uint8_t scan4PieceLift()
+ 100:Sensor.c      **** {
+ 101:Sensor.c      ****     updateLastSquareReg();
+ 102:Sensor.c      ****     
+ 103:Sensor.c      ****     sensorScan(); // Opdaterer squareReg
+ 104:Sensor.c      ****     
+ 105:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 106:Sensor.c      ****     {
+ 107:Sensor.c      ****         if(lastSquareReg[i] == 1 && squareReg[i] == 0)
+ 108:Sensor.c      ****         {
+ 109:Sensor.c      ****             CyDelayUs(change_validation_delay_us);
+ 110:Sensor.c      ****             sensorScan();
+ 111:Sensor.c      ****             if(lastSquareReg[i] == 1 && squareReg[i] == 0)
+ 112:Sensor.c      ****             {
+ 113:Sensor.c      ****                 updateLastSquareReg();
+ 114:Sensor.c      ****                 liftPos = i; // liftPos sættes til felt nummer i
+ 115:Sensor.c      ****                 return 1;
+ 116:Sensor.c      ****             }
+ 117:Sensor.c      ****         }
+ 118:Sensor.c      ****     }
+ 119:Sensor.c      ****     
+ 120:Sensor.c      ****     liftPos = -1;
+ 121:Sensor.c      ****     return 0;
+ 122:Sensor.c      **** }
+ 123:Sensor.c      **** 
+ 124:Sensor.c      **** void scanNewPos()
+ 125:Sensor.c      **** {    
+ 126:Sensor.c      ****     sensorScan(); // Opdaterer squareReg
+ 127:Sensor.c      ****     
+ 128:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 129:Sensor.c      ****     {   
+ 130:Sensor.c      ****         if(lastSquareReg[i] == 0 && squareReg[i] == 1)
+ 131:Sensor.c      ****         {
+ 132:Sensor.c      ****             CyDelayUs(change_validation_delay_us);
+ 133:Sensor.c      ****             sensorScan();
+ 134:Sensor.c      ****             if(lastSquareReg[i] == 0 && squareReg[i] == 1)
+ 135:Sensor.c      ****             {
+ 136:Sensor.c      ****                 newPos = i;
+ 137:Sensor.c      ****             }
+ 138:Sensor.c      ****         }
+ 139:Sensor.c      ****     }
+ 140:Sensor.c      ****     
+ 141:Sensor.c      **** }
+ 142:Sensor.c      **** 
+ 143:Sensor.c      ****  uint8_t scan4DeadOpp()
+ 144:Sensor.c      **** {    
+ 145:Sensor.c      ****     sensorScan(); // Opdaterer squareReg
+ 146:Sensor.c      ****     
+ 147:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 148:Sensor.c      ****     {
+ 149:Sensor.c      ****         if(lastSquareReg[i] == 1 && squareReg[i] == 0 && legalMoves[i] == 1 && i != liftPos) // Hvi
+ 150:Sensor.c      ****         {
+ 151:Sensor.c      ****             CyDelayUs(change_validation_delay_us);
+ 152:Sensor.c      ****             sensorScan();
+ 153:Sensor.c      ****             if(lastSquareReg[i] == 1 && squareReg[i] == 0)
+ 154:Sensor.c      ****             {
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 8
+
+
+ 155:Sensor.c      ****                 deadLiftPos = i;
+ 156:Sensor.c      ****                 return 1;
+ 157:Sensor.c      ****             }
+ 158:Sensor.c      ****         }
+ 159:Sensor.c      ****     }
+ 160:Sensor.c      ****     return 0;
+ 161:Sensor.c      **** }
+ 162:Sensor.c      **** 
+ 163:Sensor.c      **** int8_t newPosLegal()
+ 164:Sensor.c      **** {
+ 165:Sensor.c      ****     sensorScan(); // Opdater squareReg
+ 166:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 167:Sensor.c      ****     {
+ 168:Sensor.c      ****         // Hvis legal              og   hvis der er en brik på feltet og hvis newPos ikke er -1
+ 169:Sensor.c      ****         if(legalMoves[newPos] == 1 && squareReg[i]==1) 
+ 170:Sensor.c      ****         {
+ 171:Sensor.c      ****             return 1;
+ 172:Sensor.c      ****         }
+ 173:Sensor.c      ****         if(legalMoves[newPos] == 0 && squareReg[i]==1) //Ulovligt træk
+ 174:Sensor.c      ****         {
+ 175:Sensor.c      ****             return -1;
+ 176:Sensor.c      ****         }
+ 177:Sensor.c      ****     }
+ 178:Sensor.c      ****     return 0;
+ 179:Sensor.c      **** }
+ 180:Sensor.c      **** 
+ 181:Sensor.c      **** void sensorReset()
+ 182:Sensor.c      **** {
+ 240              		.loc 1 182 0
+ 241              		.cfi_startproc
+ 242              		@ args = 0, pretend = 0, frame = 0
+ 243              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244 0000 08B5     		push	{r3, lr}
+ 245              		.cfi_def_cfa_offset 8
+ 246              		.cfi_offset 3, -8
+ 247              		.cfi_offset 14, -4
+ 183:Sensor.c      ****     sensorReset_Write(1); //Reset on
+ 248              		.loc 1 183 0
+ 249 0002 0120     		movs	r0, #1
+ 250 0004 FFF7FEFF 		bl	sensorReset_Write
+ 251              	.LVL34:
+ 184:Sensor.c      ****     CyDelay(sensor_Clk_delay_us); //Clock Delay
+ 252              		.loc 1 184 0
+ 253 0008 0120     		movs	r0, #1
+ 254 000a FFF7FEFF 		bl	CyDelay
+ 255              	.LVL35:
+ 185:Sensor.c      ****     sensorReset_Write(0); //Reset off
+ 256              		.loc 1 185 0
+ 257 000e 0020     		movs	r0, #0
+ 258 0010 FFF7FEFF 		bl	sensorReset_Write
+ 259              	.LVL36:
+ 260 0014 08BD     		pop	{r3, pc}
+ 261              		.cfi_endproc
+ 262              	.LFE72:
+ 263              		.size	sensorReset, .-sensorReset
+ 264 0016 00BF     		.section	.text.sensorScan,"ax",%progbits
+ 265              		.align	2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 9
+
+
+ 266              		.global	sensorScan
+ 267              		.thumb
+ 268              		.thumb_func
+ 269              		.type	sensorScan, %function
+ 270              	sensorScan:
+ 271              	.LFB64:
+  17:Sensor.c      ****     sensorReset();
+ 272              		.loc 1 17 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276 0000 10B5     		push	{r4, lr}
+ 277              		.cfi_def_cfa_offset 8
+ 278              		.cfi_offset 4, -8
+ 279              		.cfi_offset 14, -4
+  18:Sensor.c      ****     for (int i = 0; i < 64; i++) 
+ 280              		.loc 1 18 0
+ 281 0002 FFF7FEFF 		bl	sensorReset
+ 282              	.LVL37:
+ 283              	.LBB6:
+  19:Sensor.c      ****     {
+ 284              		.loc 1 19 0
+ 285 0006 0024     		movs	r4, #0
+ 286 0008 2DE0     		b	.L17
+ 287              	.LVL38:
+ 288              	.L21:
+  21:Sensor.c      ****         {
+ 289              		.loc 1 21 0
+ 290 000a FFF7FEFF 		bl	sensorSignal_Read
+ 291              	.LVL39:
+ 292 000e 0128     		cmp	r0, #1
+ 293 0010 0CD1     		bne	.L18
+  23:Sensor.c      ****             if(sensorSignal_Read()==1)
+ 294              		.loc 1 23 0
+ 295 0012 4FF4FA60 		mov	r0, #2000
+ 296 0016 FFF7FEFF 		bl	CyDelayUs
+ 297              	.LVL40:
+  24:Sensor.c      ****             {
+ 298              		.loc 1 24 0
+ 299 001a FFF7FEFF 		bl	sensorSignal_Read
+ 300              	.LVL41:
+ 301 001e 0128     		cmp	r0, #1
+ 302 0020 12D1     		bne	.L19
+  26:Sensor.c      ****             }
+ 303              		.loc 1 26 0
+ 304 0022 FFF7FEFF 		bl	sensorSignal_Read
+ 305              	.LVL42:
+ 306 0026 114B     		ldr	r3, .L23
+ 307 0028 1855     		strb	r0, [r3, r4]
+ 308 002a 0DE0     		b	.L19
+ 309              	.L18:
+  29:Sensor.c      ****         {
+ 310              		.loc 1 29 0
+ 311 002c FFF7FEFF 		bl	sensorSignal_Read
+ 312              	.LVL43:
+ 313 0030 50B9     		cbnz	r0, .L19
+  31:Sensor.c      ****             if(sensorSignal_Read()==0)
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 10
+
+
+ 314              		.loc 1 31 0
+ 315 0032 4FF4FA60 		mov	r0, #2000
+ 316 0036 FFF7FEFF 		bl	CyDelayUs
+ 317              	.LVL44:
+  32:Sensor.c      ****             {
+ 318              		.loc 1 32 0
+ 319 003a FFF7FEFF 		bl	sensorSignal_Read
+ 320              	.LVL45:
+ 321 003e 18B9     		cbnz	r0, .L19
+  34:Sensor.c      ****             }
+ 322              		.loc 1 34 0
+ 323 0040 FFF7FEFF 		bl	sensorSignal_Read
+ 324              	.LVL46:
+ 325 0044 094B     		ldr	r3, .L23
+ 326 0046 1855     		strb	r0, [r3, r4]
+ 327              	.L19:
+  38:Sensor.c      ****         {
+ 328              		.loc 1 38 0
+ 329 0048 3E2C     		cmp	r4, #62
+ 330 004a 0BDC     		bgt	.L20
+  40:Sensor.c      ****             CyDelayUs(sensor_Clk_delay_us); //Clock Delay
+ 331              		.loc 1 40 0
+ 332 004c 0120     		movs	r0, #1
+ 333 004e FFF7FEFF 		bl	sensorClk_Write
+ 334              	.LVL47:
+  41:Sensor.c      ****             sensorClk_Write(0); //Clock lav
+ 335              		.loc 1 41 0
+ 336 0052 0120     		movs	r0, #1
+ 337 0054 FFF7FEFF 		bl	CyDelayUs
+ 338              	.LVL48:
+  42:Sensor.c      ****             CyDelayUs(sensor_Clk_delay_us);
+ 339              		.loc 1 42 0
+ 340 0058 0020     		movs	r0, #0
+ 341 005a FFF7FEFF 		bl	sensorClk_Write
+ 342              	.LVL49:
+  43:Sensor.c      ****         }
+ 343              		.loc 1 43 0
+ 344 005e 0120     		movs	r0, #1
+ 345 0060 FFF7FEFF 		bl	CyDelayUs
+ 346              	.LVL50:
+ 347              	.L20:
+  19:Sensor.c      ****     {
+ 348              		.loc 1 19 0 discriminator 2
+ 349 0064 0134     		adds	r4, r4, #1
+ 350              	.LVL51:
+ 351              	.L17:
+  19:Sensor.c      ****     {
+ 352              		.loc 1 19 0 is_stmt 0 discriminator 1
+ 353 0066 3F2C     		cmp	r4, #63
+ 354 0068 CFDD     		ble	.L21
+ 355              	.LBE6:
+  46:Sensor.c      **** 
+ 356              		.loc 1 46 0 is_stmt 1
+ 357 006a 10BD     		pop	{r4, pc}
+ 358              	.LVL52:
+ 359              	.L24:
+ 360              		.align	2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 11
+
+
+ 361              	.L23:
+ 362 006c 00000000 		.word	squareReg
+ 363              		.cfi_endproc
+ 364              	.LFE64:
+ 365              		.size	sensorScan, .-sensorScan
+ 366              		.section	.text.scan4PieceLift,"ax",%progbits
+ 367              		.align	2
+ 368              		.global	scan4PieceLift
+ 369              		.thumb
+ 370              		.thumb_func
+ 371              		.type	scan4PieceLift, %function
+ 372              	scan4PieceLift:
+ 373              	.LFB68:
+ 100:Sensor.c      ****     updateLastSquareReg();
+ 374              		.loc 1 100 0
+ 375              		.cfi_startproc
+ 376              		@ args = 0, pretend = 0, frame = 0
+ 377              		@ frame_needed = 0, uses_anonymous_args = 0
+ 378 0000 38B5     		push	{r3, r4, r5, lr}
+ 379              		.cfi_def_cfa_offset 16
+ 380              		.cfi_offset 3, -16
+ 381              		.cfi_offset 4, -12
+ 382              		.cfi_offset 5, -8
+ 383              		.cfi_offset 14, -4
+ 101:Sensor.c      ****     
+ 384              		.loc 1 101 0
+ 385 0002 FFF7FEFF 		bl	updateLastSquareReg
+ 386              	.LVL53:
+ 103:Sensor.c      ****     
+ 387              		.loc 1 103 0
+ 388 0006 FFF7FEFF 		bl	sensorScan
+ 389              	.LVL54:
+ 390              	.LBB7:
+ 105:Sensor.c      ****     {
+ 391              		.loc 1 105 0
+ 392 000a 0024     		movs	r4, #0
+ 393 000c 19E0     		b	.L26
+ 394              	.LVL55:
+ 395              	.L29:
+ 107:Sensor.c      ****         {
+ 396              		.loc 1 107 0
+ 397 000e 114B     		ldr	r3, .L31
+ 398 0010 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 399 0012 012B     		cmp	r3, #1
+ 400 0014 14D1     		bne	.L27
+ 107:Sensor.c      ****         {
+ 401              		.loc 1 107 0 is_stmt 0 discriminator 1
+ 402 0016 104B     		ldr	r3, .L31+4
+ 403 0018 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 404 001a 8BB9     		cbnz	r3, .L27
+ 109:Sensor.c      ****             sensorScan();
+ 405              		.loc 1 109 0 is_stmt 1
+ 406 001c 40F6B830 		movw	r0, #3000
+ 407 0020 FFF7FEFF 		bl	CyDelayUs
+ 408              	.LVL56:
+ 110:Sensor.c      ****             if(lastSquareReg[i] == 1 && squareReg[i] == 0)
+ 409              		.loc 1 110 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 12
+
+
+ 410 0024 FFF7FEFF 		bl	sensorScan
+ 411              	.LVL57:
+ 111:Sensor.c      ****             {
+ 412              		.loc 1 111 0
+ 413 0028 0A4B     		ldr	r3, .L31
+ 414 002a 1D5D     		ldrb	r5, [r3, r4]	@ zero_extendqisi2
+ 415 002c 012D     		cmp	r5, #1
+ 416 002e 07D1     		bne	.L27
+ 111:Sensor.c      ****             {
+ 417              		.loc 1 111 0 is_stmt 0 discriminator 1
+ 418 0030 094B     		ldr	r3, .L31+4
+ 419 0032 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 420 0034 23B9     		cbnz	r3, .L27
+ 113:Sensor.c      ****                 liftPos = i; // liftPos sættes til felt nummer i
+ 421              		.loc 1 113 0 is_stmt 1
+ 422 0036 FFF7FEFF 		bl	updateLastSquareReg
+ 423              	.LVL58:
+ 114:Sensor.c      ****                 return 1;
+ 424              		.loc 1 114 0
+ 425 003a 084B     		ldr	r3, .L31+8
+ 426 003c 1C70     		strb	r4, [r3]
+ 115:Sensor.c      ****             }
+ 427              		.loc 1 115 0
+ 428 003e 06E0     		b	.L28
+ 429              	.L27:
+ 105:Sensor.c      ****     {
+ 430              		.loc 1 105 0 discriminator 2
+ 431 0040 0134     		adds	r4, r4, #1
+ 432              	.LVL59:
+ 433              	.L26:
+ 105:Sensor.c      ****     {
+ 434              		.loc 1 105 0 is_stmt 0 discriminator 1
+ 435 0042 3F2C     		cmp	r4, #63
+ 436 0044 E3DD     		ble	.L29
+ 437              	.LBE7:
+ 120:Sensor.c      ****     return 0;
+ 438              		.loc 1 120 0 is_stmt 1
+ 439 0046 FF22     		movs	r2, #255
+ 440 0048 044B     		ldr	r3, .L31+8
+ 441 004a 1A70     		strb	r2, [r3]
+ 121:Sensor.c      **** }
+ 442              		.loc 1 121 0
+ 443 004c 0025     		movs	r5, #0
+ 444              	.L28:
+ 122:Sensor.c      **** 
+ 445              		.loc 1 122 0
+ 446 004e 2846     		mov	r0, r5
+ 447 0050 38BD     		pop	{r3, r4, r5, pc}
+ 448              	.LVL60:
+ 449              	.L32:
+ 450 0052 00BF     		.align	2
+ 451              	.L31:
+ 452 0054 00000000 		.word	lastSquareReg
+ 453 0058 00000000 		.word	squareReg
+ 454 005c 00000000 		.word	liftPos
+ 455              		.cfi_endproc
+ 456              	.LFE68:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 13
+
+
+ 457              		.size	scan4PieceLift, .-scan4PieceLift
+ 458              		.section	.text.scanNewPos,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	scanNewPos
+ 461              		.thumb
+ 462              		.thumb_func
+ 463              		.type	scanNewPos, %function
+ 464              	scanNewPos:
+ 465              	.LFB69:
+ 125:Sensor.c      ****     sensorScan(); // Opdaterer squareReg
+ 466              		.loc 1 125 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470 0000 10B5     		push	{r4, lr}
+ 471              		.cfi_def_cfa_offset 8
+ 472              		.cfi_offset 4, -8
+ 473              		.cfi_offset 14, -4
+ 126:Sensor.c      ****     
+ 474              		.loc 1 126 0
+ 475 0002 FFF7FEFF 		bl	sensorScan
+ 476              	.LVL61:
+ 477              	.LBB8:
+ 128:Sensor.c      ****     {   
+ 478              		.loc 1 128 0
+ 479 0006 0024     		movs	r4, #0
+ 480 0008 16E0     		b	.L34
+ 481              	.LVL62:
+ 482              	.L36:
+ 130:Sensor.c      ****         {
+ 483              		.loc 1 130 0
+ 484 000a 0D4B     		ldr	r3, .L38
+ 485 000c 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 486 000e 93B9     		cbnz	r3, .L35
+ 130:Sensor.c      ****         {
+ 487              		.loc 1 130 0 is_stmt 0 discriminator 1
+ 488 0010 0C4B     		ldr	r3, .L38+4
+ 489 0012 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 490 0014 012B     		cmp	r3, #1
+ 491 0016 0ED1     		bne	.L35
+ 132:Sensor.c      ****             sensorScan();
+ 492              		.loc 1 132 0 is_stmt 1
+ 493 0018 40F6B830 		movw	r0, #3000
+ 494 001c FFF7FEFF 		bl	CyDelayUs
+ 495              	.LVL63:
+ 133:Sensor.c      ****             if(lastSquareReg[i] == 0 && squareReg[i] == 1)
+ 496              		.loc 1 133 0
+ 497 0020 FFF7FEFF 		bl	sensorScan
+ 498              	.LVL64:
+ 134:Sensor.c      ****             {
+ 499              		.loc 1 134 0
+ 500 0024 064B     		ldr	r3, .L38
+ 501 0026 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 502 0028 2BB9     		cbnz	r3, .L35
+ 134:Sensor.c      ****             {
+ 503              		.loc 1 134 0 is_stmt 0 discriminator 1
+ 504 002a 064B     		ldr	r3, .L38+4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 14
+
+
+ 505 002c 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 506 002e 012B     		cmp	r3, #1
+ 507 0030 01D1     		bne	.L35
+ 136:Sensor.c      ****             }
+ 508              		.loc 1 136 0 is_stmt 1
+ 509 0032 054B     		ldr	r3, .L38+8
+ 510 0034 1C70     		strb	r4, [r3]
+ 511              	.L35:
+ 128:Sensor.c      ****     {   
+ 512              		.loc 1 128 0 discriminator 2
+ 513 0036 0134     		adds	r4, r4, #1
+ 514              	.LVL65:
+ 515              	.L34:
+ 128:Sensor.c      ****     {   
+ 516              		.loc 1 128 0 is_stmt 0 discriminator 1
+ 517 0038 3F2C     		cmp	r4, #63
+ 518 003a E6DD     		ble	.L36
+ 519              	.LBE8:
+ 141:Sensor.c      **** 
+ 520              		.loc 1 141 0 is_stmt 1
+ 521 003c 10BD     		pop	{r4, pc}
+ 522              	.LVL66:
+ 523              	.L39:
+ 524 003e 00BF     		.align	2
+ 525              	.L38:
+ 526 0040 00000000 		.word	lastSquareReg
+ 527 0044 00000000 		.word	squareReg
+ 528 0048 00000000 		.word	newPos
+ 529              		.cfi_endproc
+ 530              	.LFE69:
+ 531              		.size	scanNewPos, .-scanNewPos
+ 532              		.section	.text.scan4DeadOpp,"ax",%progbits
+ 533              		.align	2
+ 534              		.global	scan4DeadOpp
+ 535              		.thumb
+ 536              		.thumb_func
+ 537              		.type	scan4DeadOpp, %function
+ 538              	scan4DeadOpp:
+ 539              	.LFB70:
+ 144:Sensor.c      ****     sensorScan(); // Opdaterer squareReg
+ 540              		.loc 1 144 0
+ 541              		.cfi_startproc
+ 542              		@ args = 0, pretend = 0, frame = 0
+ 543              		@ frame_needed = 0, uses_anonymous_args = 0
+ 544 0000 10B5     		push	{r4, lr}
+ 545              		.cfi_def_cfa_offset 8
+ 546              		.cfi_offset 4, -8
+ 547              		.cfi_offset 14, -4
+ 145:Sensor.c      ****     
+ 548              		.loc 1 145 0
+ 549 0002 FFF7FEFF 		bl	sensorScan
+ 550              	.LVL67:
+ 551              	.LBB9:
+ 147:Sensor.c      ****     {
+ 552              		.loc 1 147 0
+ 553 0006 0024     		movs	r4, #0
+ 554 0008 20E0     		b	.L41
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 15
+
+
+ 555              	.LVL68:
+ 556              	.L44:
+ 149:Sensor.c      ****         {
+ 557              		.loc 1 149 0
+ 558 000a 124B     		ldr	r3, .L46
+ 559 000c 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 560 000e 012B     		cmp	r3, #1
+ 561 0010 1BD1     		bne	.L42
+ 149:Sensor.c      ****         {
+ 562              		.loc 1 149 0 is_stmt 0 discriminator 1
+ 563 0012 114B     		ldr	r3, .L46+4
+ 564 0014 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 565 0016 C3B9     		cbnz	r3, .L42
+ 149:Sensor.c      ****         {
+ 566              		.loc 1 149 0 discriminator 2
+ 567 0018 104B     		ldr	r3, .L46+8
+ 568 001a 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 569 001c 012B     		cmp	r3, #1
+ 570 001e 14D1     		bne	.L42
+ 149:Sensor.c      ****         {
+ 571              		.loc 1 149 0 discriminator 3
+ 572 0020 0F4B     		ldr	r3, .L46+12
+ 573 0022 93F90030 		ldrsb	r3, [r3]
+ 574 0026 9C42     		cmp	r4, r3
+ 575 0028 0FD0     		beq	.L42
+ 151:Sensor.c      ****             sensorScan();
+ 576              		.loc 1 151 0 is_stmt 1
+ 577 002a 40F6B830 		movw	r0, #3000
+ 578 002e FFF7FEFF 		bl	CyDelayUs
+ 579              	.LVL69:
+ 152:Sensor.c      ****             if(lastSquareReg[i] == 1 && squareReg[i] == 0)
+ 580              		.loc 1 152 0
+ 581 0032 FFF7FEFF 		bl	sensorScan
+ 582              	.LVL70:
+ 153:Sensor.c      ****             {
+ 583              		.loc 1 153 0
+ 584 0036 074B     		ldr	r3, .L46
+ 585 0038 185D     		ldrb	r0, [r3, r4]	@ zero_extendqisi2
+ 586 003a 0128     		cmp	r0, #1
+ 587 003c 05D1     		bne	.L42
+ 153:Sensor.c      ****             {
+ 588              		.loc 1 153 0 is_stmt 0 discriminator 1
+ 589 003e 064B     		ldr	r3, .L46+4
+ 590 0040 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+ 591 0042 13B9     		cbnz	r3, .L42
+ 155:Sensor.c      ****                 return 1;
+ 592              		.loc 1 155 0 is_stmt 1
+ 593 0044 074B     		ldr	r3, .L46+16
+ 594 0046 1C70     		strb	r4, [r3]
+ 156:Sensor.c      ****             }
+ 595              		.loc 1 156 0
+ 596 0048 10BD     		pop	{r4, pc}
+ 597              	.LVL71:
+ 598              	.L42:
+ 147:Sensor.c      ****     {
+ 599              		.loc 1 147 0 discriminator 2
+ 600 004a 0134     		adds	r4, r4, #1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 16
+
+
+ 601              	.LVL72:
+ 602              	.L41:
+ 147:Sensor.c      ****     {
+ 603              		.loc 1 147 0 is_stmt 0 discriminator 1
+ 604 004c 3F2C     		cmp	r4, #63
+ 605 004e DCDD     		ble	.L44
+ 606              	.LBE9:
+ 160:Sensor.c      **** }
+ 607              		.loc 1 160 0 is_stmt 1
+ 608 0050 0020     		movs	r0, #0
+ 161:Sensor.c      **** 
+ 609              		.loc 1 161 0
+ 610 0052 10BD     		pop	{r4, pc}
+ 611              	.LVL73:
+ 612              	.L47:
+ 613              		.align	2
+ 614              	.L46:
+ 615 0054 00000000 		.word	lastSquareReg
+ 616 0058 00000000 		.word	squareReg
+ 617 005c 00000000 		.word	legalMoves
+ 618 0060 00000000 		.word	liftPos
+ 619 0064 00000000 		.word	deadLiftPos
+ 620              		.cfi_endproc
+ 621              	.LFE70:
+ 622              		.size	scan4DeadOpp, .-scan4DeadOpp
+ 623              		.section	.text.newPosLegal,"ax",%progbits
+ 624              		.align	2
+ 625              		.global	newPosLegal
+ 626              		.thumb
+ 627              		.thumb_func
+ 628              		.type	newPosLegal, %function
+ 629              	newPosLegal:
+ 630              	.LFB71:
+ 164:Sensor.c      ****     sensorScan(); // Opdater squareReg
+ 631              		.loc 1 164 0
+ 632              		.cfi_startproc
+ 633              		@ args = 0, pretend = 0, frame = 0
+ 634              		@ frame_needed = 0, uses_anonymous_args = 0
+ 635 0000 08B5     		push	{r3, lr}
+ 636              		.cfi_def_cfa_offset 8
+ 637              		.cfi_offset 3, -8
+ 638              		.cfi_offset 14, -4
+ 165:Sensor.c      ****     for(int i = 0; i < 64; i++)
+ 639              		.loc 1 165 0
+ 640 0002 FFF7FEFF 		bl	sensorScan
+ 641              	.LVL74:
+ 642              	.LBB10:
+ 166:Sensor.c      ****     {
+ 643              		.loc 1 166 0
+ 644 0006 0023     		movs	r3, #0
+ 645 0008 10E0     		b	.L49
+ 646              	.LVL75:
+ 647              	.L53:
+ 169:Sensor.c      ****         {
+ 648              		.loc 1 169 0
+ 649 000a 0D4A     		ldr	r2, .L57
+ 650 000c 92F90020 		ldrsb	r2, [r2]
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 17
+
+
+ 651 0010 0C49     		ldr	r1, .L57+4
+ 652 0012 8A5C     		ldrb	r2, [r1, r2]	@ zero_extendqisi2
+ 653 0014 012A     		cmp	r2, #1
+ 654 0016 03D1     		bne	.L50
+ 169:Sensor.c      ****         {
+ 655              		.loc 1 169 0 is_stmt 0 discriminator 1
+ 656 0018 0B49     		ldr	r1, .L57+8
+ 657 001a C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 658 001c 0129     		cmp	r1, #1
+ 659 001e 09D0     		beq	.L54
+ 660              	.L50:
+ 173:Sensor.c      ****         {
+ 661              		.loc 1 173 0 is_stmt 1
+ 662 0020 1AB9     		cbnz	r2, .L52
+ 173:Sensor.c      ****         {
+ 663              		.loc 1 173 0 is_stmt 0 discriminator 1
+ 664 0022 094A     		ldr	r2, .L57+8
+ 665 0024 D25C     		ldrb	r2, [r2, r3]	@ zero_extendqisi2
+ 666 0026 012A     		cmp	r2, #1
+ 667 0028 06D0     		beq	.L55
+ 668              	.L52:
+ 166:Sensor.c      ****     {
+ 669              		.loc 1 166 0 is_stmt 1 discriminator 2
+ 670 002a 0133     		adds	r3, r3, #1
+ 671              	.LVL76:
+ 672              	.L49:
+ 166:Sensor.c      ****     {
+ 673              		.loc 1 166 0 is_stmt 0 discriminator 1
+ 674 002c 3F2B     		cmp	r3, #63
+ 675 002e ECDD     		ble	.L53
+ 676              	.LBE10:
+ 178:Sensor.c      **** }
+ 677              		.loc 1 178 0 is_stmt 1
+ 678 0030 0020     		movs	r0, #0
+ 679              	.LBB11:
+ 680 0032 08BD     		pop	{r3, pc}
+ 681              	.LVL77:
+ 682              	.L54:
+ 171:Sensor.c      ****         }
+ 683              		.loc 1 171 0
+ 684 0034 0120     		movs	r0, #1
+ 685 0036 08BD     		pop	{r3, pc}
+ 686              	.LVL78:
+ 687              	.L55:
+ 175:Sensor.c      ****         }
+ 688              		.loc 1 175 0
+ 689 0038 4FF0FF30 		mov	r0, #-1
+ 690              	.LBE11:
+ 179:Sensor.c      **** 
+ 691              		.loc 1 179 0
+ 692 003c 08BD     		pop	{r3, pc}
+ 693              	.LVL79:
+ 694              	.L58:
+ 695 003e 00BF     		.align	2
+ 696              	.L57:
+ 697 0040 00000000 		.word	newPos
+ 698 0044 00000000 		.word	legalMoves
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 18
+
+
+ 699 0048 00000000 		.word	squareReg
+ 700              		.cfi_endproc
+ 701              	.LFE71:
+ 702              		.size	newPosLegal, .-newPosLegal
+ 703              		.section	.text.initSensor,"ax",%progbits
+ 704              		.align	2
+ 705              		.global	initSensor
+ 706              		.thumb
+ 707              		.thumb_func
+ 708              		.type	initSensor, %function
+ 709              	initSensor:
+ 710              	.LFB66:
+  84:Sensor.c      ****     sensorReset();
+ 711              		.loc 1 84 0
+ 712              		.cfi_startproc
+ 713              		@ args = 0, pretend = 0, frame = 0
+ 714              		@ frame_needed = 0, uses_anonymous_args = 0
+ 715 0000 08B5     		push	{r3, lr}
+ 716              		.cfi_def_cfa_offset 8
+ 717              		.cfi_offset 3, -8
+ 718              		.cfi_offset 14, -4
+  85:Sensor.c      ****     sensorScan();
+ 719              		.loc 1 85 0
+ 720 0002 FFF7FEFF 		bl	sensorReset
+ 721              	.LVL80:
+  86:Sensor.c      ****     updateLastSquareReg();
+ 722              		.loc 1 86 0
+ 723 0006 FFF7FEFF 		bl	sensorScan
+ 724              	.LVL81:
+  87:Sensor.c      ****     newPos = -1; liftPos = -1; deadLiftPos = -1; //Nulstil positioner
+ 725              		.loc 1 87 0
+ 726 000a FFF7FEFF 		bl	updateLastSquareReg
+ 727              	.LVL82:
+  88:Sensor.c      **** }
+ 728              		.loc 1 88 0
+ 729 000e FF23     		movs	r3, #255
+ 730 0010 034A     		ldr	r2, .L61
+ 731 0012 1370     		strb	r3, [r2]
+ 732 0014 034A     		ldr	r2, .L61+4
+ 733 0016 1370     		strb	r3, [r2]
+ 734 0018 034A     		ldr	r2, .L61+8
+ 735 001a 1370     		strb	r3, [r2]
+ 736 001c 08BD     		pop	{r3, pc}
+ 737              	.L62:
+ 738 001e 00BF     		.align	2
+ 739              	.L61:
+ 740 0020 00000000 		.word	newPos
+ 741 0024 00000000 		.word	liftPos
+ 742 0028 00000000 		.word	deadLiftPos
+ 743              		.cfi_endproc
+ 744              	.LFE66:
+ 745              		.size	initSensor, .-initSensor
+ 746              		.comm	deadLiftPos,1,1
+ 747              		.comm	liftPos,1,1
+ 748              		.comm	newPos,1,1
+ 749              		.comm	deadPieceLifted,1,1
+ 750              		.comm	pieceLifted,1,1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 19
+
+
+ 751              		.comm	squareReg,64,4
+ 752              		.comm	lastSquareReg,64,4
+ 753              		.comm	legalMoves,64,4
+ 754              		.comm	startChar,1,1
+ 755              		.comm	end,4,4
+ 756              		.comm	byteIndex,2,2
+ 757              		.comm	bitIndex,1,1
+ 758              		.comm	ledData,192,4
+ 759              		.comm	ledArray,64,4
+ 760              		.comm	stepCase,1,1
+ 761              		.comm	currentSquare,1,1
+ 762              		.text
+ 763              	.Letext0:
+ 764              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 765              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 766              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 767              		.file 5 "XYPlotter.h"
+ 768              		.file 6 "LedControl.h"
+ 769              		.file 7 "UART.h"
+ 770              		.file 8 "Sensor.h"
+ 771              		.file 9 "Generated_Source\\PSoC5/UART_1.h"
+ 772              		.file 10 "Generated_Source\\PSoC5/sensorReset.h"
+ 773              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
+ 774              		.file 12 "Generated_Source\\PSoC5/sensorSignal.h"
+ 775              		.file 13 "Generated_Source\\PSoC5/sensorClk.h"
+ 776              		.section	.debug_info,"",%progbits
+ 777              	.Ldebug_info0:
+ 778 0000 9E060000 		.4byte	0x69e
+ 779 0004 0400     		.2byte	0x4
+ 780 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 781 000a 04       		.byte	0x4
+ 782 000b 01       		.uleb128 0x1
+ 783 000c 90020000 		.4byte	.LASF61
+ 784 0010 0C       		.byte	0xc
+ 785 0011 7E000000 		.4byte	.LASF62
+ 786 0015 30030000 		.4byte	.LASF63
+ 787 0019 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 788 001d 00000000 		.4byte	0
+ 789 0021 00000000 		.4byte	.Ldebug_line0
+ 790 0025 02       		.uleb128 0x2
+ 791 0026 C9010000 		.4byte	.LASF0
+ 792 002a 02       		.byte	0x2
+ 793 002b 1B       		.byte	0x1b
+ 794 002c 30000000 		.4byte	0x30
+ 795 0030 03       		.uleb128 0x3
+ 796 0031 01       		.byte	0x1
+ 797 0032 06       		.byte	0x6
+ 798 0033 66010000 		.4byte	.LASF2
+ 799 0037 02       		.uleb128 0x2
+ 800 0038 D7000000 		.4byte	.LASF1
+ 801 003c 02       		.byte	0x2
+ 802 003d 1D       		.byte	0x1d
+ 803 003e 42000000 		.4byte	0x42
+ 804 0042 03       		.uleb128 0x3
+ 805 0043 01       		.byte	0x1
+ 806 0044 08       		.byte	0x8
+ 807 0045 4F010000 		.4byte	.LASF3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 20
+
+
+ 808 0049 03       		.uleb128 0x3
+ 809 004a 02       		.byte	0x2
+ 810 004b 05       		.byte	0x5
+ 811 004c 36000000 		.4byte	.LASF4
+ 812 0050 02       		.uleb128 0x2
+ 813 0051 5E000000 		.4byte	.LASF5
+ 814 0055 02       		.byte	0x2
+ 815 0056 2B       		.byte	0x2b
+ 816 0057 5B000000 		.4byte	0x5b
+ 817 005b 03       		.uleb128 0x3
+ 818 005c 02       		.byte	0x2
+ 819 005d 07       		.byte	0x7
+ 820 005e B6010000 		.4byte	.LASF6
+ 821 0062 02       		.uleb128 0x2
+ 822 0063 42020000 		.4byte	.LASF7
+ 823 0067 02       		.byte	0x2
+ 824 0068 3F       		.byte	0x3f
+ 825 0069 6D000000 		.4byte	0x6d
+ 826 006d 03       		.uleb128 0x3
+ 827 006e 04       		.byte	0x4
+ 828 006f 05       		.byte	0x5
+ 829 0070 BA000000 		.4byte	.LASF8
+ 830 0074 03       		.uleb128 0x3
+ 831 0075 04       		.byte	0x4
+ 832 0076 07       		.byte	0x7
+ 833 0077 04020000 		.4byte	.LASF9
+ 834 007b 03       		.uleb128 0x3
+ 835 007c 08       		.byte	0x8
+ 836 007d 05       		.byte	0x5
+ 837 007e 97000000 		.4byte	.LASF10
+ 838 0082 03       		.uleb128 0x3
+ 839 0083 08       		.byte	0x8
+ 840 0084 07       		.byte	0x7
+ 841 0085 72010000 		.4byte	.LASF11
+ 842 0089 04       		.uleb128 0x4
+ 843 008a 04       		.byte	0x4
+ 844 008b 05       		.byte	0x5
+ 845 008c 696E7400 		.ascii	"int\000"
+ 846 0090 03       		.uleb128 0x3
+ 847 0091 04       		.byte	0x4
+ 848 0092 07       		.byte	0x7
+ 849 0093 94010000 		.4byte	.LASF12
+ 850 0097 02       		.uleb128 0x2
+ 851 0098 49000000 		.4byte	.LASF13
+ 852 009c 03       		.byte	0x3
+ 853 009d 14       		.byte	0x14
+ 854 009e 25000000 		.4byte	0x25
+ 855 00a2 02       		.uleb128 0x2
+ 856 00a3 28010000 		.4byte	.LASF14
+ 857 00a7 03       		.byte	0x3
+ 858 00a8 18       		.byte	0x18
+ 859 00a9 37000000 		.4byte	0x37
+ 860 00ad 02       		.uleb128 0x2
+ 861 00ae A1010000 		.4byte	.LASF15
+ 862 00b2 03       		.byte	0x3
+ 863 00b3 24       		.byte	0x24
+ 864 00b4 50000000 		.4byte	0x50
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 21
+
+
+ 865 00b8 02       		.uleb128 0x2
+ 866 00b9 FC010000 		.4byte	.LASF16
+ 867 00bd 03       		.byte	0x3
+ 868 00be 2C       		.byte	0x2c
+ 869 00bf 62000000 		.4byte	0x62
+ 870 00c3 03       		.uleb128 0x3
+ 871 00c4 04       		.byte	0x4
+ 872 00c5 04       		.byte	0x4
+ 873 00c6 87000000 		.4byte	.LASF17
+ 874 00ca 03       		.uleb128 0x3
+ 875 00cb 08       		.byte	0x8
+ 876 00cc 04       		.byte	0x4
+ 877 00cd 16020000 		.4byte	.LASF18
+ 878 00d1 03       		.uleb128 0x3
+ 879 00d2 01       		.byte	0x1
+ 880 00d3 08       		.byte	0x8
+ 881 00d4 F0010000 		.4byte	.LASF19
+ 882 00d8 03       		.uleb128 0x3
+ 883 00d9 08       		.byte	0x8
+ 884 00da 04       		.byte	0x4
+ 885 00db 39010000 		.4byte	.LASF20
+ 886 00df 03       		.uleb128 0x3
+ 887 00e0 04       		.byte	0x4
+ 888 00e1 07       		.byte	0x7
+ 889 00e2 40000000 		.4byte	.LASF21
+ 890 00e6 05       		.uleb128 0x5
+ 891 00e7 EF000000 		.4byte	.LASF30
+ 892 00eb 01       		.byte	0x1
+ 893 00ec 31       		.byte	0x31
+ 894 00ed 00000000 		.4byte	.LFB65
+ 895 00f1 F4000000 		.4byte	.LFE65-.LFB65
+ 896 00f5 01       		.uleb128 0x1
+ 897 00f6 9C       		.byte	0x9c
+ 898 00f7 37020000 		.4byte	0x237
+ 899 00fb 06       		.uleb128 0x6
+ 900 00fc 4C020000 		.4byte	.LASF22
+ 901 0100 01       		.byte	0x1
+ 902 0101 34       		.byte	0x34
+ 903 0102 A2000000 		.4byte	0xa2
+ 904 0106 00000000 		.4byte	.LLST0
+ 905 010a 06       		.uleb128 0x6
+ 906 010b 51020000 		.4byte	.LASF23
+ 907 010f 01       		.byte	0x1
+ 908 0110 34       		.byte	0x34
+ 909 0111 A2000000 		.4byte	0xa2
+ 910 0115 2A000000 		.4byte	.LLST1
+ 911 0119 06       		.uleb128 0x6
+ 912 011a 56020000 		.4byte	.LASF24
+ 913 011e 01       		.byte	0x1
+ 914 011f 34       		.byte	0x34
+ 915 0120 A2000000 		.4byte	0xa2
+ 916 0124 54000000 		.4byte	.LLST2
+ 917 0128 06       		.uleb128 0x6
+ 918 0129 5B020000 		.4byte	.LASF25
+ 919 012d 01       		.byte	0x1
+ 920 012e 34       		.byte	0x34
+ 921 012f A2000000 		.4byte	0xa2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 22
+
+
+ 922 0133 7E000000 		.4byte	.LLST3
+ 923 0137 06       		.uleb128 0x6
+ 924 0138 60020000 		.4byte	.LASF26
+ 925 013c 01       		.byte	0x1
+ 926 013d 35       		.byte	0x35
+ 927 013e A2000000 		.4byte	0xa2
+ 928 0142 A8000000 		.4byte	.LLST4
+ 929 0146 06       		.uleb128 0x6
+ 930 0147 65020000 		.4byte	.LASF27
+ 931 014b 01       		.byte	0x1
+ 932 014c 35       		.byte	0x35
+ 933 014d A2000000 		.4byte	0xa2
+ 934 0151 D2000000 		.4byte	.LLST5
+ 935 0155 06       		.uleb128 0x6
+ 936 0156 6A020000 		.4byte	.LASF28
+ 937 015a 01       		.byte	0x1
+ 938 015b 35       		.byte	0x35
+ 939 015c A2000000 		.4byte	0xa2
+ 940 0160 FC000000 		.4byte	.LLST6
+ 941 0164 06       		.uleb128 0x6
+ 942 0165 6F020000 		.4byte	.LASF29
+ 943 0169 01       		.byte	0x1
+ 944 016a 35       		.byte	0x35
+ 945 016b A2000000 		.4byte	0xa2
+ 946 016f 26010000 		.4byte	.LLST7
+ 947 0173 07       		.uleb128 0x7
+ 948 0174 00000000 		.4byte	.Ldebug_ranges0+0
+ 949 0178 8A010000 		.4byte	0x18a
+ 950 017c 08       		.uleb128 0x8
+ 951 017d 6900     		.ascii	"i\000"
+ 952 017f 01       		.byte	0x1
+ 953 0180 37       		.byte	0x37
+ 954 0181 89000000 		.4byte	0x89
+ 955 0185 50010000 		.4byte	.LLST8
+ 956 0189 00       		.byte	0
+ 957 018a 09       		.uleb128 0x9
+ 958 018b B8000000 		.4byte	.LBB4
+ 959 018f 06000000 		.4byte	.LBE4-.LBB4
+ 960 0193 A5010000 		.4byte	0x1a5
+ 961 0197 08       		.uleb128 0x8
+ 962 0198 6900     		.ascii	"i\000"
+ 963 019a 01       		.byte	0x1
+ 964 019b 42       		.byte	0x42
+ 965 019c 89000000 		.4byte	0x89
+ 966 01a0 6F010000 		.4byte	.LLST9
+ 967 01a4 00       		.byte	0
+ 968 01a5 0A       		.uleb128 0xa
+ 969 01a6 C2000000 		.4byte	.LVL22
+ 970 01aa 5F060000 		.4byte	0x65f
+ 971 01ae 0B       		.uleb128 0xb
+ 972 01af C8000000 		.4byte	.LVL23
+ 973 01b3 5F060000 		.4byte	0x65f
+ 974 01b7 C2010000 		.4byte	0x1c2
+ 975 01bb 0C       		.uleb128 0xc
+ 976 01bc 01       		.uleb128 0x1
+ 977 01bd 50       		.byte	0x50
+ 978 01be 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 23
+
+
+ 979 01bf 7A       		.byte	0x7a
+ 980 01c0 00       		.sleb128 0
+ 981 01c1 00       		.byte	0
+ 982 01c2 0B       		.uleb128 0xb
+ 983 01c3 CE000000 		.4byte	.LVL24
+ 984 01c7 5F060000 		.4byte	0x65f
+ 985 01cb D6010000 		.4byte	0x1d6
+ 986 01cf 0C       		.uleb128 0xc
+ 987 01d0 01       		.uleb128 0x1
+ 988 01d1 50       		.byte	0x50
+ 989 01d2 02       		.uleb128 0x2
+ 990 01d3 79       		.byte	0x79
+ 991 01d4 00       		.sleb128 0
+ 992 01d5 00       		.byte	0
+ 993 01d6 0B       		.uleb128 0xb
+ 994 01d7 D4000000 		.4byte	.LVL25
+ 995 01db 5F060000 		.4byte	0x65f
+ 996 01df EA010000 		.4byte	0x1ea
+ 997 01e3 0C       		.uleb128 0xc
+ 998 01e4 01       		.uleb128 0x1
+ 999 01e5 50       		.byte	0x50
+ 1000 01e6 02       		.uleb128 0x2
+ 1001 01e7 78       		.byte	0x78
+ 1002 01e8 00       		.sleb128 0
+ 1003 01e9 00       		.byte	0
+ 1004 01ea 0B       		.uleb128 0xb
+ 1005 01eb DA000000 		.4byte	.LVL26
+ 1006 01ef 5F060000 		.4byte	0x65f
+ 1007 01f3 FE010000 		.4byte	0x1fe
+ 1008 01f7 0C       		.uleb128 0xc
+ 1009 01f8 01       		.uleb128 0x1
+ 1010 01f9 50       		.byte	0x50
+ 1011 01fa 02       		.uleb128 0x2
+ 1012 01fb 77       		.byte	0x77
+ 1013 01fc 00       		.sleb128 0
+ 1014 01fd 00       		.byte	0
+ 1015 01fe 0B       		.uleb128 0xb
+ 1016 01ff E0000000 		.4byte	.LVL27
+ 1017 0203 5F060000 		.4byte	0x65f
+ 1018 0207 12020000 		.4byte	0x212
+ 1019 020b 0C       		.uleb128 0xc
+ 1020 020c 01       		.uleb128 0x1
+ 1021 020d 50       		.byte	0x50
+ 1022 020e 02       		.uleb128 0x2
+ 1023 020f 76       		.byte	0x76
+ 1024 0210 00       		.sleb128 0
+ 1025 0211 00       		.byte	0
+ 1026 0212 0B       		.uleb128 0xb
+ 1027 0213 E6000000 		.4byte	.LVL28
+ 1028 0217 5F060000 		.4byte	0x65f
+ 1029 021b 26020000 		.4byte	0x226
+ 1030 021f 0C       		.uleb128 0xc
+ 1031 0220 01       		.uleb128 0x1
+ 1032 0221 50       		.byte	0x50
+ 1033 0222 02       		.uleb128 0x2
+ 1034 0223 75       		.byte	0x75
+ 1035 0224 00       		.sleb128 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 24
+
+
+ 1036 0225 00       		.byte	0
+ 1037 0226 0D       		.uleb128 0xd
+ 1038 0227 EC000000 		.4byte	.LVL29
+ 1039 022b 5F060000 		.4byte	0x65f
+ 1040 022f 0C       		.uleb128 0xc
+ 1041 0230 01       		.uleb128 0x1
+ 1042 0231 50       		.byte	0x50
+ 1043 0232 02       		.uleb128 0x2
+ 1044 0233 74       		.byte	0x74
+ 1045 0234 00       		.sleb128 0
+ 1046 0235 00       		.byte	0
+ 1047 0236 00       		.byte	0
+ 1048 0237 05       		.uleb128 0x5
+ 1049 0238 C3000000 		.4byte	.LASF31
+ 1050 023c 01       		.byte	0x1
+ 1051 023d 5B       		.byte	0x5b
+ 1052 023e 00000000 		.4byte	.LFB67
+ 1053 0242 1C000000 		.4byte	.LFE67-.LFB67
+ 1054 0246 01       		.uleb128 0x1
+ 1055 0247 9C       		.byte	0x9c
+ 1056 0248 64020000 		.4byte	0x264
+ 1057 024c 0E       		.uleb128 0xe
+ 1058 024d 00000000 		.4byte	.LBB5
+ 1059 0251 12000000 		.4byte	.LBE5-.LBB5
+ 1060 0255 08       		.uleb128 0x8
+ 1061 0256 6900     		.ascii	"i\000"
+ 1062 0258 01       		.byte	0x1
+ 1063 0259 5D       		.byte	0x5d
+ 1064 025a 89000000 		.4byte	0x89
+ 1065 025e 82010000 		.4byte	.LLST10
+ 1066 0262 00       		.byte	0
+ 1067 0263 00       		.byte	0
+ 1068 0264 05       		.uleb128 0x5
+ 1069 0265 2A000000 		.4byte	.LASF32
+ 1070 0269 01       		.byte	0x1
+ 1071 026a B5       		.byte	0xb5
+ 1072 026b 00000000 		.4byte	.LFB72
+ 1073 026f 16000000 		.4byte	.LFE72-.LFB72
+ 1074 0273 01       		.uleb128 0x1
+ 1075 0274 9C       		.byte	0x9c
+ 1076 0275 AF020000 		.4byte	0x2af
+ 1077 0279 0B       		.uleb128 0xb
+ 1078 027a 08000000 		.4byte	.LVL34
+ 1079 027e 6A060000 		.4byte	0x66a
+ 1080 0282 8C020000 		.4byte	0x28c
+ 1081 0286 0C       		.uleb128 0xc
+ 1082 0287 01       		.uleb128 0x1
+ 1083 0288 50       		.byte	0x50
+ 1084 0289 01       		.uleb128 0x1
+ 1085 028a 31       		.byte	0x31
+ 1086 028b 00       		.byte	0
+ 1087 028c 0B       		.uleb128 0xb
+ 1088 028d 0E000000 		.4byte	.LVL35
+ 1089 0291 75060000 		.4byte	0x675
+ 1090 0295 9F020000 		.4byte	0x29f
+ 1091 0299 0C       		.uleb128 0xc
+ 1092 029a 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 25
+
+
+ 1093 029b 50       		.byte	0x50
+ 1094 029c 01       		.uleb128 0x1
+ 1095 029d 31       		.byte	0x31
+ 1096 029e 00       		.byte	0
+ 1097 029f 0D       		.uleb128 0xd
+ 1098 02a0 14000000 		.4byte	.LVL36
+ 1099 02a4 6A060000 		.4byte	0x66a
+ 1100 02a8 0C       		.uleb128 0xc
+ 1101 02a9 01       		.uleb128 0x1
+ 1102 02aa 50       		.byte	0x50
+ 1103 02ab 01       		.uleb128 0x1
+ 1104 02ac 30       		.byte	0x30
+ 1105 02ad 00       		.byte	0
+ 1106 02ae 00       		.byte	0
+ 1107 02af 05       		.uleb128 0x5
+ 1108 02b0 AF000000 		.4byte	.LASF33
+ 1109 02b4 01       		.byte	0x1
+ 1110 02b5 10       		.byte	0x10
+ 1111 02b6 00000000 		.4byte	.LFB64
+ 1112 02ba 70000000 		.4byte	.LFE64-.LFB64
+ 1113 02be 01       		.uleb128 0x1
+ 1114 02bf 9C       		.byte	0x9c
+ 1115 02c0 91030000 		.4byte	0x391
+ 1116 02c4 09       		.uleb128 0x9
+ 1117 02c5 06000000 		.4byte	.LBB6
+ 1118 02c9 64000000 		.4byte	.LBE6-.LBB6
+ 1119 02cd 87030000 		.4byte	0x387
+ 1120 02d1 08       		.uleb128 0x8
+ 1121 02d2 6900     		.ascii	"i\000"
+ 1122 02d4 01       		.byte	0x1
+ 1123 02d5 13       		.byte	0x13
+ 1124 02d6 89000000 		.4byte	0x89
+ 1125 02da A1010000 		.4byte	.LLST11
+ 1126 02de 0A       		.uleb128 0xa
+ 1127 02df 0E000000 		.4byte	.LVL39
+ 1128 02e3 80060000 		.4byte	0x680
+ 1129 02e7 0B       		.uleb128 0xb
+ 1130 02e8 1A000000 		.4byte	.LVL40
+ 1131 02ec 8B060000 		.4byte	0x68b
+ 1132 02f0 FC020000 		.4byte	0x2fc
+ 1133 02f4 0C       		.uleb128 0xc
+ 1134 02f5 01       		.uleb128 0x1
+ 1135 02f6 50       		.byte	0x50
+ 1136 02f7 03       		.uleb128 0x3
+ 1137 02f8 0A       		.byte	0xa
+ 1138 02f9 D007     		.2byte	0x7d0
+ 1139 02fb 00       		.byte	0
+ 1140 02fc 0A       		.uleb128 0xa
+ 1141 02fd 1E000000 		.4byte	.LVL41
+ 1142 0301 80060000 		.4byte	0x680
+ 1143 0305 0A       		.uleb128 0xa
+ 1144 0306 26000000 		.4byte	.LVL42
+ 1145 030a 80060000 		.4byte	0x680
+ 1146 030e 0A       		.uleb128 0xa
+ 1147 030f 30000000 		.4byte	.LVL43
+ 1148 0313 80060000 		.4byte	0x680
+ 1149 0317 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 26
+
+
+ 1150 0318 3A000000 		.4byte	.LVL44
+ 1151 031c 8B060000 		.4byte	0x68b
+ 1152 0320 2C030000 		.4byte	0x32c
+ 1153 0324 0C       		.uleb128 0xc
+ 1154 0325 01       		.uleb128 0x1
+ 1155 0326 50       		.byte	0x50
+ 1156 0327 03       		.uleb128 0x3
+ 1157 0328 0A       		.byte	0xa
+ 1158 0329 D007     		.2byte	0x7d0
+ 1159 032b 00       		.byte	0
+ 1160 032c 0A       		.uleb128 0xa
+ 1161 032d 3E000000 		.4byte	.LVL45
+ 1162 0331 80060000 		.4byte	0x680
+ 1163 0335 0A       		.uleb128 0xa
+ 1164 0336 44000000 		.4byte	.LVL46
+ 1165 033a 80060000 		.4byte	0x680
+ 1166 033e 0B       		.uleb128 0xb
+ 1167 033f 52000000 		.4byte	.LVL47
+ 1168 0343 96060000 		.4byte	0x696
+ 1169 0347 51030000 		.4byte	0x351
+ 1170 034b 0C       		.uleb128 0xc
+ 1171 034c 01       		.uleb128 0x1
+ 1172 034d 50       		.byte	0x50
+ 1173 034e 01       		.uleb128 0x1
+ 1174 034f 31       		.byte	0x31
+ 1175 0350 00       		.byte	0
+ 1176 0351 0B       		.uleb128 0xb
+ 1177 0352 58000000 		.4byte	.LVL48
+ 1178 0356 8B060000 		.4byte	0x68b
+ 1179 035a 64030000 		.4byte	0x364
+ 1180 035e 0C       		.uleb128 0xc
+ 1181 035f 01       		.uleb128 0x1
+ 1182 0360 50       		.byte	0x50
+ 1183 0361 01       		.uleb128 0x1
+ 1184 0362 31       		.byte	0x31
+ 1185 0363 00       		.byte	0
+ 1186 0364 0B       		.uleb128 0xb
+ 1187 0365 5E000000 		.4byte	.LVL49
+ 1188 0369 96060000 		.4byte	0x696
+ 1189 036d 77030000 		.4byte	0x377
+ 1190 0371 0C       		.uleb128 0xc
+ 1191 0372 01       		.uleb128 0x1
+ 1192 0373 50       		.byte	0x50
+ 1193 0374 01       		.uleb128 0x1
+ 1194 0375 30       		.byte	0x30
+ 1195 0376 00       		.byte	0
+ 1196 0377 0D       		.uleb128 0xd
+ 1197 0378 64000000 		.4byte	.LVL50
+ 1198 037c 8B060000 		.4byte	0x68b
+ 1199 0380 0C       		.uleb128 0xc
+ 1200 0381 01       		.uleb128 0x1
+ 1201 0382 50       		.byte	0x50
+ 1202 0383 01       		.uleb128 0x1
+ 1203 0384 31       		.byte	0x31
+ 1204 0385 00       		.byte	0
+ 1205 0386 00       		.byte	0
+ 1206 0387 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 27
+
+
+ 1207 0388 06000000 		.4byte	.LVL37
+ 1208 038c 64020000 		.4byte	0x264
+ 1209 0390 00       		.byte	0
+ 1210 0391 0F       		.uleb128 0xf
+ 1211 0392 74020000 		.4byte	.LASF35
+ 1212 0396 01       		.byte	0x1
+ 1213 0397 63       		.byte	0x63
+ 1214 0398 A2000000 		.4byte	0xa2
+ 1215 039c 00000000 		.4byte	.LFB68
+ 1216 03a0 60000000 		.4byte	.LFE68-.LFB68
+ 1217 03a4 01       		.uleb128 0x1
+ 1218 03a5 9C       		.byte	0x9c
+ 1219 03a6 FF030000 		.4byte	0x3ff
+ 1220 03aa 09       		.uleb128 0x9
+ 1221 03ab 0A000000 		.4byte	.LBB7
+ 1222 03af 3C000000 		.4byte	.LBE7-.LBB7
+ 1223 03b3 EC030000 		.4byte	0x3ec
+ 1224 03b7 08       		.uleb128 0x8
+ 1225 03b8 6900     		.ascii	"i\000"
+ 1226 03ba 01       		.byte	0x1
+ 1227 03bb 69       		.byte	0x69
+ 1228 03bc 89000000 		.4byte	0x89
+ 1229 03c0 C0010000 		.4byte	.LLST12
+ 1230 03c4 0B       		.uleb128 0xb
+ 1231 03c5 24000000 		.4byte	.LVL56
+ 1232 03c9 8B060000 		.4byte	0x68b
+ 1233 03cd D9030000 		.4byte	0x3d9
+ 1234 03d1 0C       		.uleb128 0xc
+ 1235 03d2 01       		.uleb128 0x1
+ 1236 03d3 50       		.byte	0x50
+ 1237 03d4 03       		.uleb128 0x3
+ 1238 03d5 0A       		.byte	0xa
+ 1239 03d6 B80B     		.2byte	0xbb8
+ 1240 03d8 00       		.byte	0
+ 1241 03d9 0A       		.uleb128 0xa
+ 1242 03da 28000000 		.4byte	.LVL57
+ 1243 03de AF020000 		.4byte	0x2af
+ 1244 03e2 0A       		.uleb128 0xa
+ 1245 03e3 3A000000 		.4byte	.LVL58
+ 1246 03e7 37020000 		.4byte	0x237
+ 1247 03eb 00       		.byte	0
+ 1248 03ec 0A       		.uleb128 0xa
+ 1249 03ed 06000000 		.4byte	.LVL53
+ 1250 03f1 37020000 		.4byte	0x237
+ 1251 03f5 0A       		.uleb128 0xa
+ 1252 03f6 0A000000 		.4byte	.LVL54
+ 1253 03fa AF020000 		.4byte	0x2af
+ 1254 03fe 00       		.byte	0
+ 1255 03ff 05       		.uleb128 0x5
+ 1256 0400 89010000 		.4byte	.LASF34
+ 1257 0404 01       		.byte	0x1
+ 1258 0405 7C       		.byte	0x7c
+ 1259 0406 00000000 		.4byte	.LFB69
+ 1260 040a 4C000000 		.4byte	.LFE69-.LFB69
+ 1261 040e 01       		.uleb128 0x1
+ 1262 040f 9C       		.byte	0x9c
+ 1263 0410 57040000 		.4byte	0x457
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 28
+
+
+ 1264 0414 09       		.uleb128 0x9
+ 1265 0415 06000000 		.4byte	.LBB8
+ 1266 0419 36000000 		.4byte	.LBE8-.LBB8
+ 1267 041d 4D040000 		.4byte	0x44d
+ 1268 0421 08       		.uleb128 0x8
+ 1269 0422 6900     		.ascii	"i\000"
+ 1270 0424 01       		.byte	0x1
+ 1271 0425 80       		.byte	0x80
+ 1272 0426 89000000 		.4byte	0x89
+ 1273 042a DF010000 		.4byte	.LLST13
+ 1274 042e 0B       		.uleb128 0xb
+ 1275 042f 20000000 		.4byte	.LVL63
+ 1276 0433 8B060000 		.4byte	0x68b
+ 1277 0437 43040000 		.4byte	0x443
+ 1278 043b 0C       		.uleb128 0xc
+ 1279 043c 01       		.uleb128 0x1
+ 1280 043d 50       		.byte	0x50
+ 1281 043e 03       		.uleb128 0x3
+ 1282 043f 0A       		.byte	0xa
+ 1283 0440 B80B     		.2byte	0xbb8
+ 1284 0442 00       		.byte	0
+ 1285 0443 0A       		.uleb128 0xa
+ 1286 0444 24000000 		.4byte	.LVL64
+ 1287 0448 AF020000 		.4byte	0x2af
+ 1288 044c 00       		.byte	0
+ 1289 044d 0A       		.uleb128 0xa
+ 1290 044e 06000000 		.4byte	.LVL61
+ 1291 0452 AF020000 		.4byte	0x2af
+ 1292 0456 00       		.byte	0
+ 1293 0457 0F       		.uleb128 0xf
+ 1294 0458 71000000 		.4byte	.LASF36
+ 1295 045c 01       		.byte	0x1
+ 1296 045d 8F       		.byte	0x8f
+ 1297 045e A2000000 		.4byte	0xa2
+ 1298 0462 00000000 		.4byte	.LFB70
+ 1299 0466 68000000 		.4byte	.LFE70-.LFB70
+ 1300 046a 01       		.uleb128 0x1
+ 1301 046b 9C       		.byte	0x9c
+ 1302 046c B3040000 		.4byte	0x4b3
+ 1303 0470 09       		.uleb128 0x9
+ 1304 0471 06000000 		.4byte	.LBB9
+ 1305 0475 4A000000 		.4byte	.LBE9-.LBB9
+ 1306 0479 A9040000 		.4byte	0x4a9
+ 1307 047d 08       		.uleb128 0x8
+ 1308 047e 6900     		.ascii	"i\000"
+ 1309 0480 01       		.byte	0x1
+ 1310 0481 93       		.byte	0x93
+ 1311 0482 89000000 		.4byte	0x89
+ 1312 0486 FE010000 		.4byte	.LLST14
+ 1313 048a 0B       		.uleb128 0xb
+ 1314 048b 32000000 		.4byte	.LVL69
+ 1315 048f 8B060000 		.4byte	0x68b
+ 1316 0493 9F040000 		.4byte	0x49f
+ 1317 0497 0C       		.uleb128 0xc
+ 1318 0498 01       		.uleb128 0x1
+ 1319 0499 50       		.byte	0x50
+ 1320 049a 03       		.uleb128 0x3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 29
+
+
+ 1321 049b 0A       		.byte	0xa
+ 1322 049c B80B     		.2byte	0xbb8
+ 1323 049e 00       		.byte	0
+ 1324 049f 0A       		.uleb128 0xa
+ 1325 04a0 36000000 		.4byte	.LVL70
+ 1326 04a4 AF020000 		.4byte	0x2af
+ 1327 04a8 00       		.byte	0
+ 1328 04a9 0A       		.uleb128 0xa
+ 1329 04aa 06000000 		.4byte	.LVL67
+ 1330 04ae AF020000 		.4byte	0x2af
+ 1331 04b2 00       		.byte	0
+ 1332 04b3 0F       		.uleb128 0xf
+ 1333 04b4 0B000000 		.4byte	.LASF37
+ 1334 04b8 01       		.byte	0x1
+ 1335 04b9 A3       		.byte	0xa3
+ 1336 04ba 97000000 		.4byte	0x97
+ 1337 04be 00000000 		.4byte	.LFB71
+ 1338 04c2 4C000000 		.4byte	.LFE71-.LFB71
+ 1339 04c6 01       		.uleb128 0x1
+ 1340 04c7 9C       		.byte	0x9c
+ 1341 04c8 ED040000 		.4byte	0x4ed
+ 1342 04cc 07       		.uleb128 0x7
+ 1343 04cd 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 1344 04d1 E3040000 		.4byte	0x4e3
+ 1345 04d5 08       		.uleb128 0x8
+ 1346 04d6 6900     		.ascii	"i\000"
+ 1347 04d8 01       		.byte	0x1
+ 1348 04d9 A6       		.byte	0xa6
+ 1349 04da 89000000 		.4byte	0x89
+ 1350 04de 1D020000 		.4byte	.LLST15
+ 1351 04e2 00       		.byte	0
+ 1352 04e3 0A       		.uleb128 0xa
+ 1353 04e4 06000000 		.4byte	.LVL74
+ 1354 04e8 AF020000 		.4byte	0x2af
+ 1355 04ec 00       		.byte	0
+ 1356 04ed 05       		.uleb128 0x5
+ 1357 04ee 00000000 		.4byte	.LASF38
+ 1358 04f2 01       		.byte	0x1
+ 1359 04f3 53       		.byte	0x53
+ 1360 04f4 00000000 		.4byte	.LFB66
+ 1361 04f8 2C000000 		.4byte	.LFE66-.LFB66
+ 1362 04fc 01       		.uleb128 0x1
+ 1363 04fd 9C       		.byte	0x9c
+ 1364 04fe 1E050000 		.4byte	0x51e
+ 1365 0502 0A       		.uleb128 0xa
+ 1366 0503 06000000 		.4byte	.LVL80
+ 1367 0507 64020000 		.4byte	0x264
+ 1368 050b 0A       		.uleb128 0xa
+ 1369 050c 0A000000 		.4byte	.LVL81
+ 1370 0510 AF020000 		.4byte	0x2af
+ 1371 0514 0A       		.uleb128 0xa
+ 1372 0515 0E000000 		.4byte	.LVL82
+ 1373 0519 37020000 		.4byte	0x237
+ 1374 051d 00       		.byte	0
+ 1375 051e 10       		.uleb128 0x10
+ 1376 051f 83020000 		.4byte	.LASF39
+ 1377 0523 04       		.byte	0x4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 30
+
+
+ 1378 0524 1207     		.2byte	0x712
+ 1379 0526 2A050000 		.4byte	0x52a
+ 1380 052a 11       		.uleb128 0x11
+ 1381 052b B8000000 		.4byte	0xb8
+ 1382 052f 12       		.uleb128 0x12
+ 1383 0530 50000000 		.4byte	.LASF40
+ 1384 0534 05       		.byte	0x5
+ 1385 0535 23       		.byte	0x23
+ 1386 0536 A2000000 		.4byte	0xa2
+ 1387 053a 05       		.uleb128 0x5
+ 1388 053b 03       		.byte	0x3
+ 1389 053c 00000000 		.4byte	currentSquare
+ 1390 0540 12       		.uleb128 0x12
+ 1391 0541 30010000 		.4byte	.LASF41
+ 1392 0545 05       		.byte	0x5
+ 1393 0546 24       		.byte	0x24
+ 1394 0547 A2000000 		.4byte	0xa2
+ 1395 054b 05       		.uleb128 0x5
+ 1396 054c 03       		.byte	0x3
+ 1397 054d 00000000 		.4byte	stepCase
+ 1398 0551 13       		.uleb128 0x13
+ 1399 0552 A2000000 		.4byte	0xa2
+ 1400 0556 61050000 		.4byte	0x561
+ 1401 055a 14       		.uleb128 0x14
+ 1402 055b DF000000 		.4byte	0xdf
+ 1403 055f 3F       		.byte	0x3f
+ 1404 0560 00       		.byte	0
+ 1405 0561 12       		.uleb128 0x12
+ 1406 0562 FF000000 		.4byte	.LASF42
+ 1407 0566 06       		.byte	0x6
+ 1408 0567 12       		.byte	0x12
+ 1409 0568 51050000 		.4byte	0x551
+ 1410 056c 05       		.uleb128 0x5
+ 1411 056d 03       		.byte	0x3
+ 1412 056e 00000000 		.4byte	ledArray
+ 1413 0572 13       		.uleb128 0x13
+ 1414 0573 A2000000 		.4byte	0xa2
+ 1415 0577 82050000 		.4byte	0x582
+ 1416 057b 14       		.uleb128 0x14
+ 1417 057c DF000000 		.4byte	0xdf
+ 1418 0580 BF       		.byte	0xbf
+ 1419 0581 00       		.byte	0
+ 1420 0582 12       		.uleb128 0x12
+ 1421 0583 69000000 		.4byte	.LASF43
+ 1422 0587 06       		.byte	0x6
+ 1423 0588 13       		.byte	0x13
+ 1424 0589 72050000 		.4byte	0x572
+ 1425 058d 05       		.uleb128 0x5
+ 1426 058e 03       		.byte	0x3
+ 1427 058f 00000000 		.4byte	ledData
+ 1428 0593 12       		.uleb128 0x12
+ 1429 0594 5D010000 		.4byte	.LASF44
+ 1430 0598 06       		.byte	0x6
+ 1431 0599 14       		.byte	0x14
+ 1432 059a 97000000 		.4byte	0x97
+ 1433 059e 05       		.uleb128 0x5
+ 1434 059f 03       		.byte	0x3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 31
+
+
+ 1435 05a0 00000000 		.4byte	bitIndex
+ 1436 05a4 12       		.uleb128 0x12
+ 1437 05a5 26030000 		.4byte	.LASF45
+ 1438 05a9 06       		.byte	0x6
+ 1439 05aa 15       		.byte	0x15
+ 1440 05ab AD000000 		.4byte	0xad
+ 1441 05af 05       		.uleb128 0x5
+ 1442 05b0 03       		.byte	0x3
+ 1443 05b1 00000000 		.4byte	byteIndex
+ 1444 05b5 15       		.uleb128 0x15
+ 1445 05b6 656E6400 		.ascii	"end\000"
+ 1446 05ba 06       		.byte	0x6
+ 1447 05bb 16       		.byte	0x16
+ 1448 05bc 89000000 		.4byte	0x89
+ 1449 05c0 05       		.uleb128 0x5
+ 1450 05c1 03       		.byte	0x3
+ 1451 05c2 00000000 		.4byte	end
+ 1452 05c6 12       		.uleb128 0x12
+ 1453 05c7 8D000000 		.4byte	.LASF46
+ 1454 05cb 07       		.byte	0x7
+ 1455 05cc 16       		.byte	0x16
+ 1456 05cd A2000000 		.4byte	0xa2
+ 1457 05d1 05       		.uleb128 0x5
+ 1458 05d2 03       		.byte	0x3
+ 1459 05d3 00000000 		.4byte	startChar
+ 1460 05d7 12       		.uleb128 0x12
+ 1461 05d8 1F000000 		.4byte	.LASF47
+ 1462 05dc 07       		.byte	0x7
+ 1463 05dd 17       		.byte	0x17
+ 1464 05de 51050000 		.4byte	0x551
+ 1465 05e2 05       		.uleb128 0x5
+ 1466 05e3 03       		.byte	0x3
+ 1467 05e4 00000000 		.4byte	legalMoves
+ 1468 05e8 12       		.uleb128 0x12
+ 1469 05e9 E1000000 		.4byte	.LASF48
+ 1470 05ed 08       		.byte	0x8
+ 1471 05ee 16       		.byte	0x16
+ 1472 05ef 51050000 		.4byte	0x551
+ 1473 05f3 05       		.uleb128 0x5
+ 1474 05f4 03       		.byte	0x3
+ 1475 05f5 00000000 		.4byte	lastSquareReg
+ 1476 05f9 12       		.uleb128 0x12
+ 1477 05fa A5000000 		.4byte	.LASF49
+ 1478 05fe 08       		.byte	0x8
+ 1479 05ff 17       		.byte	0x17
+ 1480 0600 51050000 		.4byte	0x551
+ 1481 0604 05       		.uleb128 0x5
+ 1482 0605 03       		.byte	0x3
+ 1483 0606 00000000 		.4byte	squareReg
+ 1484 060a 12       		.uleb128 0x12
+ 1485 060b D2010000 		.4byte	.LASF50
+ 1486 060f 08       		.byte	0x8
+ 1487 0610 18       		.byte	0x18
+ 1488 0611 A2000000 		.4byte	0xa2
+ 1489 0615 05       		.uleb128 0x5
+ 1490 0616 03       		.byte	0x3
+ 1491 0617 00000000 		.4byte	pieceLifted
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 32
+
+
+ 1492 061b 12       		.uleb128 0x12
+ 1493 061c 18010000 		.4byte	.LASF51
+ 1494 0620 08       		.byte	0x8
+ 1495 0621 19       		.byte	0x19
+ 1496 0622 A2000000 		.4byte	0xa2
+ 1497 0626 05       		.uleb128 0x5
+ 1498 0627 03       		.byte	0x3
+ 1499 0628 00000000 		.4byte	deadPieceLifted
+ 1500 062c 12       		.uleb128 0x12
+ 1501 062d F5010000 		.4byte	.LASF52
+ 1502 0631 08       		.byte	0x8
+ 1503 0632 1A       		.byte	0x1a
+ 1504 0633 97000000 		.4byte	0x97
+ 1505 0637 05       		.uleb128 0x5
+ 1506 0638 03       		.byte	0x3
+ 1507 0639 00000000 		.4byte	newPos
+ 1508 063d 12       		.uleb128 0x12
+ 1509 063e 17000000 		.4byte	.LASF53
+ 1510 0642 08       		.byte	0x8
+ 1511 0643 1B       		.byte	0x1b
+ 1512 0644 97000000 		.4byte	0x97
+ 1513 0648 05       		.uleb128 0x5
+ 1514 0649 03       		.byte	0x3
+ 1515 064a 00000000 		.4byte	liftPos
+ 1516 064e 12       		.uleb128 0x12
+ 1517 064f AA010000 		.4byte	.LASF54
+ 1518 0653 08       		.byte	0x8
+ 1519 0654 1C       		.byte	0x1c
+ 1520 0655 97000000 		.4byte	0x97
+ 1521 0659 05       		.uleb128 0x5
+ 1522 065a 03       		.byte	0x3
+ 1523 065b 00000000 		.4byte	deadLiftPos
+ 1524 065f 16       		.uleb128 0x16
+ 1525 0660 1D020000 		.4byte	.LASF55
+ 1526 0664 1D020000 		.4byte	.LASF55
+ 1527 0668 09       		.byte	0x9
+ 1528 0669 88       		.byte	0x88
+ 1529 066a 16       		.uleb128 0x16
+ 1530 066b DE010000 		.4byte	.LASF56
+ 1531 066f DE010000 		.4byte	.LASF56
+ 1532 0673 0A       		.byte	0xa
+ 1533 0674 26       		.byte	0x26
+ 1534 0675 16       		.uleb128 0x16
+ 1535 0676 1E030000 		.4byte	.LASF57
+ 1536 067a 1E030000 		.4byte	.LASF57
+ 1537 067e 0B       		.byte	0xb
+ 1538 067f 76       		.byte	0x76
+ 1539 0680 16       		.uleb128 0x16
+ 1540 0681 30020000 		.4byte	.LASF58
+ 1541 0685 30020000 		.4byte	.LASF58
+ 1542 0689 0C       		.byte	0xc
+ 1543 068a 29       		.byte	0x29
+ 1544 068b 16       		.uleb128 0x16
+ 1545 068c 45010000 		.4byte	.LASF59
+ 1546 0690 45010000 		.4byte	.LASF59
+ 1547 0694 0B       		.byte	0xb
+ 1548 0695 77       		.byte	0x77
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 33
+
+
+ 1549 0696 16       		.uleb128 0x16
+ 1550 0697 08010000 		.4byte	.LASF60
+ 1551 069b 08010000 		.4byte	.LASF60
+ 1552 069f 0D       		.byte	0xd
+ 1553 06a0 26       		.byte	0x26
+ 1554 06a1 00       		.byte	0
+ 1555              		.section	.debug_abbrev,"",%progbits
+ 1556              	.Ldebug_abbrev0:
+ 1557 0000 01       		.uleb128 0x1
+ 1558 0001 11       		.uleb128 0x11
+ 1559 0002 01       		.byte	0x1
+ 1560 0003 25       		.uleb128 0x25
+ 1561 0004 0E       		.uleb128 0xe
+ 1562 0005 13       		.uleb128 0x13
+ 1563 0006 0B       		.uleb128 0xb
+ 1564 0007 03       		.uleb128 0x3
+ 1565 0008 0E       		.uleb128 0xe
+ 1566 0009 1B       		.uleb128 0x1b
+ 1567 000a 0E       		.uleb128 0xe
+ 1568 000b 55       		.uleb128 0x55
+ 1569 000c 17       		.uleb128 0x17
+ 1570 000d 11       		.uleb128 0x11
+ 1571 000e 01       		.uleb128 0x1
+ 1572 000f 10       		.uleb128 0x10
+ 1573 0010 17       		.uleb128 0x17
+ 1574 0011 00       		.byte	0
+ 1575 0012 00       		.byte	0
+ 1576 0013 02       		.uleb128 0x2
+ 1577 0014 16       		.uleb128 0x16
+ 1578 0015 00       		.byte	0
+ 1579 0016 03       		.uleb128 0x3
+ 1580 0017 0E       		.uleb128 0xe
+ 1581 0018 3A       		.uleb128 0x3a
+ 1582 0019 0B       		.uleb128 0xb
+ 1583 001a 3B       		.uleb128 0x3b
+ 1584 001b 0B       		.uleb128 0xb
+ 1585 001c 49       		.uleb128 0x49
+ 1586 001d 13       		.uleb128 0x13
+ 1587 001e 00       		.byte	0
+ 1588 001f 00       		.byte	0
+ 1589 0020 03       		.uleb128 0x3
+ 1590 0021 24       		.uleb128 0x24
+ 1591 0022 00       		.byte	0
+ 1592 0023 0B       		.uleb128 0xb
+ 1593 0024 0B       		.uleb128 0xb
+ 1594 0025 3E       		.uleb128 0x3e
+ 1595 0026 0B       		.uleb128 0xb
+ 1596 0027 03       		.uleb128 0x3
+ 1597 0028 0E       		.uleb128 0xe
+ 1598 0029 00       		.byte	0
+ 1599 002a 00       		.byte	0
+ 1600 002b 04       		.uleb128 0x4
+ 1601 002c 24       		.uleb128 0x24
+ 1602 002d 00       		.byte	0
+ 1603 002e 0B       		.uleb128 0xb
+ 1604 002f 0B       		.uleb128 0xb
+ 1605 0030 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 34
+
+
+ 1606 0031 0B       		.uleb128 0xb
+ 1607 0032 03       		.uleb128 0x3
+ 1608 0033 08       		.uleb128 0x8
+ 1609 0034 00       		.byte	0
+ 1610 0035 00       		.byte	0
+ 1611 0036 05       		.uleb128 0x5
+ 1612 0037 2E       		.uleb128 0x2e
+ 1613 0038 01       		.byte	0x1
+ 1614 0039 3F       		.uleb128 0x3f
+ 1615 003a 19       		.uleb128 0x19
+ 1616 003b 03       		.uleb128 0x3
+ 1617 003c 0E       		.uleb128 0xe
+ 1618 003d 3A       		.uleb128 0x3a
+ 1619 003e 0B       		.uleb128 0xb
+ 1620 003f 3B       		.uleb128 0x3b
+ 1621 0040 0B       		.uleb128 0xb
+ 1622 0041 11       		.uleb128 0x11
+ 1623 0042 01       		.uleb128 0x1
+ 1624 0043 12       		.uleb128 0x12
+ 1625 0044 06       		.uleb128 0x6
+ 1626 0045 40       		.uleb128 0x40
+ 1627 0046 18       		.uleb128 0x18
+ 1628 0047 9742     		.uleb128 0x2117
+ 1629 0049 19       		.uleb128 0x19
+ 1630 004a 01       		.uleb128 0x1
+ 1631 004b 13       		.uleb128 0x13
+ 1632 004c 00       		.byte	0
+ 1633 004d 00       		.byte	0
+ 1634 004e 06       		.uleb128 0x6
+ 1635 004f 34       		.uleb128 0x34
+ 1636 0050 00       		.byte	0
+ 1637 0051 03       		.uleb128 0x3
+ 1638 0052 0E       		.uleb128 0xe
+ 1639 0053 3A       		.uleb128 0x3a
+ 1640 0054 0B       		.uleb128 0xb
+ 1641 0055 3B       		.uleb128 0x3b
+ 1642 0056 0B       		.uleb128 0xb
+ 1643 0057 49       		.uleb128 0x49
+ 1644 0058 13       		.uleb128 0x13
+ 1645 0059 02       		.uleb128 0x2
+ 1646 005a 17       		.uleb128 0x17
+ 1647 005b 00       		.byte	0
+ 1648 005c 00       		.byte	0
+ 1649 005d 07       		.uleb128 0x7
+ 1650 005e 0B       		.uleb128 0xb
+ 1651 005f 01       		.byte	0x1
+ 1652 0060 55       		.uleb128 0x55
+ 1653 0061 17       		.uleb128 0x17
+ 1654 0062 01       		.uleb128 0x1
+ 1655 0063 13       		.uleb128 0x13
+ 1656 0064 00       		.byte	0
+ 1657 0065 00       		.byte	0
+ 1658 0066 08       		.uleb128 0x8
+ 1659 0067 34       		.uleb128 0x34
+ 1660 0068 00       		.byte	0
+ 1661 0069 03       		.uleb128 0x3
+ 1662 006a 08       		.uleb128 0x8
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 35
+
+
+ 1663 006b 3A       		.uleb128 0x3a
+ 1664 006c 0B       		.uleb128 0xb
+ 1665 006d 3B       		.uleb128 0x3b
+ 1666 006e 0B       		.uleb128 0xb
+ 1667 006f 49       		.uleb128 0x49
+ 1668 0070 13       		.uleb128 0x13
+ 1669 0071 02       		.uleb128 0x2
+ 1670 0072 17       		.uleb128 0x17
+ 1671 0073 00       		.byte	0
+ 1672 0074 00       		.byte	0
+ 1673 0075 09       		.uleb128 0x9
+ 1674 0076 0B       		.uleb128 0xb
+ 1675 0077 01       		.byte	0x1
+ 1676 0078 11       		.uleb128 0x11
+ 1677 0079 01       		.uleb128 0x1
+ 1678 007a 12       		.uleb128 0x12
+ 1679 007b 06       		.uleb128 0x6
+ 1680 007c 01       		.uleb128 0x1
+ 1681 007d 13       		.uleb128 0x13
+ 1682 007e 00       		.byte	0
+ 1683 007f 00       		.byte	0
+ 1684 0080 0A       		.uleb128 0xa
+ 1685 0081 898201   		.uleb128 0x4109
+ 1686 0084 00       		.byte	0
+ 1687 0085 11       		.uleb128 0x11
+ 1688 0086 01       		.uleb128 0x1
+ 1689 0087 31       		.uleb128 0x31
+ 1690 0088 13       		.uleb128 0x13
+ 1691 0089 00       		.byte	0
+ 1692 008a 00       		.byte	0
+ 1693 008b 0B       		.uleb128 0xb
+ 1694 008c 898201   		.uleb128 0x4109
+ 1695 008f 01       		.byte	0x1
+ 1696 0090 11       		.uleb128 0x11
+ 1697 0091 01       		.uleb128 0x1
+ 1698 0092 31       		.uleb128 0x31
+ 1699 0093 13       		.uleb128 0x13
+ 1700 0094 01       		.uleb128 0x1
+ 1701 0095 13       		.uleb128 0x13
+ 1702 0096 00       		.byte	0
+ 1703 0097 00       		.byte	0
+ 1704 0098 0C       		.uleb128 0xc
+ 1705 0099 8A8201   		.uleb128 0x410a
+ 1706 009c 00       		.byte	0
+ 1707 009d 02       		.uleb128 0x2
+ 1708 009e 18       		.uleb128 0x18
+ 1709 009f 9142     		.uleb128 0x2111
+ 1710 00a1 18       		.uleb128 0x18
+ 1711 00a2 00       		.byte	0
+ 1712 00a3 00       		.byte	0
+ 1713 00a4 0D       		.uleb128 0xd
+ 1714 00a5 898201   		.uleb128 0x4109
+ 1715 00a8 01       		.byte	0x1
+ 1716 00a9 11       		.uleb128 0x11
+ 1717 00aa 01       		.uleb128 0x1
+ 1718 00ab 31       		.uleb128 0x31
+ 1719 00ac 13       		.uleb128 0x13
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 36
+
+
+ 1720 00ad 00       		.byte	0
+ 1721 00ae 00       		.byte	0
+ 1722 00af 0E       		.uleb128 0xe
+ 1723 00b0 0B       		.uleb128 0xb
+ 1724 00b1 01       		.byte	0x1
+ 1725 00b2 11       		.uleb128 0x11
+ 1726 00b3 01       		.uleb128 0x1
+ 1727 00b4 12       		.uleb128 0x12
+ 1728 00b5 06       		.uleb128 0x6
+ 1729 00b6 00       		.byte	0
+ 1730 00b7 00       		.byte	0
+ 1731 00b8 0F       		.uleb128 0xf
+ 1732 00b9 2E       		.uleb128 0x2e
+ 1733 00ba 01       		.byte	0x1
+ 1734 00bb 3F       		.uleb128 0x3f
+ 1735 00bc 19       		.uleb128 0x19
+ 1736 00bd 03       		.uleb128 0x3
+ 1737 00be 0E       		.uleb128 0xe
+ 1738 00bf 3A       		.uleb128 0x3a
+ 1739 00c0 0B       		.uleb128 0xb
+ 1740 00c1 3B       		.uleb128 0x3b
+ 1741 00c2 0B       		.uleb128 0xb
+ 1742 00c3 49       		.uleb128 0x49
+ 1743 00c4 13       		.uleb128 0x13
+ 1744 00c5 11       		.uleb128 0x11
+ 1745 00c6 01       		.uleb128 0x1
+ 1746 00c7 12       		.uleb128 0x12
+ 1747 00c8 06       		.uleb128 0x6
+ 1748 00c9 40       		.uleb128 0x40
+ 1749 00ca 18       		.uleb128 0x18
+ 1750 00cb 9742     		.uleb128 0x2117
+ 1751 00cd 19       		.uleb128 0x19
+ 1752 00ce 01       		.uleb128 0x1
+ 1753 00cf 13       		.uleb128 0x13
+ 1754 00d0 00       		.byte	0
+ 1755 00d1 00       		.byte	0
+ 1756 00d2 10       		.uleb128 0x10
+ 1757 00d3 34       		.uleb128 0x34
+ 1758 00d4 00       		.byte	0
+ 1759 00d5 03       		.uleb128 0x3
+ 1760 00d6 0E       		.uleb128 0xe
+ 1761 00d7 3A       		.uleb128 0x3a
+ 1762 00d8 0B       		.uleb128 0xb
+ 1763 00d9 3B       		.uleb128 0x3b
+ 1764 00da 05       		.uleb128 0x5
+ 1765 00db 49       		.uleb128 0x49
+ 1766 00dc 13       		.uleb128 0x13
+ 1767 00dd 3F       		.uleb128 0x3f
+ 1768 00de 19       		.uleb128 0x19
+ 1769 00df 3C       		.uleb128 0x3c
+ 1770 00e0 19       		.uleb128 0x19
+ 1771 00e1 00       		.byte	0
+ 1772 00e2 00       		.byte	0
+ 1773 00e3 11       		.uleb128 0x11
+ 1774 00e4 35       		.uleb128 0x35
+ 1775 00e5 00       		.byte	0
+ 1776 00e6 49       		.uleb128 0x49
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 37
+
+
+ 1777 00e7 13       		.uleb128 0x13
+ 1778 00e8 00       		.byte	0
+ 1779 00e9 00       		.byte	0
+ 1780 00ea 12       		.uleb128 0x12
+ 1781 00eb 34       		.uleb128 0x34
+ 1782 00ec 00       		.byte	0
+ 1783 00ed 03       		.uleb128 0x3
+ 1784 00ee 0E       		.uleb128 0xe
+ 1785 00ef 3A       		.uleb128 0x3a
+ 1786 00f0 0B       		.uleb128 0xb
+ 1787 00f1 3B       		.uleb128 0x3b
+ 1788 00f2 0B       		.uleb128 0xb
+ 1789 00f3 49       		.uleb128 0x49
+ 1790 00f4 13       		.uleb128 0x13
+ 1791 00f5 3F       		.uleb128 0x3f
+ 1792 00f6 19       		.uleb128 0x19
+ 1793 00f7 02       		.uleb128 0x2
+ 1794 00f8 18       		.uleb128 0x18
+ 1795 00f9 00       		.byte	0
+ 1796 00fa 00       		.byte	0
+ 1797 00fb 13       		.uleb128 0x13
+ 1798 00fc 01       		.uleb128 0x1
+ 1799 00fd 01       		.byte	0x1
+ 1800 00fe 49       		.uleb128 0x49
+ 1801 00ff 13       		.uleb128 0x13
+ 1802 0100 01       		.uleb128 0x1
+ 1803 0101 13       		.uleb128 0x13
+ 1804 0102 00       		.byte	0
+ 1805 0103 00       		.byte	0
+ 1806 0104 14       		.uleb128 0x14
+ 1807 0105 21       		.uleb128 0x21
+ 1808 0106 00       		.byte	0
+ 1809 0107 49       		.uleb128 0x49
+ 1810 0108 13       		.uleb128 0x13
+ 1811 0109 2F       		.uleb128 0x2f
+ 1812 010a 0B       		.uleb128 0xb
+ 1813 010b 00       		.byte	0
+ 1814 010c 00       		.byte	0
+ 1815 010d 15       		.uleb128 0x15
+ 1816 010e 34       		.uleb128 0x34
+ 1817 010f 00       		.byte	0
+ 1818 0110 03       		.uleb128 0x3
+ 1819 0111 08       		.uleb128 0x8
+ 1820 0112 3A       		.uleb128 0x3a
+ 1821 0113 0B       		.uleb128 0xb
+ 1822 0114 3B       		.uleb128 0x3b
+ 1823 0115 0B       		.uleb128 0xb
+ 1824 0116 49       		.uleb128 0x49
+ 1825 0117 13       		.uleb128 0x13
+ 1826 0118 3F       		.uleb128 0x3f
+ 1827 0119 19       		.uleb128 0x19
+ 1828 011a 02       		.uleb128 0x2
+ 1829 011b 18       		.uleb128 0x18
+ 1830 011c 00       		.byte	0
+ 1831 011d 00       		.byte	0
+ 1832 011e 16       		.uleb128 0x16
+ 1833 011f 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 38
+
+
+ 1834 0120 00       		.byte	0
+ 1835 0121 3F       		.uleb128 0x3f
+ 1836 0122 19       		.uleb128 0x19
+ 1837 0123 3C       		.uleb128 0x3c
+ 1838 0124 19       		.uleb128 0x19
+ 1839 0125 6E       		.uleb128 0x6e
+ 1840 0126 0E       		.uleb128 0xe
+ 1841 0127 03       		.uleb128 0x3
+ 1842 0128 0E       		.uleb128 0xe
+ 1843 0129 3A       		.uleb128 0x3a
+ 1844 012a 0B       		.uleb128 0xb
+ 1845 012b 3B       		.uleb128 0x3b
+ 1846 012c 0B       		.uleb128 0xb
+ 1847 012d 00       		.byte	0
+ 1848 012e 00       		.byte	0
+ 1849 012f 00       		.byte	0
+ 1850              		.section	.debug_loc,"",%progbits
+ 1851              	.Ldebug_loc0:
+ 1852              	.LLST0:
+ 1853 0000 04000000 		.4byte	.LVL0
+ 1854 0004 18000000 		.4byte	.LVL1
+ 1855 0008 0200     		.2byte	0x2
+ 1856 000a 30       		.byte	0x30
+ 1857 000b 9F       		.byte	0x9f
+ 1858 000c 18000000 		.4byte	.LVL1
+ 1859 0010 2A000000 		.4byte	.LVL2
+ 1860 0014 0100     		.2byte	0x1
+ 1861 0016 50       		.byte	0x50
+ 1862 0017 2C000000 		.4byte	.LVL3
+ 1863 001b C1000000 		.4byte	.LVL22-1
+ 1864 001f 0100     		.2byte	0x1
+ 1865 0021 50       		.byte	0x50
+ 1866 0022 00000000 		.4byte	0
+ 1867 0026 00000000 		.4byte	0
+ 1868              	.LLST1:
+ 1869 002a 04000000 		.4byte	.LVL0
+ 1870 002e 18000000 		.4byte	.LVL1
+ 1871 0032 0200     		.2byte	0x2
+ 1872 0034 30       		.byte	0x30
+ 1873 0035 9F       		.byte	0x9f
+ 1874 0036 18000000 		.4byte	.LVL1
+ 1875 003a 3C000000 		.4byte	.LVL4
+ 1876 003e 0100     		.2byte	0x1
+ 1877 0040 5A       		.byte	0x5a
+ 1878 0041 40000000 		.4byte	.LVL5
+ 1879 0045 F0000000 		.4byte	.LVL30
+ 1880 0049 0100     		.2byte	0x1
+ 1881 004b 5A       		.byte	0x5a
+ 1882 004c 00000000 		.4byte	0
+ 1883 0050 00000000 		.4byte	0
+ 1884              	.LLST2:
+ 1885 0054 04000000 		.4byte	.LVL0
+ 1886 0058 18000000 		.4byte	.LVL1
+ 1887 005c 0200     		.2byte	0x2
+ 1888 005e 30       		.byte	0x30
+ 1889 005f 9F       		.byte	0x9f
+ 1890 0060 18000000 		.4byte	.LVL1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 39
+
+
+ 1891 0064 50000000 		.4byte	.LVL6
+ 1892 0068 0100     		.2byte	0x1
+ 1893 006a 59       		.byte	0x59
+ 1894 006b 54000000 		.4byte	.LVL7
+ 1895 006f F0000000 		.4byte	.LVL30
+ 1896 0073 0100     		.2byte	0x1
+ 1897 0075 59       		.byte	0x59
+ 1898 0076 00000000 		.4byte	0
+ 1899 007a 00000000 		.4byte	0
+ 1900              	.LLST3:
+ 1901 007e 04000000 		.4byte	.LVL0
+ 1902 0082 18000000 		.4byte	.LVL1
+ 1903 0086 0200     		.2byte	0x2
+ 1904 0088 30       		.byte	0x30
+ 1905 0089 9F       		.byte	0x9f
+ 1906 008a 18000000 		.4byte	.LVL1
+ 1907 008e 64000000 		.4byte	.LVL8
+ 1908 0092 0100     		.2byte	0x1
+ 1909 0094 58       		.byte	0x58
+ 1910 0095 68000000 		.4byte	.LVL9
+ 1911 0099 F0000000 		.4byte	.LVL30
+ 1912 009d 0100     		.2byte	0x1
+ 1913 009f 58       		.byte	0x58
+ 1914 00a0 00000000 		.4byte	0
+ 1915 00a4 00000000 		.4byte	0
+ 1916              	.LLST4:
+ 1917 00a8 04000000 		.4byte	.LVL0
+ 1918 00ac 18000000 		.4byte	.LVL1
+ 1919 00b0 0200     		.2byte	0x2
+ 1920 00b2 30       		.byte	0x30
+ 1921 00b3 9F       		.byte	0x9f
+ 1922 00b4 18000000 		.4byte	.LVL1
+ 1923 00b8 78000000 		.4byte	.LVL10
+ 1924 00bc 0100     		.2byte	0x1
+ 1925 00be 57       		.byte	0x57
+ 1926 00bf 7A000000 		.4byte	.LVL11
+ 1927 00c3 F0000000 		.4byte	.LVL30
+ 1928 00c7 0100     		.2byte	0x1
+ 1929 00c9 57       		.byte	0x57
+ 1930 00ca 00000000 		.4byte	0
+ 1931 00ce 00000000 		.4byte	0
+ 1932              	.LLST5:
+ 1933 00d2 04000000 		.4byte	.LVL0
+ 1934 00d6 18000000 		.4byte	.LVL1
+ 1935 00da 0200     		.2byte	0x2
+ 1936 00dc 30       		.byte	0x30
+ 1937 00dd 9F       		.byte	0x9f
+ 1938 00de 18000000 		.4byte	.LVL1
+ 1939 00e2 8A000000 		.4byte	.LVL12
+ 1940 00e6 0100     		.2byte	0x1
+ 1941 00e8 56       		.byte	0x56
+ 1942 00e9 8C000000 		.4byte	.LVL13
+ 1943 00ed F0000000 		.4byte	.LVL30
+ 1944 00f1 0100     		.2byte	0x1
+ 1945 00f3 56       		.byte	0x56
+ 1946 00f4 00000000 		.4byte	0
+ 1947 00f8 00000000 		.4byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 40
+
+
+ 1948              	.LLST6:
+ 1949 00fc 04000000 		.4byte	.LVL0
+ 1950 0100 18000000 		.4byte	.LVL1
+ 1951 0104 0200     		.2byte	0x2
+ 1952 0106 30       		.byte	0x30
+ 1953 0107 9F       		.byte	0x9f
+ 1954 0108 18000000 		.4byte	.LVL1
+ 1955 010c 9C000000 		.4byte	.LVL14
+ 1956 0110 0100     		.2byte	0x1
+ 1957 0112 55       		.byte	0x55
+ 1958 0113 9E000000 		.4byte	.LVL15
+ 1959 0117 F0000000 		.4byte	.LVL30
+ 1960 011b 0100     		.2byte	0x1
+ 1961 011d 55       		.byte	0x55
+ 1962 011e 00000000 		.4byte	0
+ 1963 0122 00000000 		.4byte	0
+ 1964              	.LLST7:
+ 1965 0126 04000000 		.4byte	.LVL0
+ 1966 012a 18000000 		.4byte	.LVL1
+ 1967 012e 0200     		.2byte	0x2
+ 1968 0130 30       		.byte	0x30
+ 1969 0131 9F       		.byte	0x9f
+ 1970 0132 18000000 		.4byte	.LVL1
+ 1971 0136 AC000000 		.4byte	.LVL16
+ 1972 013a 0100     		.2byte	0x1
+ 1973 013c 54       		.byte	0x54
+ 1974 013d AE000000 		.4byte	.LVL17
+ 1975 0141 F0000000 		.4byte	.LVL30
+ 1976 0145 0100     		.2byte	0x1
+ 1977 0147 54       		.byte	0x54
+ 1978 0148 00000000 		.4byte	0
+ 1979 014c 00000000 		.4byte	0
+ 1980              	.LLST8:
+ 1981 0150 04000000 		.4byte	.LVL0
+ 1982 0154 18000000 		.4byte	.LVL1
+ 1983 0158 0200     		.2byte	0x2
+ 1984 015a 30       		.byte	0x30
+ 1985 015b 9F       		.byte	0x9f
+ 1986 015c 18000000 		.4byte	.LVL1
+ 1987 0160 B6000000 		.4byte	.LVL19
+ 1988 0164 0100     		.2byte	0x1
+ 1989 0166 53       		.byte	0x53
+ 1990 0167 00000000 		.4byte	0
+ 1991 016b 00000000 		.4byte	0
+ 1992              	.LLST9:
+ 1993 016f B8000000 		.4byte	.LVL20
+ 1994 0173 C1000000 		.4byte	.LVL22-1
+ 1995 0177 0100     		.2byte	0x1
+ 1996 0179 53       		.byte	0x53
+ 1997 017a 00000000 		.4byte	0
+ 1998 017e 00000000 		.4byte	0
+ 1999              	.LLST10:
+ 2000 0182 00000000 		.4byte	.LVL31
+ 2001 0186 04000000 		.4byte	.LVL32
+ 2002 018a 0200     		.2byte	0x2
+ 2003 018c 30       		.byte	0x30
+ 2004 018d 9F       		.byte	0x9f
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 41
+
+
+ 2005 018e 04000000 		.4byte	.LVL32
+ 2006 0192 1C000000 		.4byte	.LFE67
+ 2007 0196 0100     		.2byte	0x1
+ 2008 0198 53       		.byte	0x53
+ 2009 0199 00000000 		.4byte	0
+ 2010 019d 00000000 		.4byte	0
+ 2011              	.LLST11:
+ 2012 01a1 06000000 		.4byte	.LVL37
+ 2013 01a5 0A000000 		.4byte	.LVL38
+ 2014 01a9 0200     		.2byte	0x2
+ 2015 01ab 30       		.byte	0x30
+ 2016 01ac 9F       		.byte	0x9f
+ 2017 01ad 0A000000 		.4byte	.LVL38
+ 2018 01b1 6C000000 		.4byte	.LVL52
+ 2019 01b5 0100     		.2byte	0x1
+ 2020 01b7 54       		.byte	0x54
+ 2021 01b8 00000000 		.4byte	0
+ 2022 01bc 00000000 		.4byte	0
+ 2023              	.LLST12:
+ 2024 01c0 0A000000 		.4byte	.LVL54
+ 2025 01c4 0E000000 		.4byte	.LVL55
+ 2026 01c8 0200     		.2byte	0x2
+ 2027 01ca 30       		.byte	0x30
+ 2028 01cb 9F       		.byte	0x9f
+ 2029 01cc 0E000000 		.4byte	.LVL55
+ 2030 01d0 52000000 		.4byte	.LVL60
+ 2031 01d4 0100     		.2byte	0x1
+ 2032 01d6 54       		.byte	0x54
+ 2033 01d7 00000000 		.4byte	0
+ 2034 01db 00000000 		.4byte	0
+ 2035              	.LLST13:
+ 2036 01df 06000000 		.4byte	.LVL61
+ 2037 01e3 0A000000 		.4byte	.LVL62
+ 2038 01e7 0200     		.2byte	0x2
+ 2039 01e9 30       		.byte	0x30
+ 2040 01ea 9F       		.byte	0x9f
+ 2041 01eb 0A000000 		.4byte	.LVL62
+ 2042 01ef 3E000000 		.4byte	.LVL66
+ 2043 01f3 0100     		.2byte	0x1
+ 2044 01f5 54       		.byte	0x54
+ 2045 01f6 00000000 		.4byte	0
+ 2046 01fa 00000000 		.4byte	0
+ 2047              	.LLST14:
+ 2048 01fe 06000000 		.4byte	.LVL67
+ 2049 0202 0A000000 		.4byte	.LVL68
+ 2050 0206 0200     		.2byte	0x2
+ 2051 0208 30       		.byte	0x30
+ 2052 0209 9F       		.byte	0x9f
+ 2053 020a 0A000000 		.4byte	.LVL68
+ 2054 020e 54000000 		.4byte	.LVL73
+ 2055 0212 0100     		.2byte	0x1
+ 2056 0214 54       		.byte	0x54
+ 2057 0215 00000000 		.4byte	0
+ 2058 0219 00000000 		.4byte	0
+ 2059              	.LLST15:
+ 2060 021d 06000000 		.4byte	.LVL74
+ 2061 0221 0A000000 		.4byte	.LVL75
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 42
+
+
+ 2062 0225 0200     		.2byte	0x2
+ 2063 0227 30       		.byte	0x30
+ 2064 0228 9F       		.byte	0x9f
+ 2065 0229 0A000000 		.4byte	.LVL75
+ 2066 022d 3E000000 		.4byte	.LVL79
+ 2067 0231 0100     		.2byte	0x1
+ 2068 0233 53       		.byte	0x53
+ 2069 0234 00000000 		.4byte	0
+ 2070 0238 00000000 		.4byte	0
+ 2071              		.section	.debug_aranges,"",%progbits
+ 2072 0000 5C000000 		.4byte	0x5c
+ 2073 0004 0200     		.2byte	0x2
+ 2074 0006 00000000 		.4byte	.Ldebug_info0
+ 2075 000a 04       		.byte	0x4
+ 2076 000b 00       		.byte	0
+ 2077 000c 0000     		.2byte	0
+ 2078 000e 0000     		.2byte	0
+ 2079 0010 00000000 		.4byte	.LFB65
+ 2080 0014 F4000000 		.4byte	.LFE65-.LFB65
+ 2081 0018 00000000 		.4byte	.LFB67
+ 2082 001c 1C000000 		.4byte	.LFE67-.LFB67
+ 2083 0020 00000000 		.4byte	.LFB72
+ 2084 0024 16000000 		.4byte	.LFE72-.LFB72
+ 2085 0028 00000000 		.4byte	.LFB64
+ 2086 002c 70000000 		.4byte	.LFE64-.LFB64
+ 2087 0030 00000000 		.4byte	.LFB68
+ 2088 0034 60000000 		.4byte	.LFE68-.LFB68
+ 2089 0038 00000000 		.4byte	.LFB69
+ 2090 003c 4C000000 		.4byte	.LFE69-.LFB69
+ 2091 0040 00000000 		.4byte	.LFB70
+ 2092 0044 68000000 		.4byte	.LFE70-.LFB70
+ 2093 0048 00000000 		.4byte	.LFB71
+ 2094 004c 4C000000 		.4byte	.LFE71-.LFB71
+ 2095 0050 00000000 		.4byte	.LFB66
+ 2096 0054 2C000000 		.4byte	.LFE66-.LFB66
+ 2097 0058 00000000 		.4byte	0
+ 2098 005c 00000000 		.4byte	0
+ 2099              		.section	.debug_ranges,"",%progbits
+ 2100              	.Ldebug_ranges0:
+ 2101 0000 04000000 		.4byte	.LBB2
+ 2102 0004 06000000 		.4byte	.LBE2
+ 2103 0008 16000000 		.4byte	.LBB3
+ 2104 000c B8000000 		.4byte	.LBE3
+ 2105 0010 00000000 		.4byte	0
+ 2106 0014 00000000 		.4byte	0
+ 2107 0018 06000000 		.4byte	.LBB10
+ 2108 001c 30000000 		.4byte	.LBE10
+ 2109 0020 32000000 		.4byte	.LBB11
+ 2110 0024 3C000000 		.4byte	.LBE11
+ 2111 0028 00000000 		.4byte	0
+ 2112 002c 00000000 		.4byte	0
+ 2113 0030 00000000 		.4byte	.LFB65
+ 2114 0034 F4000000 		.4byte	.LFE65
+ 2115 0038 00000000 		.4byte	.LFB67
+ 2116 003c 1C000000 		.4byte	.LFE67
+ 2117 0040 00000000 		.4byte	.LFB72
+ 2118 0044 16000000 		.4byte	.LFE72
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 43
+
+
+ 2119 0048 00000000 		.4byte	.LFB64
+ 2120 004c 70000000 		.4byte	.LFE64
+ 2121 0050 00000000 		.4byte	.LFB68
+ 2122 0054 60000000 		.4byte	.LFE68
+ 2123 0058 00000000 		.4byte	.LFB69
+ 2124 005c 4C000000 		.4byte	.LFE69
+ 2125 0060 00000000 		.4byte	.LFB70
+ 2126 0064 68000000 		.4byte	.LFE70
+ 2127 0068 00000000 		.4byte	.LFB71
+ 2128 006c 4C000000 		.4byte	.LFE71
+ 2129 0070 00000000 		.4byte	.LFB66
+ 2130 0074 2C000000 		.4byte	.LFE66
+ 2131 0078 00000000 		.4byte	0
+ 2132 007c 00000000 		.4byte	0
+ 2133              		.section	.debug_line,"",%progbits
+ 2134              	.Ldebug_line0:
+ 2135 0000 88030000 		.section	.debug_str,"MS",%progbits,1
+ 2135      0200BF01 
+ 2135      00000201 
+ 2135      FB0E0D00 
+ 2135      01010101 
+ 2136              	.LASF38:
+ 2137 0000 696E6974 		.ascii	"initSensor\000"
+ 2137      53656E73 
+ 2137      6F7200
+ 2138              	.LASF37:
+ 2139 000b 6E657750 		.ascii	"newPosLegal\000"
+ 2139      6F734C65 
+ 2139      67616C00 
+ 2140              	.LASF53:
+ 2141 0017 6C696674 		.ascii	"liftPos\000"
+ 2141      506F7300 
+ 2142              	.LASF47:
+ 2143 001f 6C656761 		.ascii	"legalMoves\000"
+ 2143      6C4D6F76 
+ 2143      657300
+ 2144              	.LASF32:
+ 2145 002a 73656E73 		.ascii	"sensorReset\000"
+ 2145      6F725265 
+ 2145      73657400 
+ 2146              	.LASF4:
+ 2147 0036 73686F72 		.ascii	"short int\000"
+ 2147      7420696E 
+ 2147      7400
+ 2148              	.LASF21:
+ 2149 0040 73697A65 		.ascii	"sizetype\000"
+ 2149      74797065 
+ 2149      00
+ 2150              	.LASF13:
+ 2151 0049 696E7438 		.ascii	"int8_t\000"
+ 2151      5F7400
+ 2152              	.LASF40:
+ 2153 0050 63757272 		.ascii	"currentSquare\000"
+ 2153      656E7453 
+ 2153      71756172 
+ 2153      6500
+ 2154              	.LASF5:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 44
+
+
+ 2155 005e 5F5F7569 		.ascii	"__uint16_t\000"
+ 2155      6E743136 
+ 2155      5F7400
+ 2156              	.LASF43:
+ 2157 0069 6C656444 		.ascii	"ledData\000"
+ 2157      61746100 
+ 2158              	.LASF36:
+ 2159 0071 7363616E 		.ascii	"scan4DeadOpp\000"
+ 2159      34446561 
+ 2159      644F7070 
+ 2159      00
+ 2160              	.LASF62:
+ 2161 007e 53656E73 		.ascii	"Sensor.c\000"
+ 2161      6F722E63 
+ 2161      00
+ 2162              	.LASF17:
+ 2163 0087 666C6F61 		.ascii	"float\000"
+ 2163      7400
+ 2164              	.LASF46:
+ 2165 008d 73746172 		.ascii	"startChar\000"
+ 2165      74436861 
+ 2165      7200
+ 2166              	.LASF10:
+ 2167 0097 6C6F6E67 		.ascii	"long long int\000"
+ 2167      206C6F6E 
+ 2167      6720696E 
+ 2167      7400
+ 2168              	.LASF49:
+ 2169 00a5 73717561 		.ascii	"squareReg\000"
+ 2169      72655265 
+ 2169      6700
+ 2170              	.LASF33:
+ 2171 00af 73656E73 		.ascii	"sensorScan\000"
+ 2171      6F725363 
+ 2171      616E00
+ 2172              	.LASF8:
+ 2173 00ba 6C6F6E67 		.ascii	"long int\000"
+ 2173      20696E74 
+ 2173      00
+ 2174              	.LASF31:
+ 2175 00c3 75706461 		.ascii	"updateLastSquareReg\000"
+ 2175      74654C61 
+ 2175      73745371 
+ 2175      75617265 
+ 2175      52656700 
+ 2176              	.LASF1:
+ 2177 00d7 5F5F7569 		.ascii	"__uint8_t\000"
+ 2177      6E74385F 
+ 2177      7400
+ 2178              	.LASF48:
+ 2179 00e1 6C617374 		.ascii	"lastSquareReg\000"
+ 2179      53717561 
+ 2179      72655265 
+ 2179      6700
+ 2180              	.LASF30:
+ 2181 00ef 73656E73 		.ascii	"sensorPrintTest\000"
+ 2181      6F725072 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 45
+
+
+ 2181      696E7454 
+ 2181      65737400 
+ 2182              	.LASF42:
+ 2183 00ff 6C656441 		.ascii	"ledArray\000"
+ 2183      72726179 
+ 2183      00
+ 2184              	.LASF60:
+ 2185 0108 73656E73 		.ascii	"sensorClk_Write\000"
+ 2185      6F72436C 
+ 2185      6B5F5772 
+ 2185      69746500 
+ 2186              	.LASF51:
+ 2187 0118 64656164 		.ascii	"deadPieceLifted\000"
+ 2187      50696563 
+ 2187      654C6966 
+ 2187      74656400 
+ 2188              	.LASF14:
+ 2189 0128 75696E74 		.ascii	"uint8_t\000"
+ 2189      385F7400 
+ 2190              	.LASF41:
+ 2191 0130 73746570 		.ascii	"stepCase\000"
+ 2191      43617365 
+ 2191      00
+ 2192              	.LASF20:
+ 2193 0139 6C6F6E67 		.ascii	"long double\000"
+ 2193      20646F75 
+ 2193      626C6500 
+ 2194              	.LASF59:
+ 2195 0145 43794465 		.ascii	"CyDelayUs\000"
+ 2195      6C617955 
+ 2195      7300
+ 2196              	.LASF3:
+ 2197 014f 756E7369 		.ascii	"unsigned char\000"
+ 2197      676E6564 
+ 2197      20636861 
+ 2197      7200
+ 2198              	.LASF44:
+ 2199 015d 62697449 		.ascii	"bitIndex\000"
+ 2199      6E646578 
+ 2199      00
+ 2200              	.LASF2:
+ 2201 0166 7369676E 		.ascii	"signed char\000"
+ 2201      65642063 
+ 2201      68617200 
+ 2202              	.LASF11:
+ 2203 0172 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2203      206C6F6E 
+ 2203      6720756E 
+ 2203      7369676E 
+ 2203      65642069 
+ 2204              	.LASF34:
+ 2205 0189 7363616E 		.ascii	"scanNewPos\000"
+ 2205      4E657750 
+ 2205      6F7300
+ 2206              	.LASF12:
+ 2207 0194 756E7369 		.ascii	"unsigned int\000"
+ 2207      676E6564 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 46
+
+
+ 2207      20696E74 
+ 2207      00
+ 2208              	.LASF15:
+ 2209 01a1 75696E74 		.ascii	"uint16_t\000"
+ 2209      31365F74 
+ 2209      00
+ 2210              	.LASF54:
+ 2211 01aa 64656164 		.ascii	"deadLiftPos\000"
+ 2211      4C696674 
+ 2211      506F7300 
+ 2212              	.LASF6:
+ 2213 01b6 73686F72 		.ascii	"short unsigned int\000"
+ 2213      7420756E 
+ 2213      7369676E 
+ 2213      65642069 
+ 2213      6E7400
+ 2214              	.LASF0:
+ 2215 01c9 5F5F696E 		.ascii	"__int8_t\000"
+ 2215      74385F74 
+ 2215      00
+ 2216              	.LASF50:
+ 2217 01d2 70696563 		.ascii	"pieceLifted\000"
+ 2217      654C6966 
+ 2217      74656400 
+ 2218              	.LASF56:
+ 2219 01de 73656E73 		.ascii	"sensorReset_Write\000"
+ 2219      6F725265 
+ 2219      7365745F 
+ 2219      57726974 
+ 2219      6500
+ 2220              	.LASF19:
+ 2221 01f0 63686172 		.ascii	"char\000"
+ 2221      00
+ 2222              	.LASF52:
+ 2223 01f5 6E657750 		.ascii	"newPos\000"
+ 2223      6F7300
+ 2224              	.LASF16:
+ 2225 01fc 696E7433 		.ascii	"int32_t\000"
+ 2225      325F7400 
+ 2226              	.LASF9:
+ 2227 0204 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2227      20756E73 
+ 2227      69676E65 
+ 2227      6420696E 
+ 2227      7400
+ 2228              	.LASF18:
+ 2229 0216 646F7562 		.ascii	"double\000"
+ 2229      6C6500
+ 2230              	.LASF55:
+ 2231 021d 55415254 		.ascii	"UART_1_WriteTxData\000"
+ 2231      5F315F57 
+ 2231      72697465 
+ 2231      54784461 
+ 2231      746100
+ 2232              	.LASF58:
+ 2233 0230 73656E73 		.ascii	"sensorSignal_Read\000"
+ 2233      6F725369 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 47
+
+
+ 2233      676E616C 
+ 2233      5F526561 
+ 2233      6400
+ 2234              	.LASF7:
+ 2235 0242 5F5F696E 		.ascii	"__int32_t\000"
+ 2235      7433325F 
+ 2235      7400
+ 2236              	.LASF22:
+ 2237 024c 726F7731 		.ascii	"row1\000"
+ 2237      00
+ 2238              	.LASF23:
+ 2239 0251 726F7732 		.ascii	"row2\000"
+ 2239      00
+ 2240              	.LASF24:
+ 2241 0256 726F7733 		.ascii	"row3\000"
+ 2241      00
+ 2242              	.LASF25:
+ 2243 025b 726F7734 		.ascii	"row4\000"
+ 2243      00
+ 2244              	.LASF26:
+ 2245 0260 726F7735 		.ascii	"row5\000"
+ 2245      00
+ 2246              	.LASF27:
+ 2247 0265 726F7736 		.ascii	"row6\000"
+ 2247      00
+ 2248              	.LASF28:
+ 2249 026a 726F7737 		.ascii	"row7\000"
+ 2249      00
+ 2250              	.LASF29:
+ 2251 026f 726F7738 		.ascii	"row8\000"
+ 2251      00
+ 2252              	.LASF35:
+ 2253 0274 7363616E 		.ascii	"scan4PieceLift\000"
+ 2253      34506965 
+ 2253      63654C69 
+ 2253      667400
+ 2254              	.LASF39:
+ 2255 0283 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2255      52784275 
+ 2255      66666572 
+ 2255      00
+ 2256              	.LASF61:
+ 2257 0290 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2257      43313120 
+ 2257      352E342E 
+ 2257      31203230 
+ 2257      31363036 
+ 2258 02c3 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2258      20726576 
+ 2258      6973696F 
+ 2258      6E203233 
+ 2258      37373135 
+ 2259 02f6 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2259      66756E63 
+ 2259      74696F6E 
+ 2259      2D736563 
+ 2259      74696F6E 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccCSvba6.s 			page 48
+
+
+ 2260              	.LASF57:
+ 2261 031e 43794465 		.ascii	"CyDelay\000"
+ 2261      6C617900 
+ 2262              	.LASF45:
+ 2263 0326 62797465 		.ascii	"byteIndex\000"
+ 2263      496E6465 
+ 2263      7800
+ 2264              	.LASF63:
+ 2265 0330 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 2265      49545C52 
+ 2265      6F626F4D 
+ 2265      6174655C 
+ 2265      50536F43 
+ 2266 035e 726F6C6C 		.ascii	"roller.cydsn\000"
+ 2266      65722E63 
+ 2266      7964736E 
+ 2266      00
+ 2267              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

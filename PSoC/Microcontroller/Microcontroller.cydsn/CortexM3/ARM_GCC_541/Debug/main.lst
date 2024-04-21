@@ -1,0 +1,1497 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.main,"ax",%progbits
+  20              		.align	2
+  21              		.global	main
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	main, %function
+  25              	main:
+  26              	.LFB64:
+  27              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** #include "XYPlotter.h"
+  13:main.c        **** #include "Sensor.h"
+  14:main.c        **** #include "UART.h"
+  15:main.c        **** #include "LedControl.h"
+  16:main.c        **** #include "Servo.h"
+  17:main.c        **** 
+  18:main.c        **** int main(void) {
+  28              		.loc 1 18 0
+  29              		.cfi_startproc
+  30              		@ Volatile: function does not return.
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  19:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+  37              		.loc 1 19 0
+  38              		.syntax unified
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 2
+
+
+  39              	@ 19 "main.c" 1
+  40 0002 62B6     		CPSIE   i
+  41              	@ 0 "" 2
+  20:main.c        ****     initUART();
+  42              		.loc 1 20 0
+  43              		.thumb
+  44              		.syntax unified
+  45 0004 FFF7FEFF 		bl	initUART
+  46              	.LVL0:
+  21:main.c        ****     initLED(); 
+  47              		.loc 1 21 0
+  48 0008 FFF7FEFF 		bl	initLED
+  49              	.LVL1:
+  22:main.c        ****     initXYPlotter();
+  50              		.loc 1 22 0
+  51 000c FFF7FEFF 		bl	initXYPlotter
+  52              	.LVL2:
+  23:main.c        ****     initSensor();
+  53              		.loc 1 23 0
+  54 0010 FFF7FEFF 		bl	initSensor
+  55              	.LVL3:
+  24:main.c        ****     initServo();
+  56              		.loc 1 24 0
+  57 0014 FFF7FEFF 		bl	initServo
+  58              	.LVL4:
+  59              	.L4:
+  25:main.c        ****     
+  26:main.c        **** //    moveChessPiece(1,16);
+  27:main.c        **** //    
+  28:main.c        **** //    moveHome();
+  29:main.c        **** //    
+  30:main.c        **** //    moveChessPiece(16,1);
+  31:main.c        **** //    
+  32:main.c        **** //    moveHome();
+  33:main.c        ****     
+  34:main.c        **** //    moveChessPiece(10,26);
+  35:main.c        **** //    moveHome();
+  36:main.c        **** 
+  37:main.c        ****     
+  38:main.c        ****     for (;;) 
+  39:main.c        ****     {
+  40:main.c        ****         start:
+  41:main.c        ****         pieceLifted = scan4PieceLift(); //opdaterer liftPos og returnerer 1 hvis en brik bliver lø
+  60              		.loc 1 41 0
+  61 0018 FFF7FEFF 		bl	scan4PieceLift
+  62              	.LVL5:
+  63 001c 434B     		ldr	r3, .L14
+  64 001e 1870     		strb	r0, [r3]
+  42:main.c        ****         
+  43:main.c        ****         if(pieceLifted == 1)
+  65              		.loc 1 43 0
+  66 0020 0128     		cmp	r0, #1
+  67 0022 F9D1     		bne	.L4
+  44:main.c        ****         {
+  45:main.c        ****             pieceLifted = 0;            
+  68              		.loc 1 45 0
+  69 0024 0022     		movs	r2, #0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 3
+
+
+  70 0026 1A70     		strb	r2, [r3]
+  46:main.c        ****             
+  47:main.c        **** //            UART_1_PutChar('o'); //startChar for løft
+  48:main.c        **** //            UART_1_WriteTxData(liftPos); //Sender hvilket felt der er løftet en brik fra.
+  49:main.c        ****             
+  50:main.c        ****             
+  51:main.c        ****             UARTLedTest(); //Fjernes når RPI kobles til.
+  71              		.loc 1 51 0
+  72 0028 FFF7FEFF 		bl	UARTLedTest
+  73              	.LVL6:
+  74              	.L9:
+  52:main.c        ****             do
+  53:main.c        ****             {                
+  54:main.c        ****                 tryAgain: // goto label ved ulovligt træk.
+  55:main.c        ****                 scanNewPos(); //opdater newPos
+  75              		.loc 1 55 0
+  76 002c FFF7FEFF 		bl	scanNewPos
+  77              	.LVL7:
+  56:main.c        ****                 
+  57:main.c        ****                 if(newPos == liftPos && newPos != -1) // Hvis en brik placeres på samme position s
+  78              		.loc 1 57 0
+  79 0030 3F4B     		ldr	r3, .L14+4
+  80 0032 93F90030 		ldrsb	r3, [r3]
+  81 0036 3F4A     		ldr	r2, .L14+8
+  82 0038 92F90020 		ldrsb	r2, [r2]
+  83 003c 9342     		cmp	r3, r2
+  84 003e 1BD1     		bne	.L6
+  85              		.loc 1 57 0 is_stmt 0 discriminator 1
+  86 0040 B3F1FF3F 		cmp	r3, #-1
+  87 0044 18D0     		beq	.L6
+  58:main.c        ****                 {
+  59:main.c        ****                     CyDelayUs(change_validation_delay_us*3);
+  88              		.loc 1 59 0 is_stmt 1
+  89 0046 42F22830 		movw	r0, #9000
+  90 004a FFF7FEFF 		bl	CyDelayUs
+  91              	.LVL8:
+  60:main.c        ****                     scanNewPos();
+  92              		.loc 1 60 0
+  93 004e FFF7FEFF 		bl	scanNewPos
+  94              	.LVL9:
+  61:main.c        ****                     if(newPos == liftPos)
+  95              		.loc 1 61 0
+  96 0052 374B     		ldr	r3, .L14+4
+  97 0054 93F90020 		ldrsb	r2, [r3]
+  98 0058 364B     		ldr	r3, .L14+8
+  99 005a 93F90030 		ldrsb	r3, [r3]
+ 100 005e 9A42     		cmp	r2, r3
+ 101 0060 0AD1     		bne	.L6
+  62:main.c        ****                     {
+  63:main.c        ****                         newPos = -1; liftPos = -1; //Nulstil new position
+ 102              		.loc 1 63 0
+ 103 0062 FF23     		movs	r3, #255
+ 104 0064 324A     		ldr	r2, .L14+4
+ 105 0066 1370     		strb	r3, [r2]
+ 106 0068 324A     		ldr	r2, .L14+8
+ 107 006a 1370     		strb	r3, [r2]
+  64:main.c        ****                         turnOffLEDs(); // Sluk for led'er
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 4
+
+
+ 108              		.loc 1 64 0
+ 109 006c FFF7FEFF 		bl	turnOffLEDs
+ 110              	.LVL10:
+  65:main.c        ****                         UART_1_PutChar('e'); //Skriv til RPI at brik er på samme felt
+ 111              		.loc 1 65 0
+ 112 0070 6520     		movs	r0, #101
+ 113 0072 FFF7FEFF 		bl	UART_1_PutChar
+ 114              	.LVL11:
+  66:main.c        ****                         goto start; //Springer resten af do-while over.
+ 115              		.loc 1 66 0
+ 116 0076 CFE7     		b	.L4
+ 117              	.L6:
+  67:main.c        ****                     }
+  68:main.c        ****                 }
+  69:main.c        ****                 
+  70:main.c        ****                 deadPieceLifted = scan4DeadOpp(); //Hvis en brik bliver dræbt
+ 118              		.loc 1 70 0
+ 119 0078 FFF7FEFF 		bl	scan4DeadOpp
+ 120              	.LVL12:
+ 121 007c 2E4B     		ldr	r3, .L14+12
+ 122 007e 1870     		strb	r0, [r3]
+  71:main.c        ****                 if(deadPieceLifted == 1) //Hvis ny brik bliver løftet på et legalmove er en død 
+ 123              		.loc 1 71 0
+ 124 0080 0128     		cmp	r0, #1
+ 125 0082 11D1     		bne	.L7
+  72:main.c        ****                 {
+  73:main.c        ****                     deadPieceLifted = 0;
+ 126              		.loc 1 73 0
+ 127 0084 0022     		movs	r2, #0
+ 128 0086 1A70     		strb	r2, [r3]
+  74:main.c        ****                     onlyDeadPosLED(deadLiftPos); //Slukker alle andre LED'er end død briks positio
+ 129              		.loc 1 74 0
+ 130 0088 2C4B     		ldr	r3, .L14+16
+ 131 008a 93F90000 		ldrsb	r0, [r3]
+ 132 008e FFF7FEFF 		bl	onlyDeadPosLED
+ 133              	.LVL13:
+  75:main.c        ****                     updateLastSquareReg();
+ 134              		.loc 1 75 0
+ 135 0092 FFF7FEFF 		bl	updateLastSquareReg
+ 136              	.LVL14:
+ 137              	.L8:
+  76:main.c        ****                     do // Vent til brik er sat på død briks position.
+  77:main.c        ****                     {
+  78:main.c        ****                         sensorScan();
+ 138              		.loc 1 78 0 discriminator 1
+ 139 0096 FFF7FEFF 		bl	sensorScan
+ 140              	.LVL15:
+  79:main.c        ****                     }while(squareReg[deadLiftPos] == 0);
+ 141              		.loc 1 79 0 discriminator 1
+ 142 009a 284B     		ldr	r3, .L14+16
+ 143 009c 93F90030 		ldrsb	r3, [r3]
+ 144 00a0 274A     		ldr	r2, .L14+20
+ 145 00a2 D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 146 00a4 002B     		cmp	r3, #0
+ 147 00a6 F6D0     		beq	.L8
+ 148              	.L7:
+  80:main.c        ****                 }
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 5
+
+
+  81:main.c        **** 
+  82:main.c        ****             }while(newPosLegal()==0 || newPosLegal() == -1); // indtil newPos har fået en ny og lo
+ 149              		.loc 1 82 0
+ 150 00a8 FFF7FEFF 		bl	newPosLegal
+ 151              	.LVL16:
+ 152 00ac 0028     		cmp	r0, #0
+ 153 00ae BDD0     		beq	.L9
+ 154              		.loc 1 82 0 is_stmt 0 discriminator 1
+ 155 00b0 FFF7FEFF 		bl	newPosLegal
+ 156              	.LVL17:
+ 157 00b4 B0F1FF3F 		cmp	r0, #-1
+ 158 00b8 B8D0     		beq	.L9
+  83:main.c        ****             
+  84:main.c        ****             if(newPosLegal()== -1) // Hvis brik sat ulovligt
+ 159              		.loc 1 84 0 is_stmt 1
+ 160 00ba FFF7FEFF 		bl	newPosLegal
+ 161              	.LVL18:
+ 162 00be B0F1FF3F 		cmp	r0, #-1
+ 163 00c2 19D1     		bne	.L11
+  85:main.c        ****             {
+  86:main.c        ****                 UART_1_PutChar('i'); //Skriv til RPI af brik er placeret ulovligt.
+ 164              		.loc 1 86 0
+ 165 00c4 6920     		movs	r0, #105
+ 166 00c6 FFF7FEFF 		bl	UART_1_PutChar
+ 167              	.LVL19:
+  87:main.c        ****                 LED_1_Write(1); //Blå LED tændes som visuel indikator
+ 168              		.loc 1 87 0
+ 169 00ca 0120     		movs	r0, #1
+ 170 00cc FFF7FEFF 		bl	LED_1_Write
+ 171              	.LVL20:
+ 172              	.L12:
+  88:main.c        ****                 do
+  89:main.c        ****                 {
+  90:main.c        ****                     sensorScan();     // Opdater squareReg indtil brik fra ulovlig position er fjer
+ 173              		.loc 1 90 0 discriminator 1
+ 174 00d0 FFF7FEFF 		bl	sensorScan
+ 175              	.LVL21:
+  91:main.c        ****                 }while(squareReg[newPos] == 1);
+ 176              		.loc 1 91 0 discriminator 1
+ 177 00d4 164B     		ldr	r3, .L14+4
+ 178 00d6 93F90030 		ldrsb	r3, [r3]
+ 179 00da 194A     		ldr	r2, .L14+20
+ 180 00dc D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 181 00de 012B     		cmp	r3, #1
+ 182 00e0 F6D0     		beq	.L12
+  92:main.c        ****                 LED_1_Write(0); //Blå LED slukkes igen
+ 183              		.loc 1 92 0
+ 184 00e2 0020     		movs	r0, #0
+ 185 00e4 FFF7FEFF 		bl	LED_1_Write
+ 186              	.LVL22:
+  93:main.c        ****                 newPos = -1; liftPos = -1; deadLiftPos = -1; //Nulstil positioner
+ 187              		.loc 1 93 0
+ 188 00e8 FF23     		movs	r3, #255
+ 189 00ea 114A     		ldr	r2, .L14+4
+ 190 00ec 1370     		strb	r3, [r2]
+ 191 00ee 114A     		ldr	r2, .L14+8
+ 192 00f0 1370     		strb	r3, [r2]
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 6
+
+
+ 193 00f2 124A     		ldr	r2, .L14+16
+ 194 00f4 1370     		strb	r3, [r2]
+ 195              	.L5:
+  94:main.c        ****                 newPos = -1; liftPos = -1; // nulstil newPos og liftPos
+  95:main.c        ****                 goto tryAgain; 
+ 196              		.loc 1 95 0
+ 197 00f6 99E7     		b	.L9
+ 198              	.L11:
+  96:main.c        ****             }
+  97:main.c        ****             
+  98:main.c        ****             if(newPosLegal()==1)
+ 199              		.loc 1 98 0
+ 200 00f8 FFF7FEFF 		bl	newPosLegal
+ 201              	.LVL23:
+ 202 00fc 0128     		cmp	r0, #1
+ 203 00fe 8BD1     		bne	.L4
+  99:main.c        ****             {
+ 100:main.c        ****                 UART_1_PutChar('n'); //startChar for ny placering af brik
+ 204              		.loc 1 100 0
+ 205 0100 6E20     		movs	r0, #110
+ 206 0102 FFF7FEFF 		bl	UART_1_PutChar
+ 207              	.LVL24:
+ 101:main.c        ****                 UART_1_WriteTxData(newPos); //send brikkens nye position
+ 208              		.loc 1 101 0
+ 209 0106 0A4C     		ldr	r4, .L14+4
+ 210 0108 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 211 010a FFF7FEFF 		bl	UART_1_WriteTxData
+ 212              	.LVL25:
+ 102:main.c        ****                 moveAcceptedLED(newPos); //Grønt lys på den nye position, hvis brik er placeret l
+ 213              		.loc 1 102 0
+ 214 010e 94F90000 		ldrsb	r0, [r4]
+ 215 0112 FFF7FEFF 		bl	moveAcceptedLED
+ 216              	.LVL26:
+ 103:main.c        ****                 moveChessPiece(liftPos,newPos);
+ 217              		.loc 1 103 0
+ 218 0116 074D     		ldr	r5, .L14+8
+ 219 0118 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
+ 220 011a 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 221 011c FFF7FEFF 		bl	moveChessPiece
+ 222              	.LVL27:
+ 104:main.c        ****                 newPos = -1; liftPos = -1; deadLiftPos = -1; //Nulstil positioner
+ 223              		.loc 1 104 0
+ 224 0120 FF23     		movs	r3, #255
+ 225 0122 2370     		strb	r3, [r4]
+ 226 0124 2B70     		strb	r3, [r5]
+ 227 0126 054A     		ldr	r2, .L14+16
+ 228 0128 1370     		strb	r3, [r2]
+ 229              	.L3:
+ 230 012a 75E7     		b	.L4
+ 231              	.L15:
+ 232              		.align	2
+ 233              	.L14:
+ 234 012c 00000000 		.word	pieceLifted
+ 235 0130 00000000 		.word	newPos
+ 236 0134 00000000 		.word	liftPos
+ 237 0138 00000000 		.word	deadPieceLifted
+ 238 013c 00000000 		.word	deadLiftPos
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 7
+
+
+ 239 0140 00000000 		.word	squareReg
+ 240              		.cfi_endproc
+ 241              	.LFE64:
+ 242              		.size	main, .-main
+ 243              		.comm	deadLiftPos,1,1
+ 244              		.comm	liftPos,1,1
+ 245              		.comm	newPos,1,1
+ 246              		.comm	deadPieceLifted,1,1
+ 247              		.comm	pieceLifted,1,1
+ 248              		.comm	squareReg,64,4
+ 249              		.comm	lastSquareReg,64,4
+ 250              		.comm	legalMoves,64,4
+ 251              		.comm	startChar,1,1
+ 252              		.comm	end,4,4
+ 253              		.comm	byteIndex,2,2
+ 254              		.comm	bitIndex,1,1
+ 255              		.comm	ledData,192,4
+ 256              		.comm	ledArray,64,4
+ 257              		.comm	stepCase,1,1
+ 258              		.comm	currentSquare,1,1
+ 259              		.text
+ 260              	.Letext0:
+ 261              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 262              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 263              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 264              		.file 5 "XYPlotter.h"
+ 265              		.file 6 "LedControl.h"
+ 266              		.file 7 "UART.h"
+ 267              		.file 8 "Sensor.h"
+ 268              		.file 9 "Servo.h"
+ 269              		.file 10 "Generated_Source\\PSoC5/CyLib.h"
+ 270              		.file 11 "Generated_Source\\PSoC5/UART_1.h"
+ 271              		.file 12 "Generated_Source\\PSoC5/LED_1.h"
+ 272              		.section	.debug_info,"",%progbits
+ 273              	.Ldebug_info0:
+ 274 0000 6D040000 		.4byte	0x46d
+ 275 0004 0400     		.2byte	0x4
+ 276 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 277 000a 04       		.byte	0x4
+ 278 000b 01       		.uleb128 0x1
+ 279 000c A5020000 		.4byte	.LASF60
+ 280 0010 0C       		.byte	0xc
+ 281 0011 26020000 		.4byte	.LASF61
+ 282 0015 3D030000 		.4byte	.LASF62
+ 283 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 284 001d 00000000 		.4byte	0
+ 285 0021 00000000 		.4byte	.Ldebug_line0
+ 286 0025 02       		.uleb128 0x2
+ 287 0026 E8010000 		.4byte	.LASF0
+ 288 002a 02       		.byte	0x2
+ 289 002b 1B       		.byte	0x1b
+ 290 002c 30000000 		.4byte	0x30
+ 291 0030 03       		.uleb128 0x3
+ 292 0031 01       		.byte	0x1
+ 293 0032 06       		.byte	0x6
+ 294 0033 6D010000 		.4byte	.LASF2
+ 295 0037 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 8
+
+
+ 296 0038 FE000000 		.4byte	.LASF1
+ 297 003c 02       		.byte	0x2
+ 298 003d 1D       		.byte	0x1d
+ 299 003e 42000000 		.4byte	0x42
+ 300 0042 03       		.uleb128 0x3
+ 301 0043 01       		.byte	0x1
+ 302 0044 08       		.byte	0x8
+ 303 0045 4E010000 		.4byte	.LASF3
+ 304 0049 03       		.uleb128 0x3
+ 305 004a 02       		.byte	0x2
+ 306 004b 05       		.byte	0x5
+ 307 004c 3D000000 		.4byte	.LASF4
+ 308 0050 02       		.uleb128 0x2
+ 309 0051 6F000000 		.4byte	.LASF5
+ 310 0055 02       		.byte	0x2
+ 311 0056 2B       		.byte	0x2b
+ 312 0057 5B000000 		.4byte	0x5b
+ 313 005b 03       		.uleb128 0x3
+ 314 005c 02       		.byte	0x2
+ 315 005d 07       		.byte	0x7
+ 316 005e D5010000 		.4byte	.LASF6
+ 317 0062 02       		.uleb128 0x2
+ 318 0063 5E020000 		.4byte	.LASF7
+ 319 0067 02       		.byte	0x2
+ 320 0068 3F       		.byte	0x3f
+ 321 0069 6D000000 		.4byte	0x6d
+ 322 006d 03       		.uleb128 0x3
+ 323 006e 04       		.byte	0x4
+ 324 006f 05       		.byte	0x5
+ 325 0070 E1000000 		.4byte	.LASF8
+ 326 0074 03       		.uleb128 0x3
+ 327 0075 04       		.byte	0x4
+ 328 0076 07       		.byte	0x7
+ 329 0077 B1010000 		.4byte	.LASF9
+ 330 007b 03       		.uleb128 0x3
+ 331 007c 08       		.byte	0x8
+ 332 007d 05       		.byte	0x5
+ 333 007e BE000000 		.4byte	.LASF10
+ 334 0082 03       		.uleb128 0x3
+ 335 0083 08       		.byte	0x8
+ 336 0084 07       		.byte	0x7
+ 337 0085 79010000 		.4byte	.LASF11
+ 338 0089 04       		.uleb128 0x4
+ 339 008a 04       		.byte	0x4
+ 340 008b 05       		.byte	0x5
+ 341 008c 696E7400 		.ascii	"int\000"
+ 342 0090 03       		.uleb128 0x3
+ 343 0091 04       		.byte	0x4
+ 344 0092 07       		.byte	0x7
+ 345 0093 9B010000 		.4byte	.LASF12
+ 346 0097 02       		.uleb128 0x2
+ 347 0098 2A000000 		.4byte	.LASF13
+ 348 009c 03       		.byte	0x3
+ 349 009d 14       		.byte	0x14
+ 350 009e 25000000 		.4byte	0x25
+ 351 00a2 02       		.uleb128 0x2
+ 352 00a3 68020000 		.4byte	.LASF14
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 9
+
+
+ 353 00a7 03       		.byte	0x3
+ 354 00a8 18       		.byte	0x18
+ 355 00a9 37000000 		.4byte	0x37
+ 356 00ad 02       		.uleb128 0x2
+ 357 00ae A8010000 		.4byte	.LASF15
+ 358 00b2 03       		.byte	0x3
+ 359 00b3 24       		.byte	0x24
+ 360 00b4 50000000 		.4byte	0x50
+ 361 00b8 02       		.uleb128 0x2
+ 362 00b9 12020000 		.4byte	.LASF16
+ 363 00bd 03       		.byte	0x3
+ 364 00be 2C       		.byte	0x2c
+ 365 00bf 62000000 		.4byte	0x62
+ 366 00c3 03       		.uleb128 0x3
+ 367 00c4 04       		.byte	0x4
+ 368 00c5 04       		.byte	0x4
+ 369 00c6 AE000000 		.4byte	.LASF17
+ 370 00ca 03       		.uleb128 0x3
+ 371 00cb 08       		.byte	0x8
+ 372 00cc 04       		.byte	0x4
+ 373 00cd 3B020000 		.4byte	.LASF18
+ 374 00d1 03       		.uleb128 0x3
+ 375 00d2 01       		.byte	0x1
+ 376 00d3 08       		.byte	0x8
+ 377 00d4 06020000 		.4byte	.LASF19
+ 378 00d8 03       		.uleb128 0x3
+ 379 00d9 08       		.byte	0x8
+ 380 00da 04       		.byte	0x4
+ 381 00db 38010000 		.4byte	.LASF20
+ 382 00df 03       		.uleb128 0x3
+ 383 00e0 04       		.byte	0x4
+ 384 00e1 07       		.byte	0x7
+ 385 00e2 47000000 		.4byte	.LASF21
+ 386 00e6 05       		.uleb128 0x5
+ 387 00e7 5C000000 		.4byte	.LASF63
+ 388 00eb 01       		.byte	0x1
+ 389 00ec 12       		.byte	0x12
+ 390 00ed 89000000 		.4byte	0x89
+ 391 00f1 00000000 		.4byte	.LFB64
+ 392 00f5 44010000 		.4byte	.LFE64-.LFB64
+ 393 00f9 01       		.uleb128 0x1
+ 394 00fa 9C       		.byte	0x9c
+ 395 00fb 53020000 		.4byte	0x253
+ 396 00ff 06       		.uleb128 0x6
+ 397 0100 CF010000 		.4byte	.LASF22
+ 398 0104 01       		.byte	0x1
+ 399 0105 28       		.byte	0x28
+ 400 0106 2A010000 		.4byte	.L3
+ 401 010a 06       		.uleb128 0x6
+ 402 010b 55020000 		.4byte	.LASF23
+ 403 010f 01       		.byte	0x1
+ 404 0110 36       		.byte	0x36
+ 405 0111 F6000000 		.4byte	.L5
+ 406 0115 07       		.uleb128 0x7
+ 407 0116 08000000 		.4byte	.LVL0
+ 408 011a 94030000 		.4byte	0x394
+ 409 011e 07       		.uleb128 0x7
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 10
+
+
+ 410 011f 0C000000 		.4byte	.LVL1
+ 411 0123 9F030000 		.4byte	0x39f
+ 412 0127 07       		.uleb128 0x7
+ 413 0128 10000000 		.4byte	.LVL2
+ 414 012c AA030000 		.4byte	0x3aa
+ 415 0130 07       		.uleb128 0x7
+ 416 0131 14000000 		.4byte	.LVL3
+ 417 0135 B5030000 		.4byte	0x3b5
+ 418 0139 07       		.uleb128 0x7
+ 419 013a 18000000 		.4byte	.LVL4
+ 420 013e C0030000 		.4byte	0x3c0
+ 421 0142 07       		.uleb128 0x7
+ 422 0143 1C000000 		.4byte	.LVL5
+ 423 0147 CB030000 		.4byte	0x3cb
+ 424 014b 07       		.uleb128 0x7
+ 425 014c 2C000000 		.4byte	.LVL6
+ 426 0150 D6030000 		.4byte	0x3d6
+ 427 0154 07       		.uleb128 0x7
+ 428 0155 30000000 		.4byte	.LVL7
+ 429 0159 E1030000 		.4byte	0x3e1
+ 430 015d 08       		.uleb128 0x8
+ 431 015e 4E000000 		.4byte	.LVL8
+ 432 0162 EC030000 		.4byte	0x3ec
+ 433 0166 72010000 		.4byte	0x172
+ 434 016a 09       		.uleb128 0x9
+ 435 016b 01       		.uleb128 0x1
+ 436 016c 50       		.byte	0x50
+ 437 016d 03       		.uleb128 0x3
+ 438 016e 0A       		.byte	0xa
+ 439 016f 2823     		.2byte	0x2328
+ 440 0171 00       		.byte	0
+ 441 0172 07       		.uleb128 0x7
+ 442 0173 52000000 		.4byte	.LVL9
+ 443 0177 E1030000 		.4byte	0x3e1
+ 444 017b 07       		.uleb128 0x7
+ 445 017c 70000000 		.4byte	.LVL10
+ 446 0180 F7030000 		.4byte	0x3f7
+ 447 0184 08       		.uleb128 0x8
+ 448 0185 76000000 		.4byte	.LVL11
+ 449 0189 02040000 		.4byte	0x402
+ 450 018d 98010000 		.4byte	0x198
+ 451 0191 09       		.uleb128 0x9
+ 452 0192 01       		.uleb128 0x1
+ 453 0193 50       		.byte	0x50
+ 454 0194 02       		.uleb128 0x2
+ 455 0195 08       		.byte	0x8
+ 456 0196 65       		.byte	0x65
+ 457 0197 00       		.byte	0
+ 458 0198 07       		.uleb128 0x7
+ 459 0199 7C000000 		.4byte	.LVL12
+ 460 019d 0D040000 		.4byte	0x40d
+ 461 01a1 07       		.uleb128 0x7
+ 462 01a2 92000000 		.4byte	.LVL13
+ 463 01a6 18040000 		.4byte	0x418
+ 464 01aa 07       		.uleb128 0x7
+ 465 01ab 96000000 		.4byte	.LVL14
+ 466 01af 23040000 		.4byte	0x423
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 11
+
+
+ 467 01b3 07       		.uleb128 0x7
+ 468 01b4 9A000000 		.4byte	.LVL15
+ 469 01b8 2E040000 		.4byte	0x42e
+ 470 01bc 07       		.uleb128 0x7
+ 471 01bd AC000000 		.4byte	.LVL16
+ 472 01c1 39040000 		.4byte	0x439
+ 473 01c5 07       		.uleb128 0x7
+ 474 01c6 B4000000 		.4byte	.LVL17
+ 475 01ca 39040000 		.4byte	0x439
+ 476 01ce 07       		.uleb128 0x7
+ 477 01cf BE000000 		.4byte	.LVL18
+ 478 01d3 39040000 		.4byte	0x439
+ 479 01d7 08       		.uleb128 0x8
+ 480 01d8 CA000000 		.4byte	.LVL19
+ 481 01dc 02040000 		.4byte	0x402
+ 482 01e0 EB010000 		.4byte	0x1eb
+ 483 01e4 09       		.uleb128 0x9
+ 484 01e5 01       		.uleb128 0x1
+ 485 01e6 50       		.byte	0x50
+ 486 01e7 02       		.uleb128 0x2
+ 487 01e8 08       		.byte	0x8
+ 488 01e9 69       		.byte	0x69
+ 489 01ea 00       		.byte	0
+ 490 01eb 08       		.uleb128 0x8
+ 491 01ec D0000000 		.4byte	.LVL20
+ 492 01f0 44040000 		.4byte	0x444
+ 493 01f4 FE010000 		.4byte	0x1fe
+ 494 01f8 09       		.uleb128 0x9
+ 495 01f9 01       		.uleb128 0x1
+ 496 01fa 50       		.byte	0x50
+ 497 01fb 01       		.uleb128 0x1
+ 498 01fc 31       		.byte	0x31
+ 499 01fd 00       		.byte	0
+ 500 01fe 07       		.uleb128 0x7
+ 501 01ff D4000000 		.4byte	.LVL21
+ 502 0203 2E040000 		.4byte	0x42e
+ 503 0207 08       		.uleb128 0x8
+ 504 0208 E8000000 		.4byte	.LVL22
+ 505 020c 44040000 		.4byte	0x444
+ 506 0210 1A020000 		.4byte	0x21a
+ 507 0214 09       		.uleb128 0x9
+ 508 0215 01       		.uleb128 0x1
+ 509 0216 50       		.byte	0x50
+ 510 0217 01       		.uleb128 0x1
+ 511 0218 30       		.byte	0x30
+ 512 0219 00       		.byte	0
+ 513 021a 07       		.uleb128 0x7
+ 514 021b FC000000 		.4byte	.LVL23
+ 515 021f 39040000 		.4byte	0x439
+ 516 0223 08       		.uleb128 0x8
+ 517 0224 06010000 		.4byte	.LVL24
+ 518 0228 02040000 		.4byte	0x402
+ 519 022c 37020000 		.4byte	0x237
+ 520 0230 09       		.uleb128 0x9
+ 521 0231 01       		.uleb128 0x1
+ 522 0232 50       		.byte	0x50
+ 523 0233 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 12
+
+
+ 524 0234 08       		.byte	0x8
+ 525 0235 6E       		.byte	0x6e
+ 526 0236 00       		.byte	0
+ 527 0237 07       		.uleb128 0x7
+ 528 0238 0E010000 		.4byte	.LVL25
+ 529 023c 4F040000 		.4byte	0x44f
+ 530 0240 07       		.uleb128 0x7
+ 531 0241 16010000 		.4byte	.LVL26
+ 532 0245 5A040000 		.4byte	0x45a
+ 533 0249 07       		.uleb128 0x7
+ 534 024a 20010000 		.4byte	.LVL27
+ 535 024e 65040000 		.4byte	0x465
+ 536 0252 00       		.byte	0
+ 537 0253 0A       		.uleb128 0xa
+ 538 0254 98020000 		.4byte	.LASF24
+ 539 0258 04       		.byte	0x4
+ 540 0259 1207     		.2byte	0x712
+ 541 025b 5F020000 		.4byte	0x25f
+ 542 025f 0B       		.uleb128 0xb
+ 543 0260 B8000000 		.4byte	0xb8
+ 544 0264 0C       		.uleb128 0xc
+ 545 0265 61000000 		.4byte	.LASF25
+ 546 0269 05       		.byte	0x5
+ 547 026a 23       		.byte	0x23
+ 548 026b A2000000 		.4byte	0xa2
+ 549 026f 05       		.uleb128 0x5
+ 550 0270 03       		.byte	0x3
+ 551 0271 00000000 		.4byte	currentSquare
+ 552 0275 0C       		.uleb128 0xc
+ 553 0276 2F010000 		.4byte	.LASF26
+ 554 027a 05       		.byte	0x5
+ 555 027b 24       		.byte	0x24
+ 556 027c A2000000 		.4byte	0xa2
+ 557 0280 05       		.uleb128 0x5
+ 558 0281 03       		.byte	0x3
+ 559 0282 00000000 		.4byte	stepCase
+ 560 0286 0D       		.uleb128 0xd
+ 561 0287 A2000000 		.4byte	0xa2
+ 562 028b 96020000 		.4byte	0x296
+ 563 028f 0E       		.uleb128 0xe
+ 564 0290 DF000000 		.4byte	0xdf
+ 565 0294 3F       		.byte	0x3f
+ 566 0295 00       		.byte	0
+ 567 0296 0C       		.uleb128 0xc
+ 568 0297 16010000 		.4byte	.LASF27
+ 569 029b 06       		.byte	0x6
+ 570 029c 12       		.byte	0x12
+ 571 029d 86020000 		.4byte	0x286
+ 572 02a1 05       		.uleb128 0x5
+ 573 02a2 03       		.byte	0x3
+ 574 02a3 00000000 		.4byte	ledArray
+ 575 02a7 0D       		.uleb128 0xd
+ 576 02a8 A2000000 		.4byte	0xa2
+ 577 02ac B7020000 		.4byte	0x2b7
+ 578 02b0 0E       		.uleb128 0xe
+ 579 02b1 DF000000 		.4byte	0xdf
+ 580 02b5 BF       		.byte	0xbf
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 13
+
+
+ 581 02b6 00       		.byte	0
+ 582 02b7 0C       		.uleb128 0xc
+ 583 02b8 7A000000 		.4byte	.LASF28
+ 584 02bc 06       		.byte	0x6
+ 585 02bd 13       		.byte	0x13
+ 586 02be A7020000 		.4byte	0x2a7
+ 587 02c2 05       		.uleb128 0x5
+ 588 02c3 03       		.byte	0x3
+ 589 02c4 00000000 		.4byte	ledData
+ 590 02c8 0C       		.uleb128 0xc
+ 591 02c9 64010000 		.4byte	.LASF29
+ 592 02cd 06       		.byte	0x6
+ 593 02ce 14       		.byte	0x14
+ 594 02cf 97000000 		.4byte	0x97
+ 595 02d3 05       		.uleb128 0x5
+ 596 02d4 03       		.byte	0x3
+ 597 02d5 00000000 		.4byte	bitIndex
+ 598 02d9 0C       		.uleb128 0xc
+ 599 02da 33030000 		.4byte	.LASF30
+ 600 02de 06       		.byte	0x6
+ 601 02df 15       		.byte	0x15
+ 602 02e0 AD000000 		.4byte	0xad
+ 603 02e4 05       		.uleb128 0x5
+ 604 02e5 03       		.byte	0x3
+ 605 02e6 00000000 		.4byte	byteIndex
+ 606 02ea 0F       		.uleb128 0xf
+ 607 02eb 656E6400 		.ascii	"end\000"
+ 608 02ef 06       		.byte	0x6
+ 609 02f0 16       		.byte	0x16
+ 610 02f1 89000000 		.4byte	0x89
+ 611 02f5 05       		.uleb128 0x5
+ 612 02f6 03       		.byte	0x3
+ 613 02f7 00000000 		.4byte	end
+ 614 02fb 0C       		.uleb128 0xc
+ 615 02fc B4000000 		.4byte	.LASF31
+ 616 0300 07       		.byte	0x7
+ 617 0301 16       		.byte	0x16
+ 618 0302 A2000000 		.4byte	0xa2
+ 619 0306 05       		.uleb128 0x5
+ 620 0307 03       		.byte	0x3
+ 621 0308 00000000 		.4byte	startChar
+ 622 030c 0C       		.uleb128 0xc
+ 623 030d 1F000000 		.4byte	.LASF32
+ 624 0311 07       		.byte	0x7
+ 625 0312 17       		.byte	0x17
+ 626 0313 86020000 		.4byte	0x286
+ 627 0317 05       		.uleb128 0x5
+ 628 0318 03       		.byte	0x3
+ 629 0319 00000000 		.4byte	legalMoves
+ 630 031d 0C       		.uleb128 0xc
+ 631 031e 08010000 		.4byte	.LASF33
+ 632 0322 08       		.byte	0x8
+ 633 0323 16       		.byte	0x16
+ 634 0324 86020000 		.4byte	0x286
+ 635 0328 05       		.uleb128 0x5
+ 636 0329 03       		.byte	0x3
+ 637 032a 00000000 		.4byte	lastSquareReg
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 14
+
+
+ 638 032e 0C       		.uleb128 0xc
+ 639 032f CC000000 		.4byte	.LASF34
+ 640 0333 08       		.byte	0x8
+ 641 0334 17       		.byte	0x17
+ 642 0335 86020000 		.4byte	0x286
+ 643 0339 05       		.uleb128 0x5
+ 644 033a 03       		.byte	0x3
+ 645 033b 00000000 		.4byte	squareReg
+ 646 033f 0C       		.uleb128 0xc
+ 647 0340 F1010000 		.4byte	.LASF35
+ 648 0344 08       		.byte	0x8
+ 649 0345 18       		.byte	0x18
+ 650 0346 A2000000 		.4byte	0xa2
+ 651 034a 05       		.uleb128 0x5
+ 652 034b 03       		.byte	0x3
+ 653 034c 00000000 		.4byte	pieceLifted
+ 654 0350 0C       		.uleb128 0xc
+ 655 0351 1F010000 		.4byte	.LASF36
+ 656 0355 08       		.byte	0x8
+ 657 0356 19       		.byte	0x19
+ 658 0357 A2000000 		.4byte	0xa2
+ 659 035b 05       		.uleb128 0x5
+ 660 035c 03       		.byte	0x3
+ 661 035d 00000000 		.4byte	deadPieceLifted
+ 662 0361 0C       		.uleb128 0xc
+ 663 0362 0B020000 		.4byte	.LASF37
+ 664 0366 08       		.byte	0x8
+ 665 0367 1A       		.byte	0x1a
+ 666 0368 97000000 		.4byte	0x97
+ 667 036c 05       		.uleb128 0x5
+ 668 036d 03       		.byte	0x3
+ 669 036e 00000000 		.4byte	newPos
+ 670 0372 0C       		.uleb128 0xc
+ 671 0373 17000000 		.4byte	.LASF38
+ 672 0377 08       		.byte	0x8
+ 673 0378 1B       		.byte	0x1b
+ 674 0379 97000000 		.4byte	0x97
+ 675 037d 05       		.uleb128 0x5
+ 676 037e 03       		.byte	0x3
+ 677 037f 00000000 		.4byte	liftPos
+ 678 0383 0C       		.uleb128 0xc
+ 679 0384 C3010000 		.4byte	.LASF39
+ 680 0388 08       		.byte	0x8
+ 681 0389 1C       		.byte	0x1c
+ 682 038a 97000000 		.4byte	0x97
+ 683 038e 05       		.uleb128 0x5
+ 684 038f 03       		.byte	0x3
+ 685 0390 00000000 		.4byte	deadLiftPos
+ 686 0394 10       		.uleb128 0x10
+ 687 0395 FD010000 		.4byte	.LASF40
+ 688 0399 FD010000 		.4byte	.LASF40
+ 689 039d 07       		.byte	0x7
+ 690 039e 1B       		.byte	0x1b
+ 691 039f 10       		.uleb128 0x10
+ 692 03a0 5C010000 		.4byte	.LASF41
+ 693 03a4 5C010000 		.4byte	.LASF41
+ 694 03a8 06       		.byte	0x6
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 15
+
+
+ 695 03a9 1E       		.byte	0x1e
+ 696 03aa 10       		.uleb128 0x10
+ 697 03ab 2D020000 		.4byte	.LASF42
+ 698 03af 2D020000 		.4byte	.LASF42
+ 699 03b3 05       		.byte	0x5
+ 700 03b4 1E       		.byte	0x1e
+ 701 03b5 10       		.uleb128 0x10
+ 702 03b6 00000000 		.4byte	.LASF43
+ 703 03ba 00000000 		.4byte	.LASF43
+ 704 03be 08       		.byte	0x8
+ 705 03bf 1F       		.byte	0x1f
+ 706 03c0 10       		.uleb128 0x10
+ 707 03c1 8E020000 		.4byte	.LASF44
+ 708 03c5 8E020000 		.4byte	.LASF44
+ 709 03c9 09       		.byte	0x9
+ 710 03ca 17       		.byte	0x17
+ 711 03cb 10       		.uleb128 0x10
+ 712 03cc 70020000 		.4byte	.LASF45
+ 713 03d0 70020000 		.4byte	.LASF45
+ 714 03d4 08       		.byte	0x8
+ 715 03d5 20       		.byte	0x20
+ 716 03d6 10       		.uleb128 0x10
+ 717 03d7 1A020000 		.4byte	.LASF46
+ 718 03db 1A020000 		.4byte	.LASF46
+ 719 03df 07       		.byte	0x7
+ 720 03e0 1D       		.byte	0x1d
+ 721 03e1 10       		.uleb128 0x10
+ 722 03e2 90010000 		.4byte	.LASF47
+ 723 03e6 90010000 		.4byte	.LASF47
+ 724 03ea 08       		.byte	0x8
+ 725 03eb 21       		.byte	0x21
+ 726 03ec 10       		.uleb128 0x10
+ 727 03ed 44010000 		.4byte	.LASF48
+ 728 03f1 44010000 		.4byte	.LASF48
+ 729 03f5 0A       		.byte	0xa
+ 730 03f6 77       		.byte	0x77
+ 731 03f7 10       		.uleb128 0x10
+ 732 03f8 31000000 		.4byte	.LASF49
+ 733 03fc 31000000 		.4byte	.LASF49
+ 734 0400 06       		.byte	0x6
+ 735 0401 1B       		.byte	0x1b
+ 736 0402 10       		.uleb128 0x10
+ 737 0403 9F000000 		.4byte	.LASF50
+ 738 0407 9F000000 		.4byte	.LASF50
+ 739 040b 0B       		.byte	0xb
+ 740 040c 8A       		.byte	0x8a
+ 741 040d 10       		.uleb128 0x10
+ 742 040e 82000000 		.4byte	.LASF51
+ 743 0412 82000000 		.4byte	.LASF51
+ 744 0416 08       		.byte	0x8
+ 745 0417 22       		.byte	0x22
+ 746 0418 10       		.uleb128 0x10
+ 747 0419 7F020000 		.4byte	.LASF52
+ 748 041d 7F020000 		.4byte	.LASF52
+ 749 0421 06       		.byte	0x6
+ 750 0422 1C       		.byte	0x1c
+ 751 0423 10       		.uleb128 0x10
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 16
+
+
+ 752 0424 EA000000 		.4byte	.LASF53
+ 753 0428 EA000000 		.4byte	.LASF53
+ 754 042c 08       		.byte	0x8
+ 755 042d 24       		.byte	0x24
+ 756 042e 10       		.uleb128 0x10
+ 757 042f D6000000 		.4byte	.LASF54
+ 758 0433 D6000000 		.4byte	.LASF54
+ 759 0437 08       		.byte	0x8
+ 760 0438 25       		.byte	0x25
+ 761 0439 10       		.uleb128 0x10
+ 762 043a 0B000000 		.4byte	.LASF55
+ 763 043e 0B000000 		.4byte	.LASF55
+ 764 0442 08       		.byte	0x8
+ 765 0443 23       		.byte	0x23
+ 766 0444 10       		.uleb128 0x10
+ 767 0445 50000000 		.4byte	.LASF56
+ 768 0449 50000000 		.4byte	.LASF56
+ 769 044d 0C       		.byte	0xc
+ 770 044e 26       		.byte	0x26
+ 771 044f 10       		.uleb128 0x10
+ 772 0450 42020000 		.4byte	.LASF57
+ 773 0454 42020000 		.4byte	.LASF57
+ 774 0458 0B       		.byte	0xb
+ 775 0459 88       		.byte	0x88
+ 776 045a 10       		.uleb128 0x10
+ 777 045b 8F000000 		.4byte	.LASF58
+ 778 045f 8F000000 		.4byte	.LASF58
+ 779 0463 06       		.byte	0x6
+ 780 0464 1D       		.byte	0x1d
+ 781 0465 10       		.uleb128 0x10
+ 782 0466 78030000 		.4byte	.LASF59
+ 783 046a 78030000 		.4byte	.LASF59
+ 784 046e 05       		.byte	0x5
+ 785 046f 18       		.byte	0x18
+ 786 0470 00       		.byte	0
+ 787              		.section	.debug_abbrev,"",%progbits
+ 788              	.Ldebug_abbrev0:
+ 789 0000 01       		.uleb128 0x1
+ 790 0001 11       		.uleb128 0x11
+ 791 0002 01       		.byte	0x1
+ 792 0003 25       		.uleb128 0x25
+ 793 0004 0E       		.uleb128 0xe
+ 794 0005 13       		.uleb128 0x13
+ 795 0006 0B       		.uleb128 0xb
+ 796 0007 03       		.uleb128 0x3
+ 797 0008 0E       		.uleb128 0xe
+ 798 0009 1B       		.uleb128 0x1b
+ 799 000a 0E       		.uleb128 0xe
+ 800 000b 55       		.uleb128 0x55
+ 801 000c 17       		.uleb128 0x17
+ 802 000d 11       		.uleb128 0x11
+ 803 000e 01       		.uleb128 0x1
+ 804 000f 10       		.uleb128 0x10
+ 805 0010 17       		.uleb128 0x17
+ 806 0011 00       		.byte	0
+ 807 0012 00       		.byte	0
+ 808 0013 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 17
+
+
+ 809 0014 16       		.uleb128 0x16
+ 810 0015 00       		.byte	0
+ 811 0016 03       		.uleb128 0x3
+ 812 0017 0E       		.uleb128 0xe
+ 813 0018 3A       		.uleb128 0x3a
+ 814 0019 0B       		.uleb128 0xb
+ 815 001a 3B       		.uleb128 0x3b
+ 816 001b 0B       		.uleb128 0xb
+ 817 001c 49       		.uleb128 0x49
+ 818 001d 13       		.uleb128 0x13
+ 819 001e 00       		.byte	0
+ 820 001f 00       		.byte	0
+ 821 0020 03       		.uleb128 0x3
+ 822 0021 24       		.uleb128 0x24
+ 823 0022 00       		.byte	0
+ 824 0023 0B       		.uleb128 0xb
+ 825 0024 0B       		.uleb128 0xb
+ 826 0025 3E       		.uleb128 0x3e
+ 827 0026 0B       		.uleb128 0xb
+ 828 0027 03       		.uleb128 0x3
+ 829 0028 0E       		.uleb128 0xe
+ 830 0029 00       		.byte	0
+ 831 002a 00       		.byte	0
+ 832 002b 04       		.uleb128 0x4
+ 833 002c 24       		.uleb128 0x24
+ 834 002d 00       		.byte	0
+ 835 002e 0B       		.uleb128 0xb
+ 836 002f 0B       		.uleb128 0xb
+ 837 0030 3E       		.uleb128 0x3e
+ 838 0031 0B       		.uleb128 0xb
+ 839 0032 03       		.uleb128 0x3
+ 840 0033 08       		.uleb128 0x8
+ 841 0034 00       		.byte	0
+ 842 0035 00       		.byte	0
+ 843 0036 05       		.uleb128 0x5
+ 844 0037 2E       		.uleb128 0x2e
+ 845 0038 01       		.byte	0x1
+ 846 0039 3F       		.uleb128 0x3f
+ 847 003a 19       		.uleb128 0x19
+ 848 003b 03       		.uleb128 0x3
+ 849 003c 0E       		.uleb128 0xe
+ 850 003d 3A       		.uleb128 0x3a
+ 851 003e 0B       		.uleb128 0xb
+ 852 003f 3B       		.uleb128 0x3b
+ 853 0040 0B       		.uleb128 0xb
+ 854 0041 27       		.uleb128 0x27
+ 855 0042 19       		.uleb128 0x19
+ 856 0043 49       		.uleb128 0x49
+ 857 0044 13       		.uleb128 0x13
+ 858 0045 8701     		.uleb128 0x87
+ 859 0047 19       		.uleb128 0x19
+ 860 0048 11       		.uleb128 0x11
+ 861 0049 01       		.uleb128 0x1
+ 862 004a 12       		.uleb128 0x12
+ 863 004b 06       		.uleb128 0x6
+ 864 004c 40       		.uleb128 0x40
+ 865 004d 18       		.uleb128 0x18
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 18
+
+
+ 866 004e 9742     		.uleb128 0x2117
+ 867 0050 19       		.uleb128 0x19
+ 868 0051 01       		.uleb128 0x1
+ 869 0052 13       		.uleb128 0x13
+ 870 0053 00       		.byte	0
+ 871 0054 00       		.byte	0
+ 872 0055 06       		.uleb128 0x6
+ 873 0056 0A       		.uleb128 0xa
+ 874 0057 00       		.byte	0
+ 875 0058 03       		.uleb128 0x3
+ 876 0059 0E       		.uleb128 0xe
+ 877 005a 3A       		.uleb128 0x3a
+ 878 005b 0B       		.uleb128 0xb
+ 879 005c 3B       		.uleb128 0x3b
+ 880 005d 0B       		.uleb128 0xb
+ 881 005e 11       		.uleb128 0x11
+ 882 005f 01       		.uleb128 0x1
+ 883 0060 00       		.byte	0
+ 884 0061 00       		.byte	0
+ 885 0062 07       		.uleb128 0x7
+ 886 0063 898201   		.uleb128 0x4109
+ 887 0066 00       		.byte	0
+ 888 0067 11       		.uleb128 0x11
+ 889 0068 01       		.uleb128 0x1
+ 890 0069 31       		.uleb128 0x31
+ 891 006a 13       		.uleb128 0x13
+ 892 006b 00       		.byte	0
+ 893 006c 00       		.byte	0
+ 894 006d 08       		.uleb128 0x8
+ 895 006e 898201   		.uleb128 0x4109
+ 896 0071 01       		.byte	0x1
+ 897 0072 11       		.uleb128 0x11
+ 898 0073 01       		.uleb128 0x1
+ 899 0074 31       		.uleb128 0x31
+ 900 0075 13       		.uleb128 0x13
+ 901 0076 01       		.uleb128 0x1
+ 902 0077 13       		.uleb128 0x13
+ 903 0078 00       		.byte	0
+ 904 0079 00       		.byte	0
+ 905 007a 09       		.uleb128 0x9
+ 906 007b 8A8201   		.uleb128 0x410a
+ 907 007e 00       		.byte	0
+ 908 007f 02       		.uleb128 0x2
+ 909 0080 18       		.uleb128 0x18
+ 910 0081 9142     		.uleb128 0x2111
+ 911 0083 18       		.uleb128 0x18
+ 912 0084 00       		.byte	0
+ 913 0085 00       		.byte	0
+ 914 0086 0A       		.uleb128 0xa
+ 915 0087 34       		.uleb128 0x34
+ 916 0088 00       		.byte	0
+ 917 0089 03       		.uleb128 0x3
+ 918 008a 0E       		.uleb128 0xe
+ 919 008b 3A       		.uleb128 0x3a
+ 920 008c 0B       		.uleb128 0xb
+ 921 008d 3B       		.uleb128 0x3b
+ 922 008e 05       		.uleb128 0x5
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 19
+
+
+ 923 008f 49       		.uleb128 0x49
+ 924 0090 13       		.uleb128 0x13
+ 925 0091 3F       		.uleb128 0x3f
+ 926 0092 19       		.uleb128 0x19
+ 927 0093 3C       		.uleb128 0x3c
+ 928 0094 19       		.uleb128 0x19
+ 929 0095 00       		.byte	0
+ 930 0096 00       		.byte	0
+ 931 0097 0B       		.uleb128 0xb
+ 932 0098 35       		.uleb128 0x35
+ 933 0099 00       		.byte	0
+ 934 009a 49       		.uleb128 0x49
+ 935 009b 13       		.uleb128 0x13
+ 936 009c 00       		.byte	0
+ 937 009d 00       		.byte	0
+ 938 009e 0C       		.uleb128 0xc
+ 939 009f 34       		.uleb128 0x34
+ 940 00a0 00       		.byte	0
+ 941 00a1 03       		.uleb128 0x3
+ 942 00a2 0E       		.uleb128 0xe
+ 943 00a3 3A       		.uleb128 0x3a
+ 944 00a4 0B       		.uleb128 0xb
+ 945 00a5 3B       		.uleb128 0x3b
+ 946 00a6 0B       		.uleb128 0xb
+ 947 00a7 49       		.uleb128 0x49
+ 948 00a8 13       		.uleb128 0x13
+ 949 00a9 3F       		.uleb128 0x3f
+ 950 00aa 19       		.uleb128 0x19
+ 951 00ab 02       		.uleb128 0x2
+ 952 00ac 18       		.uleb128 0x18
+ 953 00ad 00       		.byte	0
+ 954 00ae 00       		.byte	0
+ 955 00af 0D       		.uleb128 0xd
+ 956 00b0 01       		.uleb128 0x1
+ 957 00b1 01       		.byte	0x1
+ 958 00b2 49       		.uleb128 0x49
+ 959 00b3 13       		.uleb128 0x13
+ 960 00b4 01       		.uleb128 0x1
+ 961 00b5 13       		.uleb128 0x13
+ 962 00b6 00       		.byte	0
+ 963 00b7 00       		.byte	0
+ 964 00b8 0E       		.uleb128 0xe
+ 965 00b9 21       		.uleb128 0x21
+ 966 00ba 00       		.byte	0
+ 967 00bb 49       		.uleb128 0x49
+ 968 00bc 13       		.uleb128 0x13
+ 969 00bd 2F       		.uleb128 0x2f
+ 970 00be 0B       		.uleb128 0xb
+ 971 00bf 00       		.byte	0
+ 972 00c0 00       		.byte	0
+ 973 00c1 0F       		.uleb128 0xf
+ 974 00c2 34       		.uleb128 0x34
+ 975 00c3 00       		.byte	0
+ 976 00c4 03       		.uleb128 0x3
+ 977 00c5 08       		.uleb128 0x8
+ 978 00c6 3A       		.uleb128 0x3a
+ 979 00c7 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 20
+
+
+ 980 00c8 3B       		.uleb128 0x3b
+ 981 00c9 0B       		.uleb128 0xb
+ 982 00ca 49       		.uleb128 0x49
+ 983 00cb 13       		.uleb128 0x13
+ 984 00cc 3F       		.uleb128 0x3f
+ 985 00cd 19       		.uleb128 0x19
+ 986 00ce 02       		.uleb128 0x2
+ 987 00cf 18       		.uleb128 0x18
+ 988 00d0 00       		.byte	0
+ 989 00d1 00       		.byte	0
+ 990 00d2 10       		.uleb128 0x10
+ 991 00d3 2E       		.uleb128 0x2e
+ 992 00d4 00       		.byte	0
+ 993 00d5 3F       		.uleb128 0x3f
+ 994 00d6 19       		.uleb128 0x19
+ 995 00d7 3C       		.uleb128 0x3c
+ 996 00d8 19       		.uleb128 0x19
+ 997 00d9 6E       		.uleb128 0x6e
+ 998 00da 0E       		.uleb128 0xe
+ 999 00db 03       		.uleb128 0x3
+ 1000 00dc 0E       		.uleb128 0xe
+ 1001 00dd 3A       		.uleb128 0x3a
+ 1002 00de 0B       		.uleb128 0xb
+ 1003 00df 3B       		.uleb128 0x3b
+ 1004 00e0 0B       		.uleb128 0xb
+ 1005 00e1 00       		.byte	0
+ 1006 00e2 00       		.byte	0
+ 1007 00e3 00       		.byte	0
+ 1008              		.section	.debug_aranges,"",%progbits
+ 1009 0000 1C000000 		.4byte	0x1c
+ 1010 0004 0200     		.2byte	0x2
+ 1011 0006 00000000 		.4byte	.Ldebug_info0
+ 1012 000a 04       		.byte	0x4
+ 1013 000b 00       		.byte	0
+ 1014 000c 0000     		.2byte	0
+ 1015 000e 0000     		.2byte	0
+ 1016 0010 00000000 		.4byte	.LFB64
+ 1017 0014 44010000 		.4byte	.LFE64-.LFB64
+ 1018 0018 00000000 		.4byte	0
+ 1019 001c 00000000 		.4byte	0
+ 1020              		.section	.debug_ranges,"",%progbits
+ 1021              	.Ldebug_ranges0:
+ 1022 0000 00000000 		.4byte	.LFB64
+ 1023 0004 44010000 		.4byte	.LFE64
+ 1024 0008 00000000 		.4byte	0
+ 1025 000c 00000000 		.4byte	0
+ 1026              		.section	.debug_line,"",%progbits
+ 1027              	.Ldebug_line0:
+ 1028 0000 FF010000 		.section	.debug_str,"MS",%progbits,1
+ 1028      0200A101 
+ 1028      00000201 
+ 1028      FB0E0D00 
+ 1028      01010101 
+ 1029              	.LASF43:
+ 1030 0000 696E6974 		.ascii	"initSensor\000"
+ 1030      53656E73 
+ 1030      6F7200
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 21
+
+
+ 1031              	.LASF55:
+ 1032 000b 6E657750 		.ascii	"newPosLegal\000"
+ 1032      6F734C65 
+ 1032      67616C00 
+ 1033              	.LASF38:
+ 1034 0017 6C696674 		.ascii	"liftPos\000"
+ 1034      506F7300 
+ 1035              	.LASF32:
+ 1036 001f 6C656761 		.ascii	"legalMoves\000"
+ 1036      6C4D6F76 
+ 1036      657300
+ 1037              	.LASF13:
+ 1038 002a 696E7438 		.ascii	"int8_t\000"
+ 1038      5F7400
+ 1039              	.LASF49:
+ 1040 0031 7475726E 		.ascii	"turnOffLEDs\000"
+ 1040      4F66664C 
+ 1040      45447300 
+ 1041              	.LASF4:
+ 1042 003d 73686F72 		.ascii	"short int\000"
+ 1042      7420696E 
+ 1042      7400
+ 1043              	.LASF21:
+ 1044 0047 73697A65 		.ascii	"sizetype\000"
+ 1044      74797065 
+ 1044      00
+ 1045              	.LASF56:
+ 1046 0050 4C45445F 		.ascii	"LED_1_Write\000"
+ 1046      315F5772 
+ 1046      69746500 
+ 1047              	.LASF63:
+ 1048 005c 6D61696E 		.ascii	"main\000"
+ 1048      00
+ 1049              	.LASF25:
+ 1050 0061 63757272 		.ascii	"currentSquare\000"
+ 1050      656E7453 
+ 1050      71756172 
+ 1050      6500
+ 1051              	.LASF5:
+ 1052 006f 5F5F7569 		.ascii	"__uint16_t\000"
+ 1052      6E743136 
+ 1052      5F7400
+ 1053              	.LASF28:
+ 1054 007a 6C656444 		.ascii	"ledData\000"
+ 1054      61746100 
+ 1055              	.LASF51:
+ 1056 0082 7363616E 		.ascii	"scan4DeadOpp\000"
+ 1056      34446561 
+ 1056      644F7070 
+ 1056      00
+ 1057              	.LASF58:
+ 1058 008f 6D6F7665 		.ascii	"moveAcceptedLED\000"
+ 1058      41636365 
+ 1058      70746564 
+ 1058      4C454400 
+ 1059              	.LASF50:
+ 1060 009f 55415254 		.ascii	"UART_1_PutChar\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 22
+
+
+ 1060      5F315F50 
+ 1060      75744368 
+ 1060      617200
+ 1061              	.LASF17:
+ 1062 00ae 666C6F61 		.ascii	"float\000"
+ 1062      7400
+ 1063              	.LASF31:
+ 1064 00b4 73746172 		.ascii	"startChar\000"
+ 1064      74436861 
+ 1064      7200
+ 1065              	.LASF10:
+ 1066 00be 6C6F6E67 		.ascii	"long long int\000"
+ 1066      206C6F6E 
+ 1066      6720696E 
+ 1066      7400
+ 1067              	.LASF34:
+ 1068 00cc 73717561 		.ascii	"squareReg\000"
+ 1068      72655265 
+ 1068      6700
+ 1069              	.LASF54:
+ 1070 00d6 73656E73 		.ascii	"sensorScan\000"
+ 1070      6F725363 
+ 1070      616E00
+ 1071              	.LASF8:
+ 1072 00e1 6C6F6E67 		.ascii	"long int\000"
+ 1072      20696E74 
+ 1072      00
+ 1073              	.LASF53:
+ 1074 00ea 75706461 		.ascii	"updateLastSquareReg\000"
+ 1074      74654C61 
+ 1074      73745371 
+ 1074      75617265 
+ 1074      52656700 
+ 1075              	.LASF1:
+ 1076 00fe 5F5F7569 		.ascii	"__uint8_t\000"
+ 1076      6E74385F 
+ 1076      7400
+ 1077              	.LASF33:
+ 1078 0108 6C617374 		.ascii	"lastSquareReg\000"
+ 1078      53717561 
+ 1078      72655265 
+ 1078      6700
+ 1079              	.LASF27:
+ 1080 0116 6C656441 		.ascii	"ledArray\000"
+ 1080      72726179 
+ 1080      00
+ 1081              	.LASF36:
+ 1082 011f 64656164 		.ascii	"deadPieceLifted\000"
+ 1082      50696563 
+ 1082      654C6966 
+ 1082      74656400 
+ 1083              	.LASF26:
+ 1084 012f 73746570 		.ascii	"stepCase\000"
+ 1084      43617365 
+ 1084      00
+ 1085              	.LASF20:
+ 1086 0138 6C6F6E67 		.ascii	"long double\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 23
+
+
+ 1086      20646F75 
+ 1086      626C6500 
+ 1087              	.LASF48:
+ 1088 0144 43794465 		.ascii	"CyDelayUs\000"
+ 1088      6C617955 
+ 1088      7300
+ 1089              	.LASF3:
+ 1090 014e 756E7369 		.ascii	"unsigned char\000"
+ 1090      676E6564 
+ 1090      20636861 
+ 1090      7200
+ 1091              	.LASF41:
+ 1092 015c 696E6974 		.ascii	"initLED\000"
+ 1092      4C454400 
+ 1093              	.LASF29:
+ 1094 0164 62697449 		.ascii	"bitIndex\000"
+ 1094      6E646578 
+ 1094      00
+ 1095              	.LASF2:
+ 1096 016d 7369676E 		.ascii	"signed char\000"
+ 1096      65642063 
+ 1096      68617200 
+ 1097              	.LASF11:
+ 1098 0179 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1098      206C6F6E 
+ 1098      6720756E 
+ 1098      7369676E 
+ 1098      65642069 
+ 1099              	.LASF47:
+ 1100 0190 7363616E 		.ascii	"scanNewPos\000"
+ 1100      4E657750 
+ 1100      6F7300
+ 1101              	.LASF12:
+ 1102 019b 756E7369 		.ascii	"unsigned int\000"
+ 1102      676E6564 
+ 1102      20696E74 
+ 1102      00
+ 1103              	.LASF15:
+ 1104 01a8 75696E74 		.ascii	"uint16_t\000"
+ 1104      31365F74 
+ 1104      00
+ 1105              	.LASF9:
+ 1106 01b1 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1106      20756E73 
+ 1106      69676E65 
+ 1106      6420696E 
+ 1106      7400
+ 1107              	.LASF39:
+ 1108 01c3 64656164 		.ascii	"deadLiftPos\000"
+ 1108      4C696674 
+ 1108      506F7300 
+ 1109              	.LASF22:
+ 1110 01cf 73746172 		.ascii	"start\000"
+ 1110      7400
+ 1111              	.LASF6:
+ 1112 01d5 73686F72 		.ascii	"short unsigned int\000"
+ 1112      7420756E 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 24
+
+
+ 1112      7369676E 
+ 1112      65642069 
+ 1112      6E7400
+ 1113              	.LASF0:
+ 1114 01e8 5F5F696E 		.ascii	"__int8_t\000"
+ 1114      74385F74 
+ 1114      00
+ 1115              	.LASF35:
+ 1116 01f1 70696563 		.ascii	"pieceLifted\000"
+ 1116      654C6966 
+ 1116      74656400 
+ 1117              	.LASF40:
+ 1118 01fd 696E6974 		.ascii	"initUART\000"
+ 1118      55415254 
+ 1118      00
+ 1119              	.LASF19:
+ 1120 0206 63686172 		.ascii	"char\000"
+ 1120      00
+ 1121              	.LASF37:
+ 1122 020b 6E657750 		.ascii	"newPos\000"
+ 1122      6F7300
+ 1123              	.LASF16:
+ 1124 0212 696E7433 		.ascii	"int32_t\000"
+ 1124      325F7400 
+ 1125              	.LASF46:
+ 1126 021a 55415254 		.ascii	"UARTLedTest\000"
+ 1126      4C656454 
+ 1126      65737400 
+ 1127              	.LASF61:
+ 1128 0226 6D61696E 		.ascii	"main.c\000"
+ 1128      2E6300
+ 1129              	.LASF42:
+ 1130 022d 696E6974 		.ascii	"initXYPlotter\000"
+ 1130      5859506C 
+ 1130      6F747465 
+ 1130      7200
+ 1131              	.LASF18:
+ 1132 023b 646F7562 		.ascii	"double\000"
+ 1132      6C6500
+ 1133              	.LASF57:
+ 1134 0242 55415254 		.ascii	"UART_1_WriteTxData\000"
+ 1134      5F315F57 
+ 1134      72697465 
+ 1134      54784461 
+ 1134      746100
+ 1135              	.LASF23:
+ 1136 0255 74727941 		.ascii	"tryAgain\000"
+ 1136      6761696E 
+ 1136      00
+ 1137              	.LASF7:
+ 1138 025e 5F5F696E 		.ascii	"__int32_t\000"
+ 1138      7433325F 
+ 1138      7400
+ 1139              	.LASF14:
+ 1140 0268 75696E74 		.ascii	"uint8_t\000"
+ 1140      385F7400 
+ 1141              	.LASF45:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cc48YHHA.s 			page 25
+
+
+ 1142 0270 7363616E 		.ascii	"scan4PieceLift\000"
+ 1142      34506965 
+ 1142      63654C69 
+ 1142      667400
+ 1143              	.LASF52:
+ 1144 027f 6F6E6C79 		.ascii	"onlyDeadPosLED\000"
+ 1144      44656164 
+ 1144      506F734C 
+ 1144      454400
+ 1145              	.LASF44:
+ 1146 028e 696E6974 		.ascii	"initServo\000"
+ 1146      53657276 
+ 1146      6F00
+ 1147              	.LASF24:
+ 1148 0298 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1148      52784275 
+ 1148      66666572 
+ 1148      00
+ 1149              	.LASF60:
+ 1150 02a5 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1150      43313120 
+ 1150      352E342E 
+ 1150      31203230 
+ 1150      31363036 
+ 1151 02d8 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1151      20726576 
+ 1151      6973696F 
+ 1151      6E203233 
+ 1151      37373135 
+ 1152 030b 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1152      66756E63 
+ 1152      74696F6E 
+ 1152      2D736563 
+ 1152      74696F6E 
+ 1153              	.LASF30:
+ 1154 0333 62797465 		.ascii	"byteIndex\000"
+ 1154      496E6465 
+ 1154      7800
+ 1155              	.LASF62:
+ 1156 033d 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 1156      49545C52 
+ 1156      6F626F4D 
+ 1156      6174655C 
+ 1156      50536F43 
+ 1157 036b 726F6C6C 		.ascii	"roller.cydsn\000"
+ 1157      65722E63 
+ 1157      7964736E 
+ 1157      00
+ 1158              	.LASF59:
+ 1159 0378 6D6F7665 		.ascii	"moveChessPiece\000"
+ 1159      43686573 
+ 1159      73506965 
+ 1159      636500
+ 1160              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

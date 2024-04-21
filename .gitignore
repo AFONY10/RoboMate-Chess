@@ -1,0 +1,14 @@
+.vscode/
+RPI/.vscode
+
+
+RPI/testNikolaj.cpp
+
+#Filer genereret ifbm makefile
+RPI/build/
+RPI/RoboMate_RPI.exe
+RPI/RoboMate_RPI
+RPI/Pieces/build/
+
+#Filer generet ifbm VSCode compilering
+RPI/main.exe

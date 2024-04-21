@@ -1,0 +1,3807 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"XY_Plotter.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.calculateSteps,"ax",%progbits
+  20              		.align	2
+  21              		.global	calculateSteps
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	calculateSteps, %function
+  25              	calculateSteps:
+  26              	.LFB64:
+  27              		.file 1 "XY_Plotter.c"
+   1:XY_Plotter.c  **** /* ========================================
+   2:XY_Plotter.c  ****  *
+   3:XY_Plotter.c  ****  * Copyright YOUR COMPANY, THE YEAR
+   4:XY_Plotter.c  ****  * All Rights Reserved
+   5:XY_Plotter.c  ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:XY_Plotter.c  ****  *
+   7:XY_Plotter.c  ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:XY_Plotter.c  ****  * WHICH IS THE PROPERTY OF your company.
+   9:XY_Plotter.c  ****  *
+  10:XY_Plotter.c  ****  * ========================================
+  11:XY_Plotter.c  **** */
+  12:XY_Plotter.c  **** #include "XY_Plotter.h"
+  13:XY_Plotter.c  **** #include "stdlib.h"
+  14:XY_Plotter.c  **** 
+  15:XY_Plotter.c  **** 
+  16:XY_Plotter.c  **** struct stepDif {
+  17:XY_Plotter.c  ****     int x;
+  18:XY_Plotter.c  ****     int y;
+  19:XY_Plotter.c  **** };
+  20:XY_Plotter.c  **** 
+  21:XY_Plotter.c  **** // Funktion til at flytte brik fra fromSquare til toSquare
+  22:XY_Plotter.c  **** void moveChessPiece(int fromSquare, int toSquare) {
+  23:XY_Plotter.c  ****     // Udtryk for at rykke fra currentSquare til fromSquare
+  24:XY_Plotter.c  ****     struct stepDif moveToStart = calculateSteps(currentSquare, fromSquare);
+  25:XY_Plotter.c  ****     // Ryk magnet til startposition
+  26:XY_Plotter.c  ****     moveMotorX(moveToStart.x);
+  27:XY_Plotter.c  ****     moveMotorY(moveToStart.y);
+  28:XY_Plotter.c  ****     
+  29:XY_Plotter.c  ****     //Tænd magnet her 
+  30:XY_Plotter.c  ****     
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 2
+
+
+  31:XY_Plotter.c  ****     struct stepDif stepsToMove = calculateSteps(fromSquare, toSquare);
+  32:XY_Plotter.c  ****     
+  33:XY_Plotter.c  ****     if(stepsToMove.x>=0){     //Positv x
+  34:XY_Plotter.c  ****     moveMotorX(0.5);
+  35:XY_Plotter.c  ****         if(stepsToMove.y>=0){ //Positv y
+  36:XY_Plotter.c  ****             moveMotorY(0.5);
+  37:XY_Plotter.c  ****             moveMotorY(stepsToMove.y-1);
+  38:XY_Plotter.c  ****             moveMotorX(stepsToMove.x-0.5);
+  39:XY_Plotter.c  ****             moveMotorY(0.5);
+  40:XY_Plotter.c  ****         }
+  41:XY_Plotter.c  ****         else{                 //Negativ y
+  42:XY_Plotter.c  ****             moveMotorY(-0.5);
+  43:XY_Plotter.c  ****             moveMotorY(stepsToMove.y+1);
+  44:XY_Plotter.c  ****             moveMotorX(stepsToMove.x-0.5);
+  45:XY_Plotter.c  ****             moveMotorY(-0.5);
+  46:XY_Plotter.c  ****         }
+  47:XY_Plotter.c  ****     }
+  48:XY_Plotter.c  ****     else{                     //Negativ x
+  49:XY_Plotter.c  ****     moveMotorX(-0.5);
+  50:XY_Plotter.c  ****         if(stepsToMove.y>=0){ //Positv y
+  51:XY_Plotter.c  ****             moveMotorY(0.5);
+  52:XY_Plotter.c  ****             moveMotorY(stepsToMove.y-1);
+  53:XY_Plotter.c  ****             moveMotorX(stepsToMove.x+0.5);
+  54:XY_Plotter.c  ****             moveMotorY(0.5);
+  55:XY_Plotter.c  ****         }
+  56:XY_Plotter.c  ****         else{                 //Negativ y
+  57:XY_Plotter.c  ****             moveMotorY(-0.5);
+  58:XY_Plotter.c  ****             moveMotorY(stepsToMove.y+1);
+  59:XY_Plotter.c  ****             moveMotorX(stepsToMove.x+0.5);
+  60:XY_Plotter.c  ****             moveMotorY(-0.5);
+  61:XY_Plotter.c  ****         }
+  62:XY_Plotter.c  ****     }
+  63:XY_Plotter.c  ****     
+  64:XY_Plotter.c  ****     //Sluk magnet her
+  65:XY_Plotter.c  ****     
+  66:XY_Plotter.c  ****     //Opdater magnetens position
+  67:XY_Plotter.c  ****     currentSquare = toSquare;
+  68:XY_Plotter.c  **** }
+  69:XY_Plotter.c  **** 
+  70:XY_Plotter.c  **** // Funktion til at beregne antal steps mellem to felter
+  71:XY_Plotter.c  **** struct stepDif calculateSteps(int fromSquare, int toSquare) {
+  28              		.loc 1 71 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34 0000 30B4     		push	{r4, r5}
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 5, -4
+  72:XY_Plotter.c  ****     // Beregn x og y for både fromSquare og toSquare
+  73:XY_Plotter.c  ****     int fromX = fromSquare % SQUARES_PER_ROW;
+  38              		.loc 1 73 0
+  39 0002 0F4B     		ldr	r3, .L7
+  40 0004 0B40     		ands	r3, r1, r3
+  41 0006 03D5     		bpl	.L2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 3
+
+
+  42 0008 013B     		subs	r3, r3, #1
+  43 000a 63F00703 		orn	r3, r3, #7
+  44 000e 0133     		adds	r3, r3, #1
+  45              	.L2:
+  46 0010 1C46     		mov	r4, r3
+  47              	.LVL1:
+  74:XY_Plotter.c  ****     int toX = toSquare % SQUARES_PER_ROW;
+  48              		.loc 1 74 0
+  49 0012 0B4B     		ldr	r3, .L7
+  50              	.LVL2:
+  51 0014 1340     		ands	r3, r2, r3
+  52 0016 03D5     		bpl	.L3
+  53 0018 013B     		subs	r3, r3, #1
+  54 001a 63F00703 		orn	r3, r3, #7
+  55 001e 0133     		adds	r3, r3, #1
+  56              	.L3:
+  57              	.LVL3:
+  75:XY_Plotter.c  ****     
+  76:XY_Plotter.c  ****     int fromY = fromSquare / SQUARES_PER_ROW;
+  58              		.loc 1 76 0
+  59 0020 0D46     		mov	r5, r1
+  60 0022 0029     		cmp	r1, #0
+  61 0024 00DA     		bge	.L4
+  62 0026 CD1D     		adds	r5, r1, #7
+  63              	.L4:
+  64 0028 ED10     		asrs	r5, r5, #3
+  65              	.LVL4:
+  77:XY_Plotter.c  ****     int toY = toSquare / SQUARES_PER_ROW;
+  66              		.loc 1 77 0
+  67 002a 1146     		mov	r1, r2
+  68              	.LVL5:
+  69 002c 002A     		cmp	r2, #0
+  70 002e 00DA     		bge	.L5
+  71              	.LVL6:
+  72 0030 D11D     		adds	r1, r2, #7
+  73              	.LVL7:
+  74              	.L5:
+  78:XY_Plotter.c  ****     
+  79:XY_Plotter.c  ****     // Beregn række- og kolonneforskellen
+  80:XY_Plotter.c  ****     struct stepDif dif;
+  81:XY_Plotter.c  ****     dif.x = (toX - fromX);
+  75              		.loc 1 81 0
+  76 0032 1B1B     		subs	r3, r3, r4
+  77              	.LVL8:
+  78 0034 0360     		str	r3, [r0]
+  82:XY_Plotter.c  ****     dif.y = (toY - fromY);
+  79              		.loc 1 82 0
+  80 0036 C5EBE105 		rsb	r5, r5, r1, asr #3
+  81              	.LVL9:
+  82 003a 4560     		str	r5, [r0, #4]
+  83:XY_Plotter.c  ****     return dif;
+  84:XY_Plotter.c  **** }
+  83              		.loc 1 84 0
+  84 003c 30BC     		pop	{r4, r5}
+  85              		.cfi_restore 5
+  86              		.cfi_restore 4
+  87              		.cfi_def_cfa_offset 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 4
+
+
+  88              	.LVL10:
+  89 003e 7047     		bx	lr
+  90              	.L8:
+  91              		.align	2
+  92              	.L7:
+  93 0040 07000080 		.word	-2147483641
+  94              		.cfi_endproc
+  95              	.LFE64:
+  96              		.size	calculateSteps, .-calculateSteps
+  97              		.global	__aeabi_fmul
+  98              		.global	__aeabi_f2iz
+  99              		.section	.text.moveMotorX,"ax",%progbits
+ 100              		.align	2
+ 101              		.global	moveMotorX
+ 102              		.thumb
+ 103              		.thumb_func
+ 104              		.type	moveMotorX, %function
+ 105              	moveMotorX:
+ 106              	.LFB65:
+  85:XY_Plotter.c  **** 
+  86:XY_Plotter.c  **** 
+  87:XY_Plotter.c  **** // Funktion til at styre steppermotor x
+  88:XY_Plotter.c  **** void moveMotorX(float squares) {
+ 107              		.loc 1 88 0
+ 108              		.cfi_startproc
+ 109              		@ args = 0, pretend = 0, frame = 0
+ 110              		@ frame_needed = 0, uses_anonymous_args = 0
+ 111              	.LVL11:
+ 112 0000 38B5     		push	{r3, r4, r5, lr}
+ 113              		.cfi_def_cfa_offset 16
+ 114              		.cfi_offset 3, -16
+ 115              		.cfi_offset 4, -12
+ 116              		.cfi_offset 5, -8
+ 117              		.cfi_offset 14, -4
+  89:XY_Plotter.c  ****     int moveSteps = squares * STEPS_PER_SQUARE;
+ 118              		.loc 1 89 0
+ 119 0002 6149     		ldr	r1, .L25
+ 120 0004 FFF7FEFF 		bl	__aeabi_fmul
+ 121              	.LVL12:
+ 122 0008 FFF7FEFF 		bl	__aeabi_f2iz
+ 123              	.LVL13:
+ 124 000c 0546     		mov	r5, r0
+ 125              	.LVL14:
+ 126              	.LBB2:
+  90:XY_Plotter.c  **** 	for(int i = 0; i < abs(moveSteps); i++){
+ 127              		.loc 1 90 0
+ 128 000e 0024     		movs	r4, #0
+ 129 0010 B2E0     		b	.L10
+ 130              	.LVL15:
+ 131              	.L23:
+  91:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 132              		.loc 1 91 0
+ 133 0012 002D     		cmp	r5, #0
+ 134 0014 58DD     		ble	.L11
+  92:XY_Plotter.c  ****             switch(stepCase){
+ 135              		.loc 1 92 0
+ 136 0016 5D4B     		ldr	r3, .L25+4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 5
+
+
+ 137 0018 1B68     		ldr	r3, [r3]
+ 138 001a 013B     		subs	r3, r3, #1
+ 139 001c 032B     		cmp	r3, #3
+ 140 001e 00F2AA80 		bhi	.L12
+ 141 0022 DFE803F0 		tbb	[pc, r3]
+ 142              	.L14:
+ 143 0026 02       		.byte	(.L13-.L14)/2
+ 144 0027 16       		.byte	(.L15-.L14)/2
+ 145 0028 2A       		.byte	(.L16-.L14)/2
+ 146 0029 3E       		.byte	(.L17-.L14)/2
+ 147              		.p2align 1
+ 148              	.L13:
+  93:XY_Plotter.c  ****                 case 1:
+  94:XY_Plotter.c  ****                 P2_3_Write(1); //P1.1
+ 149              		.loc 1 94 0
+ 150 002a 0120     		movs	r0, #1
+ 151 002c FFF7FEFF 		bl	P2_3_Write
+ 152              	.LVL16:
+  95:XY_Plotter.c  ****                 P2_4_Write(0); //P2.1
+ 153              		.loc 1 95 0
+ 154 0030 0020     		movs	r0, #0
+ 155 0032 FFF7FEFF 		bl	P2_4_Write
+ 156              	.LVL17:
+  96:XY_Plotter.c  ****                 P2_5_Write(0); //P1.2
+ 157              		.loc 1 96 0
+ 158 0036 0020     		movs	r0, #0
+ 159 0038 FFF7FEFF 		bl	P2_5_Write
+ 160              	.LVL18:
+  97:XY_Plotter.c  ****                 P2_6_Write(0); //P2.2
+ 161              		.loc 1 97 0
+ 162 003c 0020     		movs	r0, #0
+ 163 003e FFF7FEFF 		bl	P2_6_Write
+ 164              	.LVL19:
+  98:XY_Plotter.c  ****                 stepCase++;
+ 165              		.loc 1 98 0
+ 166 0042 524A     		ldr	r2, .L25+4
+ 167 0044 1368     		ldr	r3, [r2]
+ 168 0046 0133     		adds	r3, r3, #1
+ 169 0048 1360     		str	r3, [r2]
+  99:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 170              		.loc 1 99 0
+ 171 004a 0A20     		movs	r0, #10
+ 172 004c FFF7FEFF 		bl	CyDelay
+ 173              	.LVL20:
+ 100:XY_Plotter.c  ****                 break;
+ 174              		.loc 1 100 0
+ 175 0050 91E0     		b	.L12
+ 176              	.L15:
+ 101:XY_Plotter.c  ****                 case 2:
+ 102:XY_Plotter.c  ****                 P2_3_Write(0); 
+ 177              		.loc 1 102 0
+ 178 0052 0020     		movs	r0, #0
+ 179 0054 FFF7FEFF 		bl	P2_3_Write
+ 180              	.LVL21:
+ 103:XY_Plotter.c  ****                 P2_4_Write(1);
+ 181              		.loc 1 103 0
+ 182 0058 0120     		movs	r0, #1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 6
+
+
+ 183 005a FFF7FEFF 		bl	P2_4_Write
+ 184              	.LVL22:
+ 104:XY_Plotter.c  ****                 P2_5_Write(0);
+ 185              		.loc 1 104 0
+ 186 005e 0020     		movs	r0, #0
+ 187 0060 FFF7FEFF 		bl	P2_5_Write
+ 188              	.LVL23:
+ 105:XY_Plotter.c  ****                 P2_6_Write(0);
+ 189              		.loc 1 105 0
+ 190 0064 0020     		movs	r0, #0
+ 191 0066 FFF7FEFF 		bl	P2_6_Write
+ 192              	.LVL24:
+ 106:XY_Plotter.c  ****                 stepCase++;
+ 193              		.loc 1 106 0
+ 194 006a 484A     		ldr	r2, .L25+4
+ 195 006c 1368     		ldr	r3, [r2]
+ 196 006e 0133     		adds	r3, r3, #1
+ 197 0070 1360     		str	r3, [r2]
+ 107:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 198              		.loc 1 107 0
+ 199 0072 0A20     		movs	r0, #10
+ 200 0074 FFF7FEFF 		bl	CyDelay
+ 201              	.LVL25:
+ 108:XY_Plotter.c  ****                 break;
+ 202              		.loc 1 108 0
+ 203 0078 7DE0     		b	.L12
+ 204              	.L16:
+ 109:XY_Plotter.c  ****                 case 3:
+ 110:XY_Plotter.c  ****                 P2_3_Write(0);
+ 205              		.loc 1 110 0
+ 206 007a 0020     		movs	r0, #0
+ 207 007c FFF7FEFF 		bl	P2_3_Write
+ 208              	.LVL26:
+ 111:XY_Plotter.c  ****                 P2_4_Write(0);
+ 209              		.loc 1 111 0
+ 210 0080 0020     		movs	r0, #0
+ 211 0082 FFF7FEFF 		bl	P2_4_Write
+ 212              	.LVL27:
+ 112:XY_Plotter.c  ****                 P2_5_Write(1);
+ 213              		.loc 1 112 0
+ 214 0086 0120     		movs	r0, #1
+ 215 0088 FFF7FEFF 		bl	P2_5_Write
+ 216              	.LVL28:
+ 113:XY_Plotter.c  ****                 P2_6_Write(0);
+ 217              		.loc 1 113 0
+ 218 008c 0020     		movs	r0, #0
+ 219 008e FFF7FEFF 		bl	P2_6_Write
+ 220              	.LVL29:
+ 114:XY_Plotter.c  ****                 stepCase++;
+ 221              		.loc 1 114 0
+ 222 0092 3E4A     		ldr	r2, .L25+4
+ 223 0094 1368     		ldr	r3, [r2]
+ 224 0096 0133     		adds	r3, r3, #1
+ 225 0098 1360     		str	r3, [r2]
+ 115:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 226              		.loc 1 115 0
+ 227 009a 0A20     		movs	r0, #10
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 7
+
+
+ 228 009c FFF7FEFF 		bl	CyDelay
+ 229              	.LVL30:
+ 116:XY_Plotter.c  ****                 break;
+ 230              		.loc 1 116 0
+ 231 00a0 69E0     		b	.L12
+ 232              	.L17:
+ 117:XY_Plotter.c  ****                 case 4:
+ 118:XY_Plotter.c  ****                 P2_3_Write(0);
+ 233              		.loc 1 118 0
+ 234 00a2 0020     		movs	r0, #0
+ 235 00a4 FFF7FEFF 		bl	P2_3_Write
+ 236              	.LVL31:
+ 119:XY_Plotter.c  ****                 P2_4_Write(0);
+ 237              		.loc 1 119 0
+ 238 00a8 0020     		movs	r0, #0
+ 239 00aa FFF7FEFF 		bl	P2_4_Write
+ 240              	.LVL32:
+ 120:XY_Plotter.c  ****                 P2_5_Write(0);
+ 241              		.loc 1 120 0
+ 242 00ae 0020     		movs	r0, #0
+ 243 00b0 FFF7FEFF 		bl	P2_5_Write
+ 244              	.LVL33:
+ 121:XY_Plotter.c  ****                 P2_6_Write(1);
+ 245              		.loc 1 121 0
+ 246 00b4 0120     		movs	r0, #1
+ 247 00b6 FFF7FEFF 		bl	P2_6_Write
+ 248              	.LVL34:
+ 122:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 249              		.loc 1 122 0
+ 250 00ba 0A20     		movs	r0, #10
+ 251 00bc FFF7FEFF 		bl	CyDelay
+ 252              	.LVL35:
+ 123:XY_Plotter.c  ****                 stepCase = 1; //reset stepCase
+ 253              		.loc 1 123 0
+ 254 00c0 0122     		movs	r2, #1
+ 255 00c2 324B     		ldr	r3, .L25+4
+ 256 00c4 1A60     		str	r2, [r3]
+ 124:XY_Plotter.c  ****                 break;
+ 257              		.loc 1 124 0
+ 258 00c6 56E0     		b	.L12
+ 259              	.L11:
+ 125:XY_Plotter.c  ****             }
+ 126:XY_Plotter.c  **** 		}
+ 127:XY_Plotter.c  **** 		else{               //negativ retning?(mod uret)
+ 128:XY_Plotter.c  ****             switch(stepCase){
+ 260              		.loc 1 128 0
+ 261 00c8 304B     		ldr	r3, .L25+4
+ 262 00ca 1B68     		ldr	r3, [r3]
+ 263 00cc 013B     		subs	r3, r3, #1
+ 264 00ce 032B     		cmp	r3, #3
+ 265 00d0 51D8     		bhi	.L12
+ 266 00d2 DFE803F0 		tbb	[pc, r3]
+ 267              	.L19:
+ 268 00d6 3E       		.byte	(.L18-.L19)/2
+ 269 00d7 2A       		.byte	(.L20-.L19)/2
+ 270 00d8 16       		.byte	(.L21-.L19)/2
+ 271 00d9 02       		.byte	(.L22-.L19)/2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 8
+
+
+ 272              		.p2align 1
+ 273              	.L22:
+ 129:XY_Plotter.c  ****                 case 4:
+ 130:XY_Plotter.c  ****                 P2_3_Write(0);
+ 274              		.loc 1 130 0
+ 275 00da 0020     		movs	r0, #0
+ 276 00dc FFF7FEFF 		bl	P2_3_Write
+ 277              	.LVL36:
+ 131:XY_Plotter.c  ****                 P2_4_Write(0);
+ 278              		.loc 1 131 0
+ 279 00e0 0020     		movs	r0, #0
+ 280 00e2 FFF7FEFF 		bl	P2_4_Write
+ 281              	.LVL37:
+ 132:XY_Plotter.c  ****                 P2_5_Write(0);
+ 282              		.loc 1 132 0
+ 283 00e6 0020     		movs	r0, #0
+ 284 00e8 FFF7FEFF 		bl	P2_5_Write
+ 285              	.LVL38:
+ 133:XY_Plotter.c  ****                 P2_6_Write(1);
+ 286              		.loc 1 133 0
+ 287 00ec 0120     		movs	r0, #1
+ 288 00ee FFF7FEFF 		bl	P2_6_Write
+ 289              	.LVL39:
+ 134:XY_Plotter.c  ****                 stepCase--;
+ 290              		.loc 1 134 0
+ 291 00f2 264A     		ldr	r2, .L25+4
+ 292 00f4 1368     		ldr	r3, [r2]
+ 293 00f6 013B     		subs	r3, r3, #1
+ 294 00f8 1360     		str	r3, [r2]
+ 135:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 295              		.loc 1 135 0
+ 296 00fa 0A20     		movs	r0, #10
+ 297 00fc FFF7FEFF 		bl	CyDelay
+ 298              	.LVL40:
+ 136:XY_Plotter.c  ****                 break;
+ 299              		.loc 1 136 0
+ 300 0100 39E0     		b	.L12
+ 301              	.L21:
+ 137:XY_Plotter.c  ****                 case 3:
+ 138:XY_Plotter.c  ****                 P2_3_Write(0);
+ 302              		.loc 1 138 0
+ 303 0102 0020     		movs	r0, #0
+ 304 0104 FFF7FEFF 		bl	P2_3_Write
+ 305              	.LVL41:
+ 139:XY_Plotter.c  ****                 P2_4_Write(0);
+ 306              		.loc 1 139 0
+ 307 0108 0020     		movs	r0, #0
+ 308 010a FFF7FEFF 		bl	P2_4_Write
+ 309              	.LVL42:
+ 140:XY_Plotter.c  ****                 P2_5_Write(1);
+ 310              		.loc 1 140 0
+ 311 010e 0120     		movs	r0, #1
+ 312 0110 FFF7FEFF 		bl	P2_5_Write
+ 313              	.LVL43:
+ 141:XY_Plotter.c  ****                 P2_6_Write(0);
+ 314              		.loc 1 141 0
+ 315 0114 0020     		movs	r0, #0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 9
+
+
+ 316 0116 FFF7FEFF 		bl	P2_6_Write
+ 317              	.LVL44:
+ 142:XY_Plotter.c  ****                 stepCase--;
+ 318              		.loc 1 142 0
+ 319 011a 1C4A     		ldr	r2, .L25+4
+ 320 011c 1368     		ldr	r3, [r2]
+ 321 011e 013B     		subs	r3, r3, #1
+ 322 0120 1360     		str	r3, [r2]
+ 143:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 323              		.loc 1 143 0
+ 324 0122 0A20     		movs	r0, #10
+ 325 0124 FFF7FEFF 		bl	CyDelay
+ 326              	.LVL45:
+ 144:XY_Plotter.c  ****                 break;
+ 327              		.loc 1 144 0
+ 328 0128 25E0     		b	.L12
+ 329              	.L20:
+ 145:XY_Plotter.c  ****                 case 2:
+ 146:XY_Plotter.c  ****                 P2_3_Write(0);
+ 330              		.loc 1 146 0
+ 331 012a 0020     		movs	r0, #0
+ 332 012c FFF7FEFF 		bl	P2_3_Write
+ 333              	.LVL46:
+ 147:XY_Plotter.c  ****                 P2_4_Write(1);
+ 334              		.loc 1 147 0
+ 335 0130 0120     		movs	r0, #1
+ 336 0132 FFF7FEFF 		bl	P2_4_Write
+ 337              	.LVL47:
+ 148:XY_Plotter.c  ****                 P2_5_Write(0);
+ 338              		.loc 1 148 0
+ 339 0136 0020     		movs	r0, #0
+ 340 0138 FFF7FEFF 		bl	P2_5_Write
+ 341              	.LVL48:
+ 149:XY_Plotter.c  ****                 P2_6_Write(0);
+ 342              		.loc 1 149 0
+ 343 013c 0020     		movs	r0, #0
+ 344 013e FFF7FEFF 		bl	P2_6_Write
+ 345              	.LVL49:
+ 150:XY_Plotter.c  ****                 stepCase--;
+ 346              		.loc 1 150 0
+ 347 0142 124A     		ldr	r2, .L25+4
+ 348 0144 1368     		ldr	r3, [r2]
+ 349 0146 013B     		subs	r3, r3, #1
+ 350 0148 1360     		str	r3, [r2]
+ 151:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 351              		.loc 1 151 0
+ 352 014a 0A20     		movs	r0, #10
+ 353 014c FFF7FEFF 		bl	CyDelay
+ 354              	.LVL50:
+ 152:XY_Plotter.c  ****                 break;
+ 355              		.loc 1 152 0
+ 356 0150 11E0     		b	.L12
+ 357              	.L18:
+ 153:XY_Plotter.c  ****                 case 1:
+ 154:XY_Plotter.c  ****                 P2_3_Write(1);
+ 358              		.loc 1 154 0
+ 359 0152 0120     		movs	r0, #1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 10
+
+
+ 360 0154 FFF7FEFF 		bl	P2_3_Write
+ 361              	.LVL51:
+ 155:XY_Plotter.c  ****                 P2_4_Write(0);
+ 362              		.loc 1 155 0
+ 363 0158 0020     		movs	r0, #0
+ 364 015a FFF7FEFF 		bl	P2_4_Write
+ 365              	.LVL52:
+ 156:XY_Plotter.c  ****                 P2_5_Write(0);
+ 366              		.loc 1 156 0
+ 367 015e 0020     		movs	r0, #0
+ 368 0160 FFF7FEFF 		bl	P2_5_Write
+ 369              	.LVL53:
+ 157:XY_Plotter.c  ****                 P2_6_Write(0);
+ 370              		.loc 1 157 0
+ 371 0164 0020     		movs	r0, #0
+ 372 0166 FFF7FEFF 		bl	P2_6_Write
+ 373              	.LVL54:
+ 158:XY_Plotter.c  ****                 stepCase = 4; //reset stepcase
+ 374              		.loc 1 158 0
+ 375 016a 0422     		movs	r2, #4
+ 376 016c 074B     		ldr	r3, .L25+4
+ 377 016e 1A60     		str	r2, [r3]
+ 159:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 378              		.loc 1 159 0
+ 379 0170 0A20     		movs	r0, #10
+ 380 0172 FFF7FEFF 		bl	CyDelay
+ 381              	.LVL55:
+ 382              	.L12:
+  90:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 383              		.loc 1 90 0 discriminator 2
+ 384 0176 0134     		adds	r4, r4, #1
+ 385              	.LVL56:
+ 386              	.L10:
+  90:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 387              		.loc 1 90 0 is_stmt 0 discriminator 1
+ 388 0178 85EAE573 		eor	r3, r5, r5, asr #31
+ 389 017c A3EBE573 		sub	r3, r3, r5, asr #31
+ 390 0180 9C42     		cmp	r4, r3
+ 391 0182 FFF646AF 		blt	.L23
+ 392              	.LBE2:
+ 160:XY_Plotter.c  ****                 break;
+ 161:XY_Plotter.c  ****             }
+ 162:XY_Plotter.c  **** 		}
+ 163:XY_Plotter.c  **** 	}
+ 164:XY_Plotter.c  **** }
+ 393              		.loc 1 164 0 is_stmt 1
+ 394 0186 38BD     		pop	{r3, r4, r5, pc}
+ 395              	.LVL57:
+ 396              	.L26:
+ 397              		.align	2
+ 398              	.L25:
+ 399 0188 00006643 		.word	1130758144
+ 400 018c 00000000 		.word	stepCase
+ 401              		.cfi_endproc
+ 402              	.LFE65:
+ 403              		.size	moveMotorX, .-moveMotorX
+ 404              		.section	.text.moveMotorY,"ax",%progbits
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 11
+
+
+ 405              		.align	2
+ 406              		.global	moveMotorY
+ 407              		.thumb
+ 408              		.thumb_func
+ 409              		.type	moveMotorY, %function
+ 410              	moveMotorY:
+ 411              	.LFB66:
+ 165:XY_Plotter.c  **** // Funktion til at styre steppermotor y
+ 166:XY_Plotter.c  **** void moveMotorY(float squares) {
+ 412              		.loc 1 166 0
+ 413              		.cfi_startproc
+ 414              		@ args = 0, pretend = 0, frame = 0
+ 415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 416              	.LVL58:
+ 417 0000 38B5     		push	{r3, r4, r5, lr}
+ 418              		.cfi_def_cfa_offset 16
+ 419              		.cfi_offset 3, -16
+ 420              		.cfi_offset 4, -12
+ 421              		.cfi_offset 5, -8
+ 422              		.cfi_offset 14, -4
+ 167:XY_Plotter.c  ****     int moveSteps = squares * STEPS_PER_SQUARE;
+ 423              		.loc 1 167 0
+ 424 0002 6149     		ldr	r1, .L43
+ 425 0004 FFF7FEFF 		bl	__aeabi_fmul
+ 426              	.LVL59:
+ 427 0008 FFF7FEFF 		bl	__aeabi_f2iz
+ 428              	.LVL60:
+ 429 000c 0546     		mov	r5, r0
+ 430              	.LVL61:
+ 431              	.LBB3:
+ 168:XY_Plotter.c  **** 	for(int i = 0; i < abs(moveSteps); i++){
+ 432              		.loc 1 168 0
+ 433 000e 0024     		movs	r4, #0
+ 434 0010 B2E0     		b	.L28
+ 435              	.LVL62:
+ 436              	.L41:
+ 169:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 437              		.loc 1 169 0
+ 438 0012 002D     		cmp	r5, #0
+ 439 0014 58DD     		ble	.L29
+ 170:XY_Plotter.c  ****             switch(stepCase){
+ 440              		.loc 1 170 0
+ 441 0016 5D4B     		ldr	r3, .L43+4
+ 442 0018 1B68     		ldr	r3, [r3]
+ 443 001a 013B     		subs	r3, r3, #1
+ 444 001c 032B     		cmp	r3, #3
+ 445 001e 00F2AA80 		bhi	.L30
+ 446 0022 DFE803F0 		tbb	[pc, r3]
+ 447              	.L32:
+ 448 0026 02       		.byte	(.L31-.L32)/2
+ 449 0027 16       		.byte	(.L33-.L32)/2
+ 450 0028 2A       		.byte	(.L34-.L32)/2
+ 451 0029 3E       		.byte	(.L35-.L32)/2
+ 452              		.p2align 1
+ 453              	.L31:
+ 171:XY_Plotter.c  ****                 case 1:
+ 172:XY_Plotter.c  ****                 P3_3_Write(1); //P1.1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 12
+
+
+ 454              		.loc 1 172 0
+ 455 002a 0120     		movs	r0, #1
+ 456 002c FFF7FEFF 		bl	P3_3_Write
+ 457              	.LVL63:
+ 173:XY_Plotter.c  ****                 P3_4_Write(0); //P3.1
+ 458              		.loc 1 173 0
+ 459 0030 0020     		movs	r0, #0
+ 460 0032 FFF7FEFF 		bl	P3_4_Write
+ 461              	.LVL64:
+ 174:XY_Plotter.c  ****                 P3_5_Write(0); //P1.2
+ 462              		.loc 1 174 0
+ 463 0036 0020     		movs	r0, #0
+ 464 0038 FFF7FEFF 		bl	P3_5_Write
+ 465              	.LVL65:
+ 175:XY_Plotter.c  ****                 P3_6_Write(0); //P3.2
+ 466              		.loc 1 175 0
+ 467 003c 0020     		movs	r0, #0
+ 468 003e FFF7FEFF 		bl	P3_6_Write
+ 469              	.LVL66:
+ 176:XY_Plotter.c  ****                 stepCase++;
+ 470              		.loc 1 176 0
+ 471 0042 524A     		ldr	r2, .L43+4
+ 472 0044 1368     		ldr	r3, [r2]
+ 473 0046 0133     		adds	r3, r3, #1
+ 474 0048 1360     		str	r3, [r2]
+ 177:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 475              		.loc 1 177 0
+ 476 004a 0A20     		movs	r0, #10
+ 477 004c FFF7FEFF 		bl	CyDelay
+ 478              	.LVL67:
+ 178:XY_Plotter.c  ****                 break;
+ 479              		.loc 1 178 0
+ 480 0050 91E0     		b	.L30
+ 481              	.L33:
+ 179:XY_Plotter.c  ****                 case 2:
+ 180:XY_Plotter.c  ****                 P3_3_Write(0); 
+ 482              		.loc 1 180 0
+ 483 0052 0020     		movs	r0, #0
+ 484 0054 FFF7FEFF 		bl	P3_3_Write
+ 485              	.LVL68:
+ 181:XY_Plotter.c  ****                 P3_4_Write(1);
+ 486              		.loc 1 181 0
+ 487 0058 0120     		movs	r0, #1
+ 488 005a FFF7FEFF 		bl	P3_4_Write
+ 489              	.LVL69:
+ 182:XY_Plotter.c  ****                 P3_5_Write(0);
+ 490              		.loc 1 182 0
+ 491 005e 0020     		movs	r0, #0
+ 492 0060 FFF7FEFF 		bl	P3_5_Write
+ 493              	.LVL70:
+ 183:XY_Plotter.c  ****                 P3_6_Write(0);
+ 494              		.loc 1 183 0
+ 495 0064 0020     		movs	r0, #0
+ 496 0066 FFF7FEFF 		bl	P3_6_Write
+ 497              	.LVL71:
+ 184:XY_Plotter.c  ****                 stepCase++;
+ 498              		.loc 1 184 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 13
+
+
+ 499 006a 484A     		ldr	r2, .L43+4
+ 500 006c 1368     		ldr	r3, [r2]
+ 501 006e 0133     		adds	r3, r3, #1
+ 502 0070 1360     		str	r3, [r2]
+ 185:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 503              		.loc 1 185 0
+ 504 0072 0A20     		movs	r0, #10
+ 505 0074 FFF7FEFF 		bl	CyDelay
+ 506              	.LVL72:
+ 186:XY_Plotter.c  ****                 break;
+ 507              		.loc 1 186 0
+ 508 0078 7DE0     		b	.L30
+ 509              	.L34:
+ 187:XY_Plotter.c  ****                 case 3:
+ 188:XY_Plotter.c  ****                 P3_3_Write(0);
+ 510              		.loc 1 188 0
+ 511 007a 0020     		movs	r0, #0
+ 512 007c FFF7FEFF 		bl	P3_3_Write
+ 513              	.LVL73:
+ 189:XY_Plotter.c  ****                 P3_4_Write(0);
+ 514              		.loc 1 189 0
+ 515 0080 0020     		movs	r0, #0
+ 516 0082 FFF7FEFF 		bl	P3_4_Write
+ 517              	.LVL74:
+ 190:XY_Plotter.c  ****                 P3_5_Write(1);
+ 518              		.loc 1 190 0
+ 519 0086 0120     		movs	r0, #1
+ 520 0088 FFF7FEFF 		bl	P3_5_Write
+ 521              	.LVL75:
+ 191:XY_Plotter.c  ****                 P3_6_Write(0);
+ 522              		.loc 1 191 0
+ 523 008c 0020     		movs	r0, #0
+ 524 008e FFF7FEFF 		bl	P3_6_Write
+ 525              	.LVL76:
+ 192:XY_Plotter.c  ****                 stepCase++;
+ 526              		.loc 1 192 0
+ 527 0092 3E4A     		ldr	r2, .L43+4
+ 528 0094 1368     		ldr	r3, [r2]
+ 529 0096 0133     		adds	r3, r3, #1
+ 530 0098 1360     		str	r3, [r2]
+ 193:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 531              		.loc 1 193 0
+ 532 009a 0A20     		movs	r0, #10
+ 533 009c FFF7FEFF 		bl	CyDelay
+ 534              	.LVL77:
+ 194:XY_Plotter.c  ****                 break;
+ 535              		.loc 1 194 0
+ 536 00a0 69E0     		b	.L30
+ 537              	.L35:
+ 195:XY_Plotter.c  ****                 case 4:
+ 196:XY_Plotter.c  ****                 P3_3_Write(0);
+ 538              		.loc 1 196 0
+ 539 00a2 0020     		movs	r0, #0
+ 540 00a4 FFF7FEFF 		bl	P3_3_Write
+ 541              	.LVL78:
+ 197:XY_Plotter.c  ****                 P3_4_Write(0);
+ 542              		.loc 1 197 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 14
+
+
+ 543 00a8 0020     		movs	r0, #0
+ 544 00aa FFF7FEFF 		bl	P3_4_Write
+ 545              	.LVL79:
+ 198:XY_Plotter.c  ****                 P3_5_Write(0);
+ 546              		.loc 1 198 0
+ 547 00ae 0020     		movs	r0, #0
+ 548 00b0 FFF7FEFF 		bl	P3_5_Write
+ 549              	.LVL80:
+ 199:XY_Plotter.c  ****                 P3_6_Write(1);
+ 550              		.loc 1 199 0
+ 551 00b4 0120     		movs	r0, #1
+ 552 00b6 FFF7FEFF 		bl	P3_6_Write
+ 553              	.LVL81:
+ 200:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 554              		.loc 1 200 0
+ 555 00ba 0A20     		movs	r0, #10
+ 556 00bc FFF7FEFF 		bl	CyDelay
+ 557              	.LVL82:
+ 201:XY_Plotter.c  ****                 stepCase = 1; //reset stepCase
+ 558              		.loc 1 201 0
+ 559 00c0 0122     		movs	r2, #1
+ 560 00c2 324B     		ldr	r3, .L43+4
+ 561 00c4 1A60     		str	r2, [r3]
+ 202:XY_Plotter.c  ****                 break;
+ 562              		.loc 1 202 0
+ 563 00c6 56E0     		b	.L30
+ 564              	.L29:
+ 203:XY_Plotter.c  ****             }
+ 204:XY_Plotter.c  **** 		}
+ 205:XY_Plotter.c  **** 		else{               //negativ retning?(mod uret)
+ 206:XY_Plotter.c  ****             switch(stepCase){
+ 565              		.loc 1 206 0
+ 566 00c8 304B     		ldr	r3, .L43+4
+ 567 00ca 1B68     		ldr	r3, [r3]
+ 568 00cc 013B     		subs	r3, r3, #1
+ 569 00ce 032B     		cmp	r3, #3
+ 570 00d0 51D8     		bhi	.L30
+ 571 00d2 DFE803F0 		tbb	[pc, r3]
+ 572              	.L37:
+ 573 00d6 3E       		.byte	(.L36-.L37)/2
+ 574 00d7 2A       		.byte	(.L38-.L37)/2
+ 575 00d8 16       		.byte	(.L39-.L37)/2
+ 576 00d9 02       		.byte	(.L40-.L37)/2
+ 577              		.p2align 1
+ 578              	.L40:
+ 207:XY_Plotter.c  ****                 case 4:
+ 208:XY_Plotter.c  ****                 P3_3_Write(0);
+ 579              		.loc 1 208 0
+ 580 00da 0020     		movs	r0, #0
+ 581 00dc FFF7FEFF 		bl	P3_3_Write
+ 582              	.LVL83:
+ 209:XY_Plotter.c  ****                 P3_4_Write(0);
+ 583              		.loc 1 209 0
+ 584 00e0 0020     		movs	r0, #0
+ 585 00e2 FFF7FEFF 		bl	P3_4_Write
+ 586              	.LVL84:
+ 210:XY_Plotter.c  ****                 P3_5_Write(0);
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 15
+
+
+ 587              		.loc 1 210 0
+ 588 00e6 0020     		movs	r0, #0
+ 589 00e8 FFF7FEFF 		bl	P3_5_Write
+ 590              	.LVL85:
+ 211:XY_Plotter.c  ****                 P3_6_Write(1);
+ 591              		.loc 1 211 0
+ 592 00ec 0120     		movs	r0, #1
+ 593 00ee FFF7FEFF 		bl	P3_6_Write
+ 594              	.LVL86:
+ 212:XY_Plotter.c  ****                 stepCase--;
+ 595              		.loc 1 212 0
+ 596 00f2 264A     		ldr	r2, .L43+4
+ 597 00f4 1368     		ldr	r3, [r2]
+ 598 00f6 013B     		subs	r3, r3, #1
+ 599 00f8 1360     		str	r3, [r2]
+ 213:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 600              		.loc 1 213 0
+ 601 00fa 0A20     		movs	r0, #10
+ 602 00fc FFF7FEFF 		bl	CyDelay
+ 603              	.LVL87:
+ 214:XY_Plotter.c  ****                 break;
+ 604              		.loc 1 214 0
+ 605 0100 39E0     		b	.L30
+ 606              	.L39:
+ 215:XY_Plotter.c  ****                 case 3:
+ 216:XY_Plotter.c  ****                 P3_3_Write(0);
+ 607              		.loc 1 216 0
+ 608 0102 0020     		movs	r0, #0
+ 609 0104 FFF7FEFF 		bl	P3_3_Write
+ 610              	.LVL88:
+ 217:XY_Plotter.c  ****                 P3_4_Write(0);
+ 611              		.loc 1 217 0
+ 612 0108 0020     		movs	r0, #0
+ 613 010a FFF7FEFF 		bl	P3_4_Write
+ 614              	.LVL89:
+ 218:XY_Plotter.c  ****                 P3_5_Write(1);
+ 615              		.loc 1 218 0
+ 616 010e 0120     		movs	r0, #1
+ 617 0110 FFF7FEFF 		bl	P3_5_Write
+ 618              	.LVL90:
+ 219:XY_Plotter.c  ****                 P3_6_Write(0);
+ 619              		.loc 1 219 0
+ 620 0114 0020     		movs	r0, #0
+ 621 0116 FFF7FEFF 		bl	P3_6_Write
+ 622              	.LVL91:
+ 220:XY_Plotter.c  ****                 stepCase--;
+ 623              		.loc 1 220 0
+ 624 011a 1C4A     		ldr	r2, .L43+4
+ 625 011c 1368     		ldr	r3, [r2]
+ 626 011e 013B     		subs	r3, r3, #1
+ 627 0120 1360     		str	r3, [r2]
+ 221:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 628              		.loc 1 221 0
+ 629 0122 0A20     		movs	r0, #10
+ 630 0124 FFF7FEFF 		bl	CyDelay
+ 631              	.LVL92:
+ 222:XY_Plotter.c  ****                 break;
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 16
+
+
+ 632              		.loc 1 222 0
+ 633 0128 25E0     		b	.L30
+ 634              	.L38:
+ 223:XY_Plotter.c  ****                 case 2:
+ 224:XY_Plotter.c  ****                 P3_3_Write(0);
+ 635              		.loc 1 224 0
+ 636 012a 0020     		movs	r0, #0
+ 637 012c FFF7FEFF 		bl	P3_3_Write
+ 638              	.LVL93:
+ 225:XY_Plotter.c  ****                 P3_4_Write(1);
+ 639              		.loc 1 225 0
+ 640 0130 0120     		movs	r0, #1
+ 641 0132 FFF7FEFF 		bl	P3_4_Write
+ 642              	.LVL94:
+ 226:XY_Plotter.c  ****                 P3_5_Write(0);
+ 643              		.loc 1 226 0
+ 644 0136 0020     		movs	r0, #0
+ 645 0138 FFF7FEFF 		bl	P3_5_Write
+ 646              	.LVL95:
+ 227:XY_Plotter.c  ****                 P3_6_Write(0);
+ 647              		.loc 1 227 0
+ 648 013c 0020     		movs	r0, #0
+ 649 013e FFF7FEFF 		bl	P3_6_Write
+ 650              	.LVL96:
+ 228:XY_Plotter.c  ****                 stepCase--;
+ 651              		.loc 1 228 0
+ 652 0142 124A     		ldr	r2, .L43+4
+ 653 0144 1368     		ldr	r3, [r2]
+ 654 0146 013B     		subs	r3, r3, #1
+ 655 0148 1360     		str	r3, [r2]
+ 229:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 656              		.loc 1 229 0
+ 657 014a 0A20     		movs	r0, #10
+ 658 014c FFF7FEFF 		bl	CyDelay
+ 659              	.LVL97:
+ 230:XY_Plotter.c  ****                 break;
+ 660              		.loc 1 230 0
+ 661 0150 11E0     		b	.L30
+ 662              	.L36:
+ 231:XY_Plotter.c  ****                 case 1:
+ 232:XY_Plotter.c  ****                 P3_3_Write(1);
+ 663              		.loc 1 232 0
+ 664 0152 0120     		movs	r0, #1
+ 665 0154 FFF7FEFF 		bl	P3_3_Write
+ 666              	.LVL98:
+ 233:XY_Plotter.c  ****                 P3_4_Write(0);
+ 667              		.loc 1 233 0
+ 668 0158 0020     		movs	r0, #0
+ 669 015a FFF7FEFF 		bl	P3_4_Write
+ 670              	.LVL99:
+ 234:XY_Plotter.c  ****                 P3_5_Write(0);
+ 671              		.loc 1 234 0
+ 672 015e 0020     		movs	r0, #0
+ 673 0160 FFF7FEFF 		bl	P3_5_Write
+ 674              	.LVL100:
+ 235:XY_Plotter.c  ****                 P3_6_Write(0);
+ 675              		.loc 1 235 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 17
+
+
+ 676 0164 0020     		movs	r0, #0
+ 677 0166 FFF7FEFF 		bl	P3_6_Write
+ 678              	.LVL101:
+ 236:XY_Plotter.c  ****                 stepCase = 4; //reset stepcase
+ 679              		.loc 1 236 0
+ 680 016a 0422     		movs	r2, #4
+ 681 016c 074B     		ldr	r3, .L43+4
+ 682 016e 1A60     		str	r2, [r3]
+ 237:XY_Plotter.c  ****                 CyDelay(stepperWait);
+ 683              		.loc 1 237 0
+ 684 0170 0A20     		movs	r0, #10
+ 685 0172 FFF7FEFF 		bl	CyDelay
+ 686              	.LVL102:
+ 687              	.L30:
+ 168:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 688              		.loc 1 168 0 discriminator 2
+ 689 0176 0134     		adds	r4, r4, #1
+ 690              	.LVL103:
+ 691              	.L28:
+ 168:XY_Plotter.c  **** 		if (moveSteps > 0){  //positiv retning?(med uret)
+ 692              		.loc 1 168 0 is_stmt 0 discriminator 1
+ 693 0178 85EAE573 		eor	r3, r5, r5, asr #31
+ 694 017c A3EBE573 		sub	r3, r3, r5, asr #31
+ 695 0180 9C42     		cmp	r4, r3
+ 696 0182 FFF646AF 		blt	.L41
+ 697              	.LBE3:
+ 238:XY_Plotter.c  ****                 break;
+ 239:XY_Plotter.c  ****             }
+ 240:XY_Plotter.c  **** 		}
+ 241:XY_Plotter.c  **** 	}
+ 242:XY_Plotter.c  **** }
+ 698              		.loc 1 242 0 is_stmt 1
+ 699 0186 38BD     		pop	{r3, r4, r5, pc}
+ 700              	.LVL104:
+ 701              	.L44:
+ 702              		.align	2
+ 703              	.L43:
+ 704 0188 00006643 		.word	1130758144
+ 705 018c 00000000 		.word	stepCase
+ 706              		.cfi_endproc
+ 707              	.LFE66:
+ 708              		.size	moveMotorY, .-moveMotorY
+ 709              		.global	__aeabi_i2f
+ 710              		.global	__aeabi_i2d
+ 711              		.global	__aeabi_dsub
+ 712              		.global	__aeabi_d2f
+ 713              		.global	__aeabi_dadd
+ 714              		.section	.text.moveChessPiece,"ax",%progbits
+ 715              		.align	2
+ 716              		.global	moveChessPiece
+ 717              		.thumb
+ 718              		.thumb_func
+ 719              		.type	moveChessPiece, %function
+ 720              	moveChessPiece:
+ 721              	.LFB63:
+  22:XY_Plotter.c  ****     // Udtryk for at rykke fra currentSquare til fromSquare
+ 722              		.loc 1 22 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 18
+
+
+ 723              		.cfi_startproc
+ 724              		@ args = 0, pretend = 0, frame = 16
+ 725              		@ frame_needed = 0, uses_anonymous_args = 0
+ 726              	.LVL105:
+ 727 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 728              		.cfi_def_cfa_offset 20
+ 729              		.cfi_offset 4, -20
+ 730              		.cfi_offset 5, -16
+ 731              		.cfi_offset 6, -12
+ 732              		.cfi_offset 7, -8
+ 733              		.cfi_offset 14, -4
+ 734 0002 85B0     		sub	sp, sp, #20
+ 735              		.cfi_def_cfa_offset 40
+ 736 0004 0546     		mov	r5, r0
+ 737 0006 0C46     		mov	r4, r1
+  24:XY_Plotter.c  ****     // Ryk magnet til startposition
+ 738              		.loc 1 24 0
+ 739 0008 0246     		mov	r2, r0
+ 740 000a 464B     		ldr	r3, .L51
+ 741 000c 1968     		ldr	r1, [r3]
+ 742              	.LVL106:
+ 743 000e 02A8     		add	r0, sp, #8
+ 744              	.LVL107:
+ 745 0010 FFF7FEFF 		bl	calculateSteps
+ 746              	.LVL108:
+  26:XY_Plotter.c  ****     moveMotorY(moveToStart.y);
+ 747              		.loc 1 26 0
+ 748 0014 0298     		ldr	r0, [sp, #8]
+ 749 0016 FFF7FEFF 		bl	__aeabi_i2f
+ 750              	.LVL109:
+ 751 001a FFF7FEFF 		bl	moveMotorX
+ 752              	.LVL110:
+  27:XY_Plotter.c  ****     
+ 753              		.loc 1 27 0
+ 754 001e 0398     		ldr	r0, [sp, #12]
+ 755 0020 FFF7FEFF 		bl	__aeabi_i2f
+ 756              	.LVL111:
+ 757 0024 FFF7FEFF 		bl	moveMotorY
+ 758              	.LVL112:
+  31:XY_Plotter.c  ****     
+ 759              		.loc 1 31 0
+ 760 0028 2246     		mov	r2, r4
+ 761 002a 2946     		mov	r1, r5
+ 762 002c 6846     		mov	r0, sp
+ 763 002e FFF7FEFF 		bl	calculateSteps
+ 764              	.LVL113:
+  33:XY_Plotter.c  ****     moveMotorX(0.5);
+ 765              		.loc 1 33 0
+ 766 0032 009D     		ldr	r5, [sp]
+ 767              	.LVL114:
+ 768 0034 002D     		cmp	r5, #0
+ 769 0036 38DB     		blt	.L46
+  34:XY_Plotter.c  ****         if(stepsToMove.y>=0){ //Positv y
+ 770              		.loc 1 34 0
+ 771 0038 4FF07C50 		mov	r0, #1056964608
+ 772 003c FFF7FEFF 		bl	moveMotorX
+ 773              	.LVL115:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 19
+
+
+  35:XY_Plotter.c  ****             moveMotorY(0.5);
+ 774              		.loc 1 35 0
+ 775 0040 019E     		ldr	r6, [sp, #4]
+ 776 0042 002E     		cmp	r6, #0
+ 777 0044 18DB     		blt	.L47
+  36:XY_Plotter.c  ****             moveMotorY(stepsToMove.y-1);
+ 778              		.loc 1 36 0
+ 779 0046 4FF07C57 		mov	r7, #1056964608
+ 780 004a 3846     		mov	r0, r7
+ 781 004c FFF7FEFF 		bl	moveMotorY
+ 782              	.LVL116:
+  37:XY_Plotter.c  ****             moveMotorX(stepsToMove.x-0.5);
+ 783              		.loc 1 37 0
+ 784 0050 701E     		subs	r0, r6, #1
+ 785 0052 FFF7FEFF 		bl	__aeabi_i2f
+ 786              	.LVL117:
+ 787 0056 FFF7FEFF 		bl	moveMotorY
+ 788              	.LVL118:
+  38:XY_Plotter.c  ****             moveMotorY(0.5);
+ 789              		.loc 1 38 0
+ 790 005a 2846     		mov	r0, r5
+ 791 005c FFF7FEFF 		bl	__aeabi_i2d
+ 792              	.LVL119:
+ 793 0060 0022     		movs	r2, #0
+ 794 0062 314B     		ldr	r3, .L51+4
+ 795 0064 FFF7FEFF 		bl	__aeabi_dsub
+ 796              	.LVL120:
+ 797 0068 FFF7FEFF 		bl	__aeabi_d2f
+ 798              	.LVL121:
+ 799 006c FFF7FEFF 		bl	moveMotorX
+ 800              	.LVL122:
+  39:XY_Plotter.c  ****         }
+ 801              		.loc 1 39 0
+ 802 0070 3846     		mov	r0, r7
+ 803 0072 FFF7FEFF 		bl	moveMotorY
+ 804              	.LVL123:
+ 805 0076 50E0     		b	.L48
+ 806              	.L47:
+  42:XY_Plotter.c  ****             moveMotorY(stepsToMove.y+1);
+ 807              		.loc 1 42 0
+ 808 0078 4FF03F47 		mov	r7, #-1090519040
+ 809 007c 3846     		mov	r0, r7
+ 810 007e FFF7FEFF 		bl	moveMotorY
+ 811              	.LVL124:
+  43:XY_Plotter.c  ****             moveMotorX(stepsToMove.x-0.5);
+ 812              		.loc 1 43 0
+ 813 0082 701C     		adds	r0, r6, #1
+ 814 0084 FFF7FEFF 		bl	__aeabi_i2f
+ 815              	.LVL125:
+ 816 0088 FFF7FEFF 		bl	moveMotorY
+ 817              	.LVL126:
+  44:XY_Plotter.c  ****             moveMotorY(-0.5);
+ 818              		.loc 1 44 0
+ 819 008c 2846     		mov	r0, r5
+ 820 008e FFF7FEFF 		bl	__aeabi_i2d
+ 821              	.LVL127:
+ 822 0092 0022     		movs	r2, #0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 20
+
+
+ 823 0094 244B     		ldr	r3, .L51+4
+ 824 0096 FFF7FEFF 		bl	__aeabi_dsub
+ 825              	.LVL128:
+ 826 009a FFF7FEFF 		bl	__aeabi_d2f
+ 827              	.LVL129:
+ 828 009e FFF7FEFF 		bl	moveMotorX
+ 829              	.LVL130:
+  45:XY_Plotter.c  ****         }
+ 830              		.loc 1 45 0
+ 831 00a2 3846     		mov	r0, r7
+ 832 00a4 FFF7FEFF 		bl	moveMotorY
+ 833              	.LVL131:
+ 834 00a8 37E0     		b	.L48
+ 835              	.L46:
+  49:XY_Plotter.c  ****         if(stepsToMove.y>=0){ //Positv y
+ 836              		.loc 1 49 0
+ 837 00aa 4FF03F40 		mov	r0, #-1090519040
+ 838 00ae FFF7FEFF 		bl	moveMotorX
+ 839              	.LVL132:
+  50:XY_Plotter.c  ****             moveMotorY(0.5);
+ 840              		.loc 1 50 0
+ 841 00b2 019E     		ldr	r6, [sp, #4]
+ 842 00b4 002E     		cmp	r6, #0
+ 843 00b6 18DB     		blt	.L49
+  51:XY_Plotter.c  ****             moveMotorY(stepsToMove.y-1);
+ 844              		.loc 1 51 0
+ 845 00b8 4FF07C57 		mov	r7, #1056964608
+ 846 00bc 3846     		mov	r0, r7
+ 847 00be FFF7FEFF 		bl	moveMotorY
+ 848              	.LVL133:
+  52:XY_Plotter.c  ****             moveMotorX(stepsToMove.x+0.5);
+ 849              		.loc 1 52 0
+ 850 00c2 701E     		subs	r0, r6, #1
+ 851 00c4 FFF7FEFF 		bl	__aeabi_i2f
+ 852              	.LVL134:
+ 853 00c8 FFF7FEFF 		bl	moveMotorY
+ 854              	.LVL135:
+  53:XY_Plotter.c  ****             moveMotorY(0.5);
+ 855              		.loc 1 53 0
+ 856 00cc 2846     		mov	r0, r5
+ 857 00ce FFF7FEFF 		bl	__aeabi_i2d
+ 858              	.LVL136:
+ 859 00d2 0022     		movs	r2, #0
+ 860 00d4 144B     		ldr	r3, .L51+4
+ 861 00d6 FFF7FEFF 		bl	__aeabi_dadd
+ 862              	.LVL137:
+ 863 00da FFF7FEFF 		bl	__aeabi_d2f
+ 864              	.LVL138:
+ 865 00de FFF7FEFF 		bl	moveMotorX
+ 866              	.LVL139:
+  54:XY_Plotter.c  ****         }
+ 867              		.loc 1 54 0
+ 868 00e2 3846     		mov	r0, r7
+ 869 00e4 FFF7FEFF 		bl	moveMotorY
+ 870              	.LVL140:
+ 871 00e8 17E0     		b	.L48
+ 872              	.L49:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 21
+
+
+  57:XY_Plotter.c  ****             moveMotorY(stepsToMove.y+1);
+ 873              		.loc 1 57 0
+ 874 00ea 4FF03F47 		mov	r7, #-1090519040
+ 875 00ee 3846     		mov	r0, r7
+ 876 00f0 FFF7FEFF 		bl	moveMotorY
+ 877              	.LVL141:
+  58:XY_Plotter.c  ****             moveMotorX(stepsToMove.x+0.5);
+ 878              		.loc 1 58 0
+ 879 00f4 701C     		adds	r0, r6, #1
+ 880 00f6 FFF7FEFF 		bl	__aeabi_i2f
+ 881              	.LVL142:
+ 882 00fa FFF7FEFF 		bl	moveMotorY
+ 883              	.LVL143:
+  59:XY_Plotter.c  ****             moveMotorY(-0.5);
+ 884              		.loc 1 59 0
+ 885 00fe 2846     		mov	r0, r5
+ 886 0100 FFF7FEFF 		bl	__aeabi_i2d
+ 887              	.LVL144:
+ 888 0104 0022     		movs	r2, #0
+ 889 0106 084B     		ldr	r3, .L51+4
+ 890 0108 FFF7FEFF 		bl	__aeabi_dadd
+ 891              	.LVL145:
+ 892 010c FFF7FEFF 		bl	__aeabi_d2f
+ 893              	.LVL146:
+ 894 0110 FFF7FEFF 		bl	moveMotorX
+ 895              	.LVL147:
+  60:XY_Plotter.c  ****         }
+ 896              		.loc 1 60 0
+ 897 0114 3846     		mov	r0, r7
+ 898 0116 FFF7FEFF 		bl	moveMotorY
+ 899              	.LVL148:
+ 900              	.L48:
+  67:XY_Plotter.c  **** }
+ 901              		.loc 1 67 0
+ 902 011a 024B     		ldr	r3, .L51
+ 903 011c 1C60     		str	r4, [r3]
+  68:XY_Plotter.c  **** 
+ 904              		.loc 1 68 0
+ 905 011e 05B0     		add	sp, sp, #20
+ 906              		.cfi_def_cfa_offset 20
+ 907              		@ sp needed
+ 908 0120 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 909              	.LVL149:
+ 910              	.L52:
+ 911 0122 00BF     		.align	2
+ 912              	.L51:
+ 913 0124 00000000 		.word	currentSquare
+ 914 0128 0000E03F 		.word	1071644672
+ 915              		.cfi_endproc
+ 916              	.LFE63:
+ 917              		.size	moveChessPiece, .-moveChessPiece
+ 918              		.section	.text.initXYPlotter,"ax",%progbits
+ 919              		.align	2
+ 920              		.global	initXYPlotter
+ 921              		.thumb
+ 922              		.thumb_func
+ 923              		.type	initXYPlotter, %function
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 22
+
+
+ 924              	initXYPlotter:
+ 925              	.LFB67:
+ 243:XY_Plotter.c  **** 
+ 244:XY_Plotter.c  **** void initXYPlotter()
+ 245:XY_Plotter.c  **** {
+ 926              		.loc 1 245 0
+ 927              		.cfi_startproc
+ 928              		@ args = 0, pretend = 0, frame = 0
+ 929              		@ frame_needed = 0, uses_anonymous_args = 0
+ 930              		@ link register save eliminated.
+ 246:XY_Plotter.c  ****     stepCase = 1;
+ 931              		.loc 1 246 0
+ 932 0000 0122     		movs	r2, #1
+ 933 0002 014B     		ldr	r3, .L54
+ 934 0004 1A60     		str	r2, [r3]
+ 935 0006 7047     		bx	lr
+ 936              	.L55:
+ 937              		.align	2
+ 938              	.L54:
+ 939 0008 00000000 		.word	stepCase
+ 940              		.cfi_endproc
+ 941              	.LFE67:
+ 942              		.size	initXYPlotter, .-initXYPlotter
+ 943              		.section	.text.motorTest,"ax",%progbits
+ 944              		.align	2
+ 945              		.global	motorTest
+ 946              		.thumb
+ 947              		.thumb_func
+ 948              		.type	motorTest, %function
+ 949              	motorTest:
+ 950              	.LFB68:
+ 247:XY_Plotter.c  **** }
+ 248:XY_Plotter.c  **** 
+ 249:XY_Plotter.c  **** void motorTest(P1_1,P2_1,P1_2,P2_2)
+ 250:XY_Plotter.c  **** {
+ 951              		.loc 1 250 0
+ 952              		.cfi_startproc
+ 953              		@ args = 0, pretend = 0, frame = 0
+ 954              		@ frame_needed = 0, uses_anonymous_args = 0
+ 955              	.LVL150:
+ 956 0000 70B5     		push	{r4, r5, r6, lr}
+ 957              		.cfi_def_cfa_offset 16
+ 958              		.cfi_offset 4, -16
+ 959              		.cfi_offset 5, -12
+ 960              		.cfi_offset 6, -8
+ 961              		.cfi_offset 14, -4
+ 962 0002 0E46     		mov	r6, r1
+ 963 0004 1546     		mov	r5, r2
+ 964 0006 1C46     		mov	r4, r3
+ 251:XY_Plotter.c  **** P2_3_Write(P1_1); //P1.1
+ 965              		.loc 1 251 0
+ 966 0008 C0B2     		uxtb	r0, r0
+ 967              	.LVL151:
+ 968 000a FFF7FEFF 		bl	P2_3_Write
+ 969              	.LVL152:
+ 252:XY_Plotter.c  **** P2_4_Write(P2_1); //P2.1
+ 970              		.loc 1 252 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 23
+
+
+ 971 000e F0B2     		uxtb	r0, r6
+ 972 0010 FFF7FEFF 		bl	P2_4_Write
+ 973              	.LVL153:
+ 253:XY_Plotter.c  **** P2_5_Write(P1_2); //P1.2
+ 974              		.loc 1 253 0
+ 975 0014 E8B2     		uxtb	r0, r5
+ 976 0016 FFF7FEFF 		bl	P2_5_Write
+ 977              	.LVL154:
+ 254:XY_Plotter.c  **** P2_6_Write(P2_2); //P2.2
+ 978              		.loc 1 254 0
+ 979 001a E0B2     		uxtb	r0, r4
+ 980 001c FFF7FEFF 		bl	P2_6_Write
+ 981              	.LVL155:
+ 982 0020 70BD     		pop	{r4, r5, r6, pc}
+ 983              		.cfi_endproc
+ 984              	.LFE68:
+ 985              		.size	motorTest, .-motorTest
+ 986 0022 00BF     		.section	.text.XYPlotterTest,"ax",%progbits
+ 987              		.align	2
+ 988              		.global	XYPlotterTest
+ 989              		.thumb
+ 990              		.thumb_func
+ 991              		.type	XYPlotterTest, %function
+ 992              	XYPlotterTest:
+ 993              	.LFB69:
+ 255:XY_Plotter.c  **** }
+ 256:XY_Plotter.c  **** 
+ 257:XY_Plotter.c  **** void XYPlotterTest()
+ 258:XY_Plotter.c  **** {
+ 994              		.loc 1 258 0
+ 995              		.cfi_startproc
+ 996              		@ args = 0, pretend = 0, frame = 0
+ 997              		@ frame_needed = 0, uses_anonymous_args = 0
+ 998 0000 08B5     		push	{r3, lr}
+ 999              		.cfi_def_cfa_offset 8
+ 1000              		.cfi_offset 3, -8
+ 1001              		.cfi_offset 14, -4
+ 259:XY_Plotter.c  ****     //moveChessPiece(1,12);
+ 260:XY_Plotter.c  ****     moveMotorY(-5);
+ 1002              		.loc 1 260 0
+ 1003 0002 0348     		ldr	r0, .L60
+ 1004 0004 FFF7FEFF 		bl	moveMotorY
+ 1005              	.LVL156:
+ 261:XY_Plotter.c  ****     moveMotorY(5);
+ 1006              		.loc 1 261 0
+ 1007 0008 0248     		ldr	r0, .L60+4
+ 1008 000a FFF7FEFF 		bl	moveMotorY
+ 1009              	.LVL157:
+ 1010 000e 08BD     		pop	{r3, pc}
+ 1011              	.L61:
+ 1012              		.align	2
+ 1013              	.L60:
+ 1014 0010 0000A0C0 		.word	-1063256064
+ 1015 0014 0000A040 		.word	1084227584
+ 1016              		.cfi_endproc
+ 1017              	.LFE69:
+ 1018              		.size	XYPlotterTest, .-XYPlotterTest
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 24
+
+
+ 1019              		.comm	stepCase,4,4
+ 1020              		.comm	currentSquare,4,4
+ 1021              		.text
+ 1022              	.Letext0:
+ 1023              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1024              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1025              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 1026              		.file 5 "XY_Plotter.h"
+ 1027              		.file 6 "Generated_Source\\PSoC5/P2_3.h"
+ 1028              		.file 7 "Generated_Source\\PSoC5/P2_4.h"
+ 1029              		.file 8 "Generated_Source\\PSoC5/P2_5.h"
+ 1030              		.file 9 "Generated_Source\\PSoC5/P2_6.h"
+ 1031              		.file 10 "Generated_Source\\PSoC5/CyLib.h"
+ 1032              		.file 11 "Generated_Source\\PSoC5/P3_3.h"
+ 1033              		.file 12 "Generated_Source\\PSoC5/P3_4.h"
+ 1034              		.file 13 "Generated_Source\\PSoC5/P3_5.h"
+ 1035              		.file 14 "Generated_Source\\PSoC5/P3_6.h"
+ 1036              		.section	.debug_info,"",%progbits
+ 1037              	.Ldebug_info0:
+ 1038 0000 CD0A0000 		.4byte	0xacd
+ 1039 0004 0400     		.2byte	0x4
+ 1040 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1041 000a 04       		.byte	0x4
+ 1042 000b 01       		.uleb128 0x1
+ 1043 000c 8B000000 		.4byte	.LASF44
+ 1044 0010 0C       		.byte	0xc
+ 1045 0011 A0020000 		.4byte	.LASF45
+ 1046 0015 77010000 		.4byte	.LASF46
+ 1047 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 1048 001d 00000000 		.4byte	0
+ 1049 0021 00000000 		.4byte	.Ldebug_line0
+ 1050 0025 02       		.uleb128 0x2
+ 1051 0026 04       		.byte	0x4
+ 1052 0027 04       		.byte	0x4
+ 1053 0028 72000000 		.4byte	.LASF0
+ 1054 002c 02       		.uleb128 0x2
+ 1055 002d 01       		.byte	0x1
+ 1056 002e 06       		.byte	0x6
+ 1057 002f B9020000 		.4byte	.LASF1
+ 1058 0033 02       		.uleb128 0x2
+ 1059 0034 01       		.byte	0x1
+ 1060 0035 08       		.byte	0x8
+ 1061 0036 7D000000 		.4byte	.LASF2
+ 1062 003a 02       		.uleb128 0x2
+ 1063 003b 02       		.byte	0x2
+ 1064 003c 05       		.byte	0x5
+ 1065 003d B2010000 		.4byte	.LASF3
+ 1066 0041 02       		.uleb128 0x2
+ 1067 0042 02       		.byte	0x2
+ 1068 0043 07       		.byte	0x7
+ 1069 0044 38000000 		.4byte	.LASF4
+ 1070 0048 03       		.uleb128 0x3
+ 1071 0049 2E000000 		.4byte	.LASF10
+ 1072 004d 02       		.byte	0x2
+ 1073 004e 3F       		.byte	0x3f
+ 1074 004f 53000000 		.4byte	0x53
+ 1075 0053 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 25
+
+
+ 1076 0054 04       		.byte	0x4
+ 1077 0055 05       		.byte	0x5
+ 1078 0056 92020000 		.4byte	.LASF5
+ 1079 005a 02       		.uleb128 0x2
+ 1080 005b 04       		.byte	0x4
+ 1081 005c 07       		.byte	0x7
+ 1082 005d 24010000 		.4byte	.LASF6
+ 1083 0061 02       		.uleb128 0x2
+ 1084 0062 08       		.byte	0x8
+ 1085 0063 05       		.byte	0x5
+ 1086 0064 53020000 		.4byte	.LASF7
+ 1087 0068 02       		.uleb128 0x2
+ 1088 0069 08       		.byte	0x8
+ 1089 006a 07       		.byte	0x7
+ 1090 006b F4010000 		.4byte	.LASF8
+ 1091 006f 04       		.uleb128 0x4
+ 1092 0070 04       		.byte	0x4
+ 1093 0071 05       		.byte	0x5
+ 1094 0072 696E7400 		.ascii	"int\000"
+ 1095 0076 02       		.uleb128 0x2
+ 1096 0077 04       		.byte	0x4
+ 1097 0078 07       		.byte	0x7
+ 1098 0079 DE010000 		.4byte	.LASF9
+ 1099 007d 03       		.uleb128 0x3
+ 1100 007e 35020000 		.4byte	.LASF11
+ 1101 0082 03       		.byte	0x3
+ 1102 0083 2C       		.byte	0x2c
+ 1103 0084 48000000 		.4byte	0x48
+ 1104 0088 02       		.uleb128 0x2
+ 1105 0089 08       		.byte	0x8
+ 1106 008a 04       		.byte	0x4
+ 1107 008b 55000000 		.4byte	.LASF12
+ 1108 008f 02       		.uleb128 0x2
+ 1109 0090 01       		.byte	0x1
+ 1110 0091 08       		.byte	0x8
+ 1111 0092 9B020000 		.4byte	.LASF13
+ 1112 0096 02       		.uleb128 0x2
+ 1113 0097 08       		.byte	0x8
+ 1114 0098 04       		.byte	0x4
+ 1115 0099 AD020000 		.4byte	.LASF14
+ 1116 009d 02       		.uleb128 0x2
+ 1117 009e 04       		.byte	0x4
+ 1118 009f 07       		.byte	0x7
+ 1119 00a0 61020000 		.4byte	.LASF15
+ 1120 00a4 05       		.uleb128 0x5
+ 1121 00a5 26000000 		.4byte	.LASF47
+ 1122 00a9 08       		.byte	0x8
+ 1123 00aa 01       		.byte	0x1
+ 1124 00ab 10       		.byte	0x10
+ 1125 00ac C5000000 		.4byte	0xc5
+ 1126 00b0 06       		.uleb128 0x6
+ 1127 00b1 7800     		.ascii	"x\000"
+ 1128 00b3 01       		.byte	0x1
+ 1129 00b4 11       		.byte	0x11
+ 1130 00b5 6F000000 		.4byte	0x6f
+ 1131 00b9 00       		.byte	0
+ 1132 00ba 06       		.uleb128 0x6
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 26
+
+
+ 1133 00bb 7900     		.ascii	"y\000"
+ 1134 00bd 01       		.byte	0x1
+ 1135 00be 12       		.byte	0x12
+ 1136 00bf 6F000000 		.4byte	0x6f
+ 1137 00c3 04       		.byte	0x4
+ 1138 00c4 00       		.byte	0
+ 1139 00c5 07       		.uleb128 0x7
+ 1140 00c6 5A010000 		.4byte	.LASF48
+ 1141 00ca 01       		.byte	0x1
+ 1142 00cb 47       		.byte	0x47
+ 1143 00cc A4000000 		.4byte	0xa4
+ 1144 00d0 00000000 		.4byte	.LFB64
+ 1145 00d4 44000000 		.4byte	.LFE64-.LFB64
+ 1146 00d8 01       		.uleb128 0x1
+ 1147 00d9 9C       		.byte	0x9c
+ 1148 00da 49010000 		.4byte	0x149
+ 1149 00de 08       		.uleb128 0x8
+ 1150 00df 67000000 		.4byte	.LASF16
+ 1151 00e3 01       		.byte	0x1
+ 1152 00e4 47       		.byte	0x47
+ 1153 00e5 6F000000 		.4byte	0x6f
+ 1154 00e9 00000000 		.4byte	.LLST0
+ 1155 00ed 08       		.uleb128 0x8
+ 1156 00ee 72020000 		.4byte	.LASF17
+ 1157 00f2 01       		.byte	0x1
+ 1158 00f3 47       		.byte	0x47
+ 1159 00f4 6F000000 		.4byte	0x6f
+ 1160 00f8 21000000 		.4byte	.LLST1
+ 1161 00fc 09       		.uleb128 0x9
+ 1162 00fd 29020000 		.4byte	.LASF18
+ 1163 0101 01       		.byte	0x1
+ 1164 0102 49       		.byte	0x49
+ 1165 0103 6F000000 		.4byte	0x6f
+ 1166 0107 4A000000 		.4byte	.LLST2
+ 1167 010b 0A       		.uleb128 0xa
+ 1168 010c 746F5800 		.ascii	"toX\000"
+ 1169 0110 01       		.byte	0x1
+ 1170 0111 4A       		.byte	0x4a
+ 1171 0112 6F000000 		.4byte	0x6f
+ 1172 0116 68000000 		.4byte	.LLST3
+ 1173 011a 09       		.uleb128 0x9
+ 1174 011b 2F020000 		.4byte	.LASF19
+ 1175 011f 01       		.byte	0x1
+ 1176 0120 4C       		.byte	0x4c
+ 1177 0121 6F000000 		.4byte	0x6f
+ 1178 0125 7B000000 		.4byte	.LLST4
+ 1179 0129 0B       		.uleb128 0xb
+ 1180 012a 746F5900 		.ascii	"toY\000"
+ 1181 012e 01       		.byte	0x1
+ 1182 012f 4D       		.byte	0x4d
+ 1183 0130 6F000000 		.4byte	0x6f
+ 1184 0134 05       		.uleb128 0x5
+ 1185 0135 71       		.byte	0x71
+ 1186 0136 00       		.sleb128 0
+ 1187 0137 33       		.byte	0x33
+ 1188 0138 26       		.byte	0x26
+ 1189 0139 9F       		.byte	0x9f
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 27
+
+
+ 1190 013a 0B       		.uleb128 0xb
+ 1191 013b 64696600 		.ascii	"dif\000"
+ 1192 013f 01       		.byte	0x1
+ 1193 0140 50       		.byte	0x50
+ 1194 0141 A4000000 		.4byte	0xa4
+ 1195 0145 02       		.uleb128 0x2
+ 1196 0146 70       		.byte	0x70
+ 1197 0147 00       		.sleb128 0
+ 1198 0148 00       		.byte	0
+ 1199 0149 0C       		.uleb128 0xc
+ 1200 014a 3D020000 		.4byte	.LASF22
+ 1201 014e 01       		.byte	0x1
+ 1202 014f 58       		.byte	0x58
+ 1203 0150 00000000 		.4byte	.LFB65
+ 1204 0154 90010000 		.4byte	.LFE65-.LFB65
+ 1205 0158 01       		.uleb128 0x1
+ 1206 0159 9C       		.byte	0x9c
+ 1207 015a 88040000 		.4byte	0x488
+ 1208 015e 08       		.uleb128 0x8
+ 1209 015f 6A020000 		.4byte	.LASF20
+ 1210 0163 01       		.byte	0x1
+ 1211 0164 58       		.byte	0x58
+ 1212 0165 25000000 		.4byte	0x25
+ 1213 0169 8E000000 		.4byte	.LLST5
+ 1214 016d 09       		.uleb128 0x9
+ 1215 016e 4B000000 		.4byte	.LASF21
+ 1216 0172 01       		.byte	0x1
+ 1217 0173 59       		.byte	0x59
+ 1218 0174 6F000000 		.4byte	0x6f
+ 1219 0178 B1000000 		.4byte	.LLST6
+ 1220 017c 0D       		.uleb128 0xd
+ 1221 017d 0E000000 		.4byte	.LBB2
+ 1222 0181 78010000 		.4byte	.LBE2-.LBB2
+ 1223 0185 0A       		.uleb128 0xa
+ 1224 0186 6900     		.ascii	"i\000"
+ 1225 0188 01       		.byte	0x1
+ 1226 0189 5A       		.byte	0x5a
+ 1227 018a 6F000000 		.4byte	0x6f
+ 1228 018e CF000000 		.4byte	.LLST7
+ 1229 0192 0E       		.uleb128 0xe
+ 1230 0193 30000000 		.4byte	.LVL16
+ 1231 0197 6D0A0000 		.4byte	0xa6d
+ 1232 019b A5010000 		.4byte	0x1a5
+ 1233 019f 0F       		.uleb128 0xf
+ 1234 01a0 01       		.uleb128 0x1
+ 1235 01a1 50       		.byte	0x50
+ 1236 01a2 01       		.uleb128 0x1
+ 1237 01a3 31       		.byte	0x31
+ 1238 01a4 00       		.byte	0
+ 1239 01a5 0E       		.uleb128 0xe
+ 1240 01a6 36000000 		.4byte	.LVL17
+ 1241 01aa 780A0000 		.4byte	0xa78
+ 1242 01ae B8010000 		.4byte	0x1b8
+ 1243 01b2 0F       		.uleb128 0xf
+ 1244 01b3 01       		.uleb128 0x1
+ 1245 01b4 50       		.byte	0x50
+ 1246 01b5 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 28
+
+
+ 1247 01b6 30       		.byte	0x30
+ 1248 01b7 00       		.byte	0
+ 1249 01b8 0E       		.uleb128 0xe
+ 1250 01b9 3C000000 		.4byte	.LVL18
+ 1251 01bd 830A0000 		.4byte	0xa83
+ 1252 01c1 CB010000 		.4byte	0x1cb
+ 1253 01c5 0F       		.uleb128 0xf
+ 1254 01c6 01       		.uleb128 0x1
+ 1255 01c7 50       		.byte	0x50
+ 1256 01c8 01       		.uleb128 0x1
+ 1257 01c9 30       		.byte	0x30
+ 1258 01ca 00       		.byte	0
+ 1259 01cb 0E       		.uleb128 0xe
+ 1260 01cc 42000000 		.4byte	.LVL19
+ 1261 01d0 8E0A0000 		.4byte	0xa8e
+ 1262 01d4 DE010000 		.4byte	0x1de
+ 1263 01d8 0F       		.uleb128 0xf
+ 1264 01d9 01       		.uleb128 0x1
+ 1265 01da 50       		.byte	0x50
+ 1266 01db 01       		.uleb128 0x1
+ 1267 01dc 30       		.byte	0x30
+ 1268 01dd 00       		.byte	0
+ 1269 01de 0E       		.uleb128 0xe
+ 1270 01df 50000000 		.4byte	.LVL20
+ 1271 01e3 990A0000 		.4byte	0xa99
+ 1272 01e7 F1010000 		.4byte	0x1f1
+ 1273 01eb 0F       		.uleb128 0xf
+ 1274 01ec 01       		.uleb128 0x1
+ 1275 01ed 50       		.byte	0x50
+ 1276 01ee 01       		.uleb128 0x1
+ 1277 01ef 3A       		.byte	0x3a
+ 1278 01f0 00       		.byte	0
+ 1279 01f1 0E       		.uleb128 0xe
+ 1280 01f2 58000000 		.4byte	.LVL21
+ 1281 01f6 6D0A0000 		.4byte	0xa6d
+ 1282 01fa 04020000 		.4byte	0x204
+ 1283 01fe 0F       		.uleb128 0xf
+ 1284 01ff 01       		.uleb128 0x1
+ 1285 0200 50       		.byte	0x50
+ 1286 0201 01       		.uleb128 0x1
+ 1287 0202 30       		.byte	0x30
+ 1288 0203 00       		.byte	0
+ 1289 0204 0E       		.uleb128 0xe
+ 1290 0205 5E000000 		.4byte	.LVL22
+ 1291 0209 780A0000 		.4byte	0xa78
+ 1292 020d 17020000 		.4byte	0x217
+ 1293 0211 0F       		.uleb128 0xf
+ 1294 0212 01       		.uleb128 0x1
+ 1295 0213 50       		.byte	0x50
+ 1296 0214 01       		.uleb128 0x1
+ 1297 0215 31       		.byte	0x31
+ 1298 0216 00       		.byte	0
+ 1299 0217 0E       		.uleb128 0xe
+ 1300 0218 64000000 		.4byte	.LVL23
+ 1301 021c 830A0000 		.4byte	0xa83
+ 1302 0220 2A020000 		.4byte	0x22a
+ 1303 0224 0F       		.uleb128 0xf
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 29
+
+
+ 1304 0225 01       		.uleb128 0x1
+ 1305 0226 50       		.byte	0x50
+ 1306 0227 01       		.uleb128 0x1
+ 1307 0228 30       		.byte	0x30
+ 1308 0229 00       		.byte	0
+ 1309 022a 0E       		.uleb128 0xe
+ 1310 022b 6A000000 		.4byte	.LVL24
+ 1311 022f 8E0A0000 		.4byte	0xa8e
+ 1312 0233 3D020000 		.4byte	0x23d
+ 1313 0237 0F       		.uleb128 0xf
+ 1314 0238 01       		.uleb128 0x1
+ 1315 0239 50       		.byte	0x50
+ 1316 023a 01       		.uleb128 0x1
+ 1317 023b 30       		.byte	0x30
+ 1318 023c 00       		.byte	0
+ 1319 023d 0E       		.uleb128 0xe
+ 1320 023e 78000000 		.4byte	.LVL25
+ 1321 0242 990A0000 		.4byte	0xa99
+ 1322 0246 50020000 		.4byte	0x250
+ 1323 024a 0F       		.uleb128 0xf
+ 1324 024b 01       		.uleb128 0x1
+ 1325 024c 50       		.byte	0x50
+ 1326 024d 01       		.uleb128 0x1
+ 1327 024e 3A       		.byte	0x3a
+ 1328 024f 00       		.byte	0
+ 1329 0250 0E       		.uleb128 0xe
+ 1330 0251 80000000 		.4byte	.LVL26
+ 1331 0255 6D0A0000 		.4byte	0xa6d
+ 1332 0259 63020000 		.4byte	0x263
+ 1333 025d 0F       		.uleb128 0xf
+ 1334 025e 01       		.uleb128 0x1
+ 1335 025f 50       		.byte	0x50
+ 1336 0260 01       		.uleb128 0x1
+ 1337 0261 30       		.byte	0x30
+ 1338 0262 00       		.byte	0
+ 1339 0263 0E       		.uleb128 0xe
+ 1340 0264 86000000 		.4byte	.LVL27
+ 1341 0268 780A0000 		.4byte	0xa78
+ 1342 026c 76020000 		.4byte	0x276
+ 1343 0270 0F       		.uleb128 0xf
+ 1344 0271 01       		.uleb128 0x1
+ 1345 0272 50       		.byte	0x50
+ 1346 0273 01       		.uleb128 0x1
+ 1347 0274 30       		.byte	0x30
+ 1348 0275 00       		.byte	0
+ 1349 0276 0E       		.uleb128 0xe
+ 1350 0277 8C000000 		.4byte	.LVL28
+ 1351 027b 830A0000 		.4byte	0xa83
+ 1352 027f 89020000 		.4byte	0x289
+ 1353 0283 0F       		.uleb128 0xf
+ 1354 0284 01       		.uleb128 0x1
+ 1355 0285 50       		.byte	0x50
+ 1356 0286 01       		.uleb128 0x1
+ 1357 0287 31       		.byte	0x31
+ 1358 0288 00       		.byte	0
+ 1359 0289 0E       		.uleb128 0xe
+ 1360 028a 92000000 		.4byte	.LVL29
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 30
+
+
+ 1361 028e 8E0A0000 		.4byte	0xa8e
+ 1362 0292 9C020000 		.4byte	0x29c
+ 1363 0296 0F       		.uleb128 0xf
+ 1364 0297 01       		.uleb128 0x1
+ 1365 0298 50       		.byte	0x50
+ 1366 0299 01       		.uleb128 0x1
+ 1367 029a 30       		.byte	0x30
+ 1368 029b 00       		.byte	0
+ 1369 029c 0E       		.uleb128 0xe
+ 1370 029d A0000000 		.4byte	.LVL30
+ 1371 02a1 990A0000 		.4byte	0xa99
+ 1372 02a5 AF020000 		.4byte	0x2af
+ 1373 02a9 0F       		.uleb128 0xf
+ 1374 02aa 01       		.uleb128 0x1
+ 1375 02ab 50       		.byte	0x50
+ 1376 02ac 01       		.uleb128 0x1
+ 1377 02ad 3A       		.byte	0x3a
+ 1378 02ae 00       		.byte	0
+ 1379 02af 0E       		.uleb128 0xe
+ 1380 02b0 A8000000 		.4byte	.LVL31
+ 1381 02b4 6D0A0000 		.4byte	0xa6d
+ 1382 02b8 C2020000 		.4byte	0x2c2
+ 1383 02bc 0F       		.uleb128 0xf
+ 1384 02bd 01       		.uleb128 0x1
+ 1385 02be 50       		.byte	0x50
+ 1386 02bf 01       		.uleb128 0x1
+ 1387 02c0 30       		.byte	0x30
+ 1388 02c1 00       		.byte	0
+ 1389 02c2 0E       		.uleb128 0xe
+ 1390 02c3 AE000000 		.4byte	.LVL32
+ 1391 02c7 780A0000 		.4byte	0xa78
+ 1392 02cb D5020000 		.4byte	0x2d5
+ 1393 02cf 0F       		.uleb128 0xf
+ 1394 02d0 01       		.uleb128 0x1
+ 1395 02d1 50       		.byte	0x50
+ 1396 02d2 01       		.uleb128 0x1
+ 1397 02d3 30       		.byte	0x30
+ 1398 02d4 00       		.byte	0
+ 1399 02d5 0E       		.uleb128 0xe
+ 1400 02d6 B4000000 		.4byte	.LVL33
+ 1401 02da 830A0000 		.4byte	0xa83
+ 1402 02de E8020000 		.4byte	0x2e8
+ 1403 02e2 0F       		.uleb128 0xf
+ 1404 02e3 01       		.uleb128 0x1
+ 1405 02e4 50       		.byte	0x50
+ 1406 02e5 01       		.uleb128 0x1
+ 1407 02e6 30       		.byte	0x30
+ 1408 02e7 00       		.byte	0
+ 1409 02e8 0E       		.uleb128 0xe
+ 1410 02e9 BA000000 		.4byte	.LVL34
+ 1411 02ed 8E0A0000 		.4byte	0xa8e
+ 1412 02f1 FB020000 		.4byte	0x2fb
+ 1413 02f5 0F       		.uleb128 0xf
+ 1414 02f6 01       		.uleb128 0x1
+ 1415 02f7 50       		.byte	0x50
+ 1416 02f8 01       		.uleb128 0x1
+ 1417 02f9 31       		.byte	0x31
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 31
+
+
+ 1418 02fa 00       		.byte	0
+ 1419 02fb 0E       		.uleb128 0xe
+ 1420 02fc C0000000 		.4byte	.LVL35
+ 1421 0300 990A0000 		.4byte	0xa99
+ 1422 0304 0E030000 		.4byte	0x30e
+ 1423 0308 0F       		.uleb128 0xf
+ 1424 0309 01       		.uleb128 0x1
+ 1425 030a 50       		.byte	0x50
+ 1426 030b 01       		.uleb128 0x1
+ 1427 030c 3A       		.byte	0x3a
+ 1428 030d 00       		.byte	0
+ 1429 030e 0E       		.uleb128 0xe
+ 1430 030f E0000000 		.4byte	.LVL36
+ 1431 0313 6D0A0000 		.4byte	0xa6d
+ 1432 0317 21030000 		.4byte	0x321
+ 1433 031b 0F       		.uleb128 0xf
+ 1434 031c 01       		.uleb128 0x1
+ 1435 031d 50       		.byte	0x50
+ 1436 031e 01       		.uleb128 0x1
+ 1437 031f 30       		.byte	0x30
+ 1438 0320 00       		.byte	0
+ 1439 0321 0E       		.uleb128 0xe
+ 1440 0322 E6000000 		.4byte	.LVL37
+ 1441 0326 780A0000 		.4byte	0xa78
+ 1442 032a 34030000 		.4byte	0x334
+ 1443 032e 0F       		.uleb128 0xf
+ 1444 032f 01       		.uleb128 0x1
+ 1445 0330 50       		.byte	0x50
+ 1446 0331 01       		.uleb128 0x1
+ 1447 0332 30       		.byte	0x30
+ 1448 0333 00       		.byte	0
+ 1449 0334 0E       		.uleb128 0xe
+ 1450 0335 EC000000 		.4byte	.LVL38
+ 1451 0339 830A0000 		.4byte	0xa83
+ 1452 033d 47030000 		.4byte	0x347
+ 1453 0341 0F       		.uleb128 0xf
+ 1454 0342 01       		.uleb128 0x1
+ 1455 0343 50       		.byte	0x50
+ 1456 0344 01       		.uleb128 0x1
+ 1457 0345 30       		.byte	0x30
+ 1458 0346 00       		.byte	0
+ 1459 0347 0E       		.uleb128 0xe
+ 1460 0348 F2000000 		.4byte	.LVL39
+ 1461 034c 8E0A0000 		.4byte	0xa8e
+ 1462 0350 5A030000 		.4byte	0x35a
+ 1463 0354 0F       		.uleb128 0xf
+ 1464 0355 01       		.uleb128 0x1
+ 1465 0356 50       		.byte	0x50
+ 1466 0357 01       		.uleb128 0x1
+ 1467 0358 31       		.byte	0x31
+ 1468 0359 00       		.byte	0
+ 1469 035a 0E       		.uleb128 0xe
+ 1470 035b 00010000 		.4byte	.LVL40
+ 1471 035f 990A0000 		.4byte	0xa99
+ 1472 0363 6D030000 		.4byte	0x36d
+ 1473 0367 0F       		.uleb128 0xf
+ 1474 0368 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 32
+
+
+ 1475 0369 50       		.byte	0x50
+ 1476 036a 01       		.uleb128 0x1
+ 1477 036b 3A       		.byte	0x3a
+ 1478 036c 00       		.byte	0
+ 1479 036d 0E       		.uleb128 0xe
+ 1480 036e 08010000 		.4byte	.LVL41
+ 1481 0372 6D0A0000 		.4byte	0xa6d
+ 1482 0376 80030000 		.4byte	0x380
+ 1483 037a 0F       		.uleb128 0xf
+ 1484 037b 01       		.uleb128 0x1
+ 1485 037c 50       		.byte	0x50
+ 1486 037d 01       		.uleb128 0x1
+ 1487 037e 30       		.byte	0x30
+ 1488 037f 00       		.byte	0
+ 1489 0380 0E       		.uleb128 0xe
+ 1490 0381 0E010000 		.4byte	.LVL42
+ 1491 0385 780A0000 		.4byte	0xa78
+ 1492 0389 93030000 		.4byte	0x393
+ 1493 038d 0F       		.uleb128 0xf
+ 1494 038e 01       		.uleb128 0x1
+ 1495 038f 50       		.byte	0x50
+ 1496 0390 01       		.uleb128 0x1
+ 1497 0391 30       		.byte	0x30
+ 1498 0392 00       		.byte	0
+ 1499 0393 0E       		.uleb128 0xe
+ 1500 0394 14010000 		.4byte	.LVL43
+ 1501 0398 830A0000 		.4byte	0xa83
+ 1502 039c A6030000 		.4byte	0x3a6
+ 1503 03a0 0F       		.uleb128 0xf
+ 1504 03a1 01       		.uleb128 0x1
+ 1505 03a2 50       		.byte	0x50
+ 1506 03a3 01       		.uleb128 0x1
+ 1507 03a4 31       		.byte	0x31
+ 1508 03a5 00       		.byte	0
+ 1509 03a6 0E       		.uleb128 0xe
+ 1510 03a7 1A010000 		.4byte	.LVL44
+ 1511 03ab 8E0A0000 		.4byte	0xa8e
+ 1512 03af B9030000 		.4byte	0x3b9
+ 1513 03b3 0F       		.uleb128 0xf
+ 1514 03b4 01       		.uleb128 0x1
+ 1515 03b5 50       		.byte	0x50
+ 1516 03b6 01       		.uleb128 0x1
+ 1517 03b7 30       		.byte	0x30
+ 1518 03b8 00       		.byte	0
+ 1519 03b9 0E       		.uleb128 0xe
+ 1520 03ba 28010000 		.4byte	.LVL45
+ 1521 03be 990A0000 		.4byte	0xa99
+ 1522 03c2 CC030000 		.4byte	0x3cc
+ 1523 03c6 0F       		.uleb128 0xf
+ 1524 03c7 01       		.uleb128 0x1
+ 1525 03c8 50       		.byte	0x50
+ 1526 03c9 01       		.uleb128 0x1
+ 1527 03ca 3A       		.byte	0x3a
+ 1528 03cb 00       		.byte	0
+ 1529 03cc 0E       		.uleb128 0xe
+ 1530 03cd 30010000 		.4byte	.LVL46
+ 1531 03d1 6D0A0000 		.4byte	0xa6d
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 33
+
+
+ 1532 03d5 DF030000 		.4byte	0x3df
+ 1533 03d9 0F       		.uleb128 0xf
+ 1534 03da 01       		.uleb128 0x1
+ 1535 03db 50       		.byte	0x50
+ 1536 03dc 01       		.uleb128 0x1
+ 1537 03dd 30       		.byte	0x30
+ 1538 03de 00       		.byte	0
+ 1539 03df 0E       		.uleb128 0xe
+ 1540 03e0 36010000 		.4byte	.LVL47
+ 1541 03e4 780A0000 		.4byte	0xa78
+ 1542 03e8 F2030000 		.4byte	0x3f2
+ 1543 03ec 0F       		.uleb128 0xf
+ 1544 03ed 01       		.uleb128 0x1
+ 1545 03ee 50       		.byte	0x50
+ 1546 03ef 01       		.uleb128 0x1
+ 1547 03f0 31       		.byte	0x31
+ 1548 03f1 00       		.byte	0
+ 1549 03f2 0E       		.uleb128 0xe
+ 1550 03f3 3C010000 		.4byte	.LVL48
+ 1551 03f7 830A0000 		.4byte	0xa83
+ 1552 03fb 05040000 		.4byte	0x405
+ 1553 03ff 0F       		.uleb128 0xf
+ 1554 0400 01       		.uleb128 0x1
+ 1555 0401 50       		.byte	0x50
+ 1556 0402 01       		.uleb128 0x1
+ 1557 0403 30       		.byte	0x30
+ 1558 0404 00       		.byte	0
+ 1559 0405 0E       		.uleb128 0xe
+ 1560 0406 42010000 		.4byte	.LVL49
+ 1561 040a 8E0A0000 		.4byte	0xa8e
+ 1562 040e 18040000 		.4byte	0x418
+ 1563 0412 0F       		.uleb128 0xf
+ 1564 0413 01       		.uleb128 0x1
+ 1565 0414 50       		.byte	0x50
+ 1566 0415 01       		.uleb128 0x1
+ 1567 0416 30       		.byte	0x30
+ 1568 0417 00       		.byte	0
+ 1569 0418 0E       		.uleb128 0xe
+ 1570 0419 50010000 		.4byte	.LVL50
+ 1571 041d 990A0000 		.4byte	0xa99
+ 1572 0421 2B040000 		.4byte	0x42b
+ 1573 0425 0F       		.uleb128 0xf
+ 1574 0426 01       		.uleb128 0x1
+ 1575 0427 50       		.byte	0x50
+ 1576 0428 01       		.uleb128 0x1
+ 1577 0429 3A       		.byte	0x3a
+ 1578 042a 00       		.byte	0
+ 1579 042b 0E       		.uleb128 0xe
+ 1580 042c 58010000 		.4byte	.LVL51
+ 1581 0430 6D0A0000 		.4byte	0xa6d
+ 1582 0434 3E040000 		.4byte	0x43e
+ 1583 0438 0F       		.uleb128 0xf
+ 1584 0439 01       		.uleb128 0x1
+ 1585 043a 50       		.byte	0x50
+ 1586 043b 01       		.uleb128 0x1
+ 1587 043c 31       		.byte	0x31
+ 1588 043d 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 34
+
+
+ 1589 043e 0E       		.uleb128 0xe
+ 1590 043f 5E010000 		.4byte	.LVL52
+ 1591 0443 780A0000 		.4byte	0xa78
+ 1592 0447 51040000 		.4byte	0x451
+ 1593 044b 0F       		.uleb128 0xf
+ 1594 044c 01       		.uleb128 0x1
+ 1595 044d 50       		.byte	0x50
+ 1596 044e 01       		.uleb128 0x1
+ 1597 044f 30       		.byte	0x30
+ 1598 0450 00       		.byte	0
+ 1599 0451 0E       		.uleb128 0xe
+ 1600 0452 64010000 		.4byte	.LVL53
+ 1601 0456 830A0000 		.4byte	0xa83
+ 1602 045a 64040000 		.4byte	0x464
+ 1603 045e 0F       		.uleb128 0xf
+ 1604 045f 01       		.uleb128 0x1
+ 1605 0460 50       		.byte	0x50
+ 1606 0461 01       		.uleb128 0x1
+ 1607 0462 30       		.byte	0x30
+ 1608 0463 00       		.byte	0
+ 1609 0464 0E       		.uleb128 0xe
+ 1610 0465 6A010000 		.4byte	.LVL54
+ 1611 0469 8E0A0000 		.4byte	0xa8e
+ 1612 046d 77040000 		.4byte	0x477
+ 1613 0471 0F       		.uleb128 0xf
+ 1614 0472 01       		.uleb128 0x1
+ 1615 0473 50       		.byte	0x50
+ 1616 0474 01       		.uleb128 0x1
+ 1617 0475 30       		.byte	0x30
+ 1618 0476 00       		.byte	0
+ 1619 0477 10       		.uleb128 0x10
+ 1620 0478 76010000 		.4byte	.LVL55
+ 1621 047c 990A0000 		.4byte	0xa99
+ 1622 0480 0F       		.uleb128 0xf
+ 1623 0481 01       		.uleb128 0x1
+ 1624 0482 50       		.byte	0x50
+ 1625 0483 01       		.uleb128 0x1
+ 1626 0484 3A       		.byte	0x3a
+ 1627 0485 00       		.byte	0
+ 1628 0486 00       		.byte	0
+ 1629 0487 00       		.byte	0
+ 1630 0488 0C       		.uleb128 0xc
+ 1631 0489 36010000 		.4byte	.LASF23
+ 1632 048d 01       		.byte	0x1
+ 1633 048e A6       		.byte	0xa6
+ 1634 048f 00000000 		.4byte	.LFB66
+ 1635 0493 90010000 		.4byte	.LFE66-.LFB66
+ 1636 0497 01       		.uleb128 0x1
+ 1637 0498 9C       		.byte	0x9c
+ 1638 0499 C7070000 		.4byte	0x7c7
+ 1639 049d 08       		.uleb128 0x8
+ 1640 049e 6A020000 		.4byte	.LASF20
+ 1641 04a2 01       		.byte	0x1
+ 1642 04a3 A6       		.byte	0xa6
+ 1643 04a4 25000000 		.4byte	0x25
+ 1644 04a8 EE000000 		.4byte	.LLST8
+ 1645 04ac 09       		.uleb128 0x9
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 35
+
+
+ 1646 04ad 4B000000 		.4byte	.LASF21
+ 1647 04b1 01       		.byte	0x1
+ 1648 04b2 A7       		.byte	0xa7
+ 1649 04b3 6F000000 		.4byte	0x6f
+ 1650 04b7 11010000 		.4byte	.LLST9
+ 1651 04bb 0D       		.uleb128 0xd
+ 1652 04bc 0E000000 		.4byte	.LBB3
+ 1653 04c0 78010000 		.4byte	.LBE3-.LBB3
+ 1654 04c4 0A       		.uleb128 0xa
+ 1655 04c5 6900     		.ascii	"i\000"
+ 1656 04c7 01       		.byte	0x1
+ 1657 04c8 A8       		.byte	0xa8
+ 1658 04c9 6F000000 		.4byte	0x6f
+ 1659 04cd 2F010000 		.4byte	.LLST10
+ 1660 04d1 0E       		.uleb128 0xe
+ 1661 04d2 30000000 		.4byte	.LVL63
+ 1662 04d6 A40A0000 		.4byte	0xaa4
+ 1663 04da E4040000 		.4byte	0x4e4
+ 1664 04de 0F       		.uleb128 0xf
+ 1665 04df 01       		.uleb128 0x1
+ 1666 04e0 50       		.byte	0x50
+ 1667 04e1 01       		.uleb128 0x1
+ 1668 04e2 31       		.byte	0x31
+ 1669 04e3 00       		.byte	0
+ 1670 04e4 0E       		.uleb128 0xe
+ 1671 04e5 36000000 		.4byte	.LVL64
+ 1672 04e9 AF0A0000 		.4byte	0xaaf
+ 1673 04ed F7040000 		.4byte	0x4f7
+ 1674 04f1 0F       		.uleb128 0xf
+ 1675 04f2 01       		.uleb128 0x1
+ 1676 04f3 50       		.byte	0x50
+ 1677 04f4 01       		.uleb128 0x1
+ 1678 04f5 30       		.byte	0x30
+ 1679 04f6 00       		.byte	0
+ 1680 04f7 0E       		.uleb128 0xe
+ 1681 04f8 3C000000 		.4byte	.LVL65
+ 1682 04fc BA0A0000 		.4byte	0xaba
+ 1683 0500 0A050000 		.4byte	0x50a
+ 1684 0504 0F       		.uleb128 0xf
+ 1685 0505 01       		.uleb128 0x1
+ 1686 0506 50       		.byte	0x50
+ 1687 0507 01       		.uleb128 0x1
+ 1688 0508 30       		.byte	0x30
+ 1689 0509 00       		.byte	0
+ 1690 050a 0E       		.uleb128 0xe
+ 1691 050b 42000000 		.4byte	.LVL66
+ 1692 050f C50A0000 		.4byte	0xac5
+ 1693 0513 1D050000 		.4byte	0x51d
+ 1694 0517 0F       		.uleb128 0xf
+ 1695 0518 01       		.uleb128 0x1
+ 1696 0519 50       		.byte	0x50
+ 1697 051a 01       		.uleb128 0x1
+ 1698 051b 30       		.byte	0x30
+ 1699 051c 00       		.byte	0
+ 1700 051d 0E       		.uleb128 0xe
+ 1701 051e 50000000 		.4byte	.LVL67
+ 1702 0522 990A0000 		.4byte	0xa99
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 36
+
+
+ 1703 0526 30050000 		.4byte	0x530
+ 1704 052a 0F       		.uleb128 0xf
+ 1705 052b 01       		.uleb128 0x1
+ 1706 052c 50       		.byte	0x50
+ 1707 052d 01       		.uleb128 0x1
+ 1708 052e 3A       		.byte	0x3a
+ 1709 052f 00       		.byte	0
+ 1710 0530 0E       		.uleb128 0xe
+ 1711 0531 58000000 		.4byte	.LVL68
+ 1712 0535 A40A0000 		.4byte	0xaa4
+ 1713 0539 43050000 		.4byte	0x543
+ 1714 053d 0F       		.uleb128 0xf
+ 1715 053e 01       		.uleb128 0x1
+ 1716 053f 50       		.byte	0x50
+ 1717 0540 01       		.uleb128 0x1
+ 1718 0541 30       		.byte	0x30
+ 1719 0542 00       		.byte	0
+ 1720 0543 0E       		.uleb128 0xe
+ 1721 0544 5E000000 		.4byte	.LVL69
+ 1722 0548 AF0A0000 		.4byte	0xaaf
+ 1723 054c 56050000 		.4byte	0x556
+ 1724 0550 0F       		.uleb128 0xf
+ 1725 0551 01       		.uleb128 0x1
+ 1726 0552 50       		.byte	0x50
+ 1727 0553 01       		.uleb128 0x1
+ 1728 0554 31       		.byte	0x31
+ 1729 0555 00       		.byte	0
+ 1730 0556 0E       		.uleb128 0xe
+ 1731 0557 64000000 		.4byte	.LVL70
+ 1732 055b BA0A0000 		.4byte	0xaba
+ 1733 055f 69050000 		.4byte	0x569
+ 1734 0563 0F       		.uleb128 0xf
+ 1735 0564 01       		.uleb128 0x1
+ 1736 0565 50       		.byte	0x50
+ 1737 0566 01       		.uleb128 0x1
+ 1738 0567 30       		.byte	0x30
+ 1739 0568 00       		.byte	0
+ 1740 0569 0E       		.uleb128 0xe
+ 1741 056a 6A000000 		.4byte	.LVL71
+ 1742 056e C50A0000 		.4byte	0xac5
+ 1743 0572 7C050000 		.4byte	0x57c
+ 1744 0576 0F       		.uleb128 0xf
+ 1745 0577 01       		.uleb128 0x1
+ 1746 0578 50       		.byte	0x50
+ 1747 0579 01       		.uleb128 0x1
+ 1748 057a 30       		.byte	0x30
+ 1749 057b 00       		.byte	0
+ 1750 057c 0E       		.uleb128 0xe
+ 1751 057d 78000000 		.4byte	.LVL72
+ 1752 0581 990A0000 		.4byte	0xa99
+ 1753 0585 8F050000 		.4byte	0x58f
+ 1754 0589 0F       		.uleb128 0xf
+ 1755 058a 01       		.uleb128 0x1
+ 1756 058b 50       		.byte	0x50
+ 1757 058c 01       		.uleb128 0x1
+ 1758 058d 3A       		.byte	0x3a
+ 1759 058e 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 37
+
+
+ 1760 058f 0E       		.uleb128 0xe
+ 1761 0590 80000000 		.4byte	.LVL73
+ 1762 0594 A40A0000 		.4byte	0xaa4
+ 1763 0598 A2050000 		.4byte	0x5a2
+ 1764 059c 0F       		.uleb128 0xf
+ 1765 059d 01       		.uleb128 0x1
+ 1766 059e 50       		.byte	0x50
+ 1767 059f 01       		.uleb128 0x1
+ 1768 05a0 30       		.byte	0x30
+ 1769 05a1 00       		.byte	0
+ 1770 05a2 0E       		.uleb128 0xe
+ 1771 05a3 86000000 		.4byte	.LVL74
+ 1772 05a7 AF0A0000 		.4byte	0xaaf
+ 1773 05ab B5050000 		.4byte	0x5b5
+ 1774 05af 0F       		.uleb128 0xf
+ 1775 05b0 01       		.uleb128 0x1
+ 1776 05b1 50       		.byte	0x50
+ 1777 05b2 01       		.uleb128 0x1
+ 1778 05b3 30       		.byte	0x30
+ 1779 05b4 00       		.byte	0
+ 1780 05b5 0E       		.uleb128 0xe
+ 1781 05b6 8C000000 		.4byte	.LVL75
+ 1782 05ba BA0A0000 		.4byte	0xaba
+ 1783 05be C8050000 		.4byte	0x5c8
+ 1784 05c2 0F       		.uleb128 0xf
+ 1785 05c3 01       		.uleb128 0x1
+ 1786 05c4 50       		.byte	0x50
+ 1787 05c5 01       		.uleb128 0x1
+ 1788 05c6 31       		.byte	0x31
+ 1789 05c7 00       		.byte	0
+ 1790 05c8 0E       		.uleb128 0xe
+ 1791 05c9 92000000 		.4byte	.LVL76
+ 1792 05cd C50A0000 		.4byte	0xac5
+ 1793 05d1 DB050000 		.4byte	0x5db
+ 1794 05d5 0F       		.uleb128 0xf
+ 1795 05d6 01       		.uleb128 0x1
+ 1796 05d7 50       		.byte	0x50
+ 1797 05d8 01       		.uleb128 0x1
+ 1798 05d9 30       		.byte	0x30
+ 1799 05da 00       		.byte	0
+ 1800 05db 0E       		.uleb128 0xe
+ 1801 05dc A0000000 		.4byte	.LVL77
+ 1802 05e0 990A0000 		.4byte	0xa99
+ 1803 05e4 EE050000 		.4byte	0x5ee
+ 1804 05e8 0F       		.uleb128 0xf
+ 1805 05e9 01       		.uleb128 0x1
+ 1806 05ea 50       		.byte	0x50
+ 1807 05eb 01       		.uleb128 0x1
+ 1808 05ec 3A       		.byte	0x3a
+ 1809 05ed 00       		.byte	0
+ 1810 05ee 0E       		.uleb128 0xe
+ 1811 05ef A8000000 		.4byte	.LVL78
+ 1812 05f3 A40A0000 		.4byte	0xaa4
+ 1813 05f7 01060000 		.4byte	0x601
+ 1814 05fb 0F       		.uleb128 0xf
+ 1815 05fc 01       		.uleb128 0x1
+ 1816 05fd 50       		.byte	0x50
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 38
+
+
+ 1817 05fe 01       		.uleb128 0x1
+ 1818 05ff 30       		.byte	0x30
+ 1819 0600 00       		.byte	0
+ 1820 0601 0E       		.uleb128 0xe
+ 1821 0602 AE000000 		.4byte	.LVL79
+ 1822 0606 AF0A0000 		.4byte	0xaaf
+ 1823 060a 14060000 		.4byte	0x614
+ 1824 060e 0F       		.uleb128 0xf
+ 1825 060f 01       		.uleb128 0x1
+ 1826 0610 50       		.byte	0x50
+ 1827 0611 01       		.uleb128 0x1
+ 1828 0612 30       		.byte	0x30
+ 1829 0613 00       		.byte	0
+ 1830 0614 0E       		.uleb128 0xe
+ 1831 0615 B4000000 		.4byte	.LVL80
+ 1832 0619 BA0A0000 		.4byte	0xaba
+ 1833 061d 27060000 		.4byte	0x627
+ 1834 0621 0F       		.uleb128 0xf
+ 1835 0622 01       		.uleb128 0x1
+ 1836 0623 50       		.byte	0x50
+ 1837 0624 01       		.uleb128 0x1
+ 1838 0625 30       		.byte	0x30
+ 1839 0626 00       		.byte	0
+ 1840 0627 0E       		.uleb128 0xe
+ 1841 0628 BA000000 		.4byte	.LVL81
+ 1842 062c C50A0000 		.4byte	0xac5
+ 1843 0630 3A060000 		.4byte	0x63a
+ 1844 0634 0F       		.uleb128 0xf
+ 1845 0635 01       		.uleb128 0x1
+ 1846 0636 50       		.byte	0x50
+ 1847 0637 01       		.uleb128 0x1
+ 1848 0638 31       		.byte	0x31
+ 1849 0639 00       		.byte	0
+ 1850 063a 0E       		.uleb128 0xe
+ 1851 063b C0000000 		.4byte	.LVL82
+ 1852 063f 990A0000 		.4byte	0xa99
+ 1853 0643 4D060000 		.4byte	0x64d
+ 1854 0647 0F       		.uleb128 0xf
+ 1855 0648 01       		.uleb128 0x1
+ 1856 0649 50       		.byte	0x50
+ 1857 064a 01       		.uleb128 0x1
+ 1858 064b 3A       		.byte	0x3a
+ 1859 064c 00       		.byte	0
+ 1860 064d 0E       		.uleb128 0xe
+ 1861 064e E0000000 		.4byte	.LVL83
+ 1862 0652 A40A0000 		.4byte	0xaa4
+ 1863 0656 60060000 		.4byte	0x660
+ 1864 065a 0F       		.uleb128 0xf
+ 1865 065b 01       		.uleb128 0x1
+ 1866 065c 50       		.byte	0x50
+ 1867 065d 01       		.uleb128 0x1
+ 1868 065e 30       		.byte	0x30
+ 1869 065f 00       		.byte	0
+ 1870 0660 0E       		.uleb128 0xe
+ 1871 0661 E6000000 		.4byte	.LVL84
+ 1872 0665 AF0A0000 		.4byte	0xaaf
+ 1873 0669 73060000 		.4byte	0x673
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 39
+
+
+ 1874 066d 0F       		.uleb128 0xf
+ 1875 066e 01       		.uleb128 0x1
+ 1876 066f 50       		.byte	0x50
+ 1877 0670 01       		.uleb128 0x1
+ 1878 0671 30       		.byte	0x30
+ 1879 0672 00       		.byte	0
+ 1880 0673 0E       		.uleb128 0xe
+ 1881 0674 EC000000 		.4byte	.LVL85
+ 1882 0678 BA0A0000 		.4byte	0xaba
+ 1883 067c 86060000 		.4byte	0x686
+ 1884 0680 0F       		.uleb128 0xf
+ 1885 0681 01       		.uleb128 0x1
+ 1886 0682 50       		.byte	0x50
+ 1887 0683 01       		.uleb128 0x1
+ 1888 0684 30       		.byte	0x30
+ 1889 0685 00       		.byte	0
+ 1890 0686 0E       		.uleb128 0xe
+ 1891 0687 F2000000 		.4byte	.LVL86
+ 1892 068b C50A0000 		.4byte	0xac5
+ 1893 068f 99060000 		.4byte	0x699
+ 1894 0693 0F       		.uleb128 0xf
+ 1895 0694 01       		.uleb128 0x1
+ 1896 0695 50       		.byte	0x50
+ 1897 0696 01       		.uleb128 0x1
+ 1898 0697 31       		.byte	0x31
+ 1899 0698 00       		.byte	0
+ 1900 0699 0E       		.uleb128 0xe
+ 1901 069a 00010000 		.4byte	.LVL87
+ 1902 069e 990A0000 		.4byte	0xa99
+ 1903 06a2 AC060000 		.4byte	0x6ac
+ 1904 06a6 0F       		.uleb128 0xf
+ 1905 06a7 01       		.uleb128 0x1
+ 1906 06a8 50       		.byte	0x50
+ 1907 06a9 01       		.uleb128 0x1
+ 1908 06aa 3A       		.byte	0x3a
+ 1909 06ab 00       		.byte	0
+ 1910 06ac 0E       		.uleb128 0xe
+ 1911 06ad 08010000 		.4byte	.LVL88
+ 1912 06b1 A40A0000 		.4byte	0xaa4
+ 1913 06b5 BF060000 		.4byte	0x6bf
+ 1914 06b9 0F       		.uleb128 0xf
+ 1915 06ba 01       		.uleb128 0x1
+ 1916 06bb 50       		.byte	0x50
+ 1917 06bc 01       		.uleb128 0x1
+ 1918 06bd 30       		.byte	0x30
+ 1919 06be 00       		.byte	0
+ 1920 06bf 0E       		.uleb128 0xe
+ 1921 06c0 0E010000 		.4byte	.LVL89
+ 1922 06c4 AF0A0000 		.4byte	0xaaf
+ 1923 06c8 D2060000 		.4byte	0x6d2
+ 1924 06cc 0F       		.uleb128 0xf
+ 1925 06cd 01       		.uleb128 0x1
+ 1926 06ce 50       		.byte	0x50
+ 1927 06cf 01       		.uleb128 0x1
+ 1928 06d0 30       		.byte	0x30
+ 1929 06d1 00       		.byte	0
+ 1930 06d2 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 40
+
+
+ 1931 06d3 14010000 		.4byte	.LVL90
+ 1932 06d7 BA0A0000 		.4byte	0xaba
+ 1933 06db E5060000 		.4byte	0x6e5
+ 1934 06df 0F       		.uleb128 0xf
+ 1935 06e0 01       		.uleb128 0x1
+ 1936 06e1 50       		.byte	0x50
+ 1937 06e2 01       		.uleb128 0x1
+ 1938 06e3 31       		.byte	0x31
+ 1939 06e4 00       		.byte	0
+ 1940 06e5 0E       		.uleb128 0xe
+ 1941 06e6 1A010000 		.4byte	.LVL91
+ 1942 06ea C50A0000 		.4byte	0xac5
+ 1943 06ee F8060000 		.4byte	0x6f8
+ 1944 06f2 0F       		.uleb128 0xf
+ 1945 06f3 01       		.uleb128 0x1
+ 1946 06f4 50       		.byte	0x50
+ 1947 06f5 01       		.uleb128 0x1
+ 1948 06f6 30       		.byte	0x30
+ 1949 06f7 00       		.byte	0
+ 1950 06f8 0E       		.uleb128 0xe
+ 1951 06f9 28010000 		.4byte	.LVL92
+ 1952 06fd 990A0000 		.4byte	0xa99
+ 1953 0701 0B070000 		.4byte	0x70b
+ 1954 0705 0F       		.uleb128 0xf
+ 1955 0706 01       		.uleb128 0x1
+ 1956 0707 50       		.byte	0x50
+ 1957 0708 01       		.uleb128 0x1
+ 1958 0709 3A       		.byte	0x3a
+ 1959 070a 00       		.byte	0
+ 1960 070b 0E       		.uleb128 0xe
+ 1961 070c 30010000 		.4byte	.LVL93
+ 1962 0710 A40A0000 		.4byte	0xaa4
+ 1963 0714 1E070000 		.4byte	0x71e
+ 1964 0718 0F       		.uleb128 0xf
+ 1965 0719 01       		.uleb128 0x1
+ 1966 071a 50       		.byte	0x50
+ 1967 071b 01       		.uleb128 0x1
+ 1968 071c 30       		.byte	0x30
+ 1969 071d 00       		.byte	0
+ 1970 071e 0E       		.uleb128 0xe
+ 1971 071f 36010000 		.4byte	.LVL94
+ 1972 0723 AF0A0000 		.4byte	0xaaf
+ 1973 0727 31070000 		.4byte	0x731
+ 1974 072b 0F       		.uleb128 0xf
+ 1975 072c 01       		.uleb128 0x1
+ 1976 072d 50       		.byte	0x50
+ 1977 072e 01       		.uleb128 0x1
+ 1978 072f 31       		.byte	0x31
+ 1979 0730 00       		.byte	0
+ 1980 0731 0E       		.uleb128 0xe
+ 1981 0732 3C010000 		.4byte	.LVL95
+ 1982 0736 BA0A0000 		.4byte	0xaba
+ 1983 073a 44070000 		.4byte	0x744
+ 1984 073e 0F       		.uleb128 0xf
+ 1985 073f 01       		.uleb128 0x1
+ 1986 0740 50       		.byte	0x50
+ 1987 0741 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 41
+
+
+ 1988 0742 30       		.byte	0x30
+ 1989 0743 00       		.byte	0
+ 1990 0744 0E       		.uleb128 0xe
+ 1991 0745 42010000 		.4byte	.LVL96
+ 1992 0749 C50A0000 		.4byte	0xac5
+ 1993 074d 57070000 		.4byte	0x757
+ 1994 0751 0F       		.uleb128 0xf
+ 1995 0752 01       		.uleb128 0x1
+ 1996 0753 50       		.byte	0x50
+ 1997 0754 01       		.uleb128 0x1
+ 1998 0755 30       		.byte	0x30
+ 1999 0756 00       		.byte	0
+ 2000 0757 0E       		.uleb128 0xe
+ 2001 0758 50010000 		.4byte	.LVL97
+ 2002 075c 990A0000 		.4byte	0xa99
+ 2003 0760 6A070000 		.4byte	0x76a
+ 2004 0764 0F       		.uleb128 0xf
+ 2005 0765 01       		.uleb128 0x1
+ 2006 0766 50       		.byte	0x50
+ 2007 0767 01       		.uleb128 0x1
+ 2008 0768 3A       		.byte	0x3a
+ 2009 0769 00       		.byte	0
+ 2010 076a 0E       		.uleb128 0xe
+ 2011 076b 58010000 		.4byte	.LVL98
+ 2012 076f A40A0000 		.4byte	0xaa4
+ 2013 0773 7D070000 		.4byte	0x77d
+ 2014 0777 0F       		.uleb128 0xf
+ 2015 0778 01       		.uleb128 0x1
+ 2016 0779 50       		.byte	0x50
+ 2017 077a 01       		.uleb128 0x1
+ 2018 077b 31       		.byte	0x31
+ 2019 077c 00       		.byte	0
+ 2020 077d 0E       		.uleb128 0xe
+ 2021 077e 5E010000 		.4byte	.LVL99
+ 2022 0782 AF0A0000 		.4byte	0xaaf
+ 2023 0786 90070000 		.4byte	0x790
+ 2024 078a 0F       		.uleb128 0xf
+ 2025 078b 01       		.uleb128 0x1
+ 2026 078c 50       		.byte	0x50
+ 2027 078d 01       		.uleb128 0x1
+ 2028 078e 30       		.byte	0x30
+ 2029 078f 00       		.byte	0
+ 2030 0790 0E       		.uleb128 0xe
+ 2031 0791 64010000 		.4byte	.LVL100
+ 2032 0795 BA0A0000 		.4byte	0xaba
+ 2033 0799 A3070000 		.4byte	0x7a3
+ 2034 079d 0F       		.uleb128 0xf
+ 2035 079e 01       		.uleb128 0x1
+ 2036 079f 50       		.byte	0x50
+ 2037 07a0 01       		.uleb128 0x1
+ 2038 07a1 30       		.byte	0x30
+ 2039 07a2 00       		.byte	0
+ 2040 07a3 0E       		.uleb128 0xe
+ 2041 07a4 6A010000 		.4byte	.LVL101
+ 2042 07a8 C50A0000 		.4byte	0xac5
+ 2043 07ac B6070000 		.4byte	0x7b6
+ 2044 07b0 0F       		.uleb128 0xf
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 42
+
+
+ 2045 07b1 01       		.uleb128 0x1
+ 2046 07b2 50       		.byte	0x50
+ 2047 07b3 01       		.uleb128 0x1
+ 2048 07b4 30       		.byte	0x30
+ 2049 07b5 00       		.byte	0
+ 2050 07b6 10       		.uleb128 0x10
+ 2051 07b7 76010000 		.4byte	.LVL102
+ 2052 07bb 990A0000 		.4byte	0xa99
+ 2053 07bf 0F       		.uleb128 0xf
+ 2054 07c0 01       		.uleb128 0x1
+ 2055 07c1 50       		.byte	0x50
+ 2056 07c2 01       		.uleb128 0x1
+ 2057 07c3 3A       		.byte	0x3a
+ 2058 07c4 00       		.byte	0
+ 2059 07c5 00       		.byte	0
+ 2060 07c6 00       		.byte	0
+ 2061 07c7 0C       		.uleb128 0xc
+ 2062 07c8 17000000 		.4byte	.LASF24
+ 2063 07cc 01       		.byte	0x1
+ 2064 07cd 16       		.byte	0x16
+ 2065 07ce 00000000 		.4byte	.LFB63
+ 2066 07d2 2C010000 		.4byte	.LFE63-.LFB63
+ 2067 07d6 01       		.uleb128 0x1
+ 2068 07d7 9C       		.byte	0x9c
+ 2069 07d8 61090000 		.4byte	0x961
+ 2070 07dc 08       		.uleb128 0x8
+ 2071 07dd 67000000 		.4byte	.LASF16
+ 2072 07e1 01       		.byte	0x1
+ 2073 07e2 16       		.byte	0x16
+ 2074 07e3 6F000000 		.4byte	0x6f
+ 2075 07e7 4E010000 		.4byte	.LLST11
+ 2076 07eb 08       		.uleb128 0x8
+ 2077 07ec 72020000 		.4byte	.LASF17
+ 2078 07f0 01       		.byte	0x1
+ 2079 07f1 16       		.byte	0x16
+ 2080 07f2 6F000000 		.4byte	0x6f
+ 2081 07f6 85010000 		.4byte	.LLST12
+ 2082 07fa 11       		.uleb128 0x11
+ 2083 07fb 00000000 		.4byte	.LASF25
+ 2084 07ff 01       		.byte	0x1
+ 2085 0800 18       		.byte	0x18
+ 2086 0801 A4000000 		.4byte	0xa4
+ 2087 0805 02       		.uleb128 0x2
+ 2088 0806 91       		.byte	0x91
+ 2089 0807 60       		.sleb128 -32
+ 2090 0808 11       		.uleb128 0x11
+ 2091 0809 86020000 		.4byte	.LASF26
+ 2092 080d 01       		.byte	0x1
+ 2093 080e 1F       		.byte	0x1f
+ 2094 080f A4000000 		.4byte	0xa4
+ 2095 0813 02       		.uleb128 0x2
+ 2096 0814 91       		.byte	0x91
+ 2097 0815 58       		.sleb128 -40
+ 2098 0816 0E       		.uleb128 0xe
+ 2099 0817 14000000 		.4byte	.LVL108
+ 2100 081b C5000000 		.4byte	0xc5
+ 2101 081f 30080000 		.4byte	0x830
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 43
+
+
+ 2102 0823 0F       		.uleb128 0xf
+ 2103 0824 01       		.uleb128 0x1
+ 2104 0825 50       		.byte	0x50
+ 2105 0826 02       		.uleb128 0x2
+ 2106 0827 91       		.byte	0x91
+ 2107 0828 60       		.sleb128 -32
+ 2108 0829 0F       		.uleb128 0xf
+ 2109 082a 01       		.uleb128 0x1
+ 2110 082b 52       		.byte	0x52
+ 2111 082c 02       		.uleb128 0x2
+ 2112 082d 75       		.byte	0x75
+ 2113 082e 00       		.sleb128 0
+ 2114 082f 00       		.byte	0
+ 2115 0830 12       		.uleb128 0x12
+ 2116 0831 1E000000 		.4byte	.LVL110
+ 2117 0835 49010000 		.4byte	0x149
+ 2118 0839 12       		.uleb128 0x12
+ 2119 083a 28000000 		.4byte	.LVL112
+ 2120 083e 88040000 		.4byte	0x488
+ 2121 0842 0E       		.uleb128 0xe
+ 2122 0843 32000000 		.4byte	.LVL113
+ 2123 0847 C5000000 		.4byte	0xc5
+ 2124 084b 62080000 		.4byte	0x862
+ 2125 084f 0F       		.uleb128 0xf
+ 2126 0850 01       		.uleb128 0x1
+ 2127 0851 50       		.byte	0x50
+ 2128 0852 02       		.uleb128 0x2
+ 2129 0853 7D       		.byte	0x7d
+ 2130 0854 00       		.sleb128 0
+ 2131 0855 0F       		.uleb128 0xf
+ 2132 0856 01       		.uleb128 0x1
+ 2133 0857 51       		.byte	0x51
+ 2134 0858 02       		.uleb128 0x2
+ 2135 0859 75       		.byte	0x75
+ 2136 085a 00       		.sleb128 0
+ 2137 085b 0F       		.uleb128 0xf
+ 2138 085c 01       		.uleb128 0x1
+ 2139 085d 52       		.byte	0x52
+ 2140 085e 02       		.uleb128 0x2
+ 2141 085f 74       		.byte	0x74
+ 2142 0860 00       		.sleb128 0
+ 2143 0861 00       		.byte	0
+ 2144 0862 12       		.uleb128 0x12
+ 2145 0863 40000000 		.4byte	.LVL115
+ 2146 0867 49010000 		.4byte	0x149
+ 2147 086b 0E       		.uleb128 0xe
+ 2148 086c 50000000 		.4byte	.LVL116
+ 2149 0870 88040000 		.4byte	0x488
+ 2150 0874 80080000 		.4byte	0x880
+ 2151 0878 0F       		.uleb128 0xf
+ 2152 0879 01       		.uleb128 0x1
+ 2153 087a 50       		.byte	0x50
+ 2154 087b 03       		.uleb128 0x3
+ 2155 087c F5       		.byte	0xf5
+ 2156 087d 07       		.uleb128 0x7
+ 2157 087e 25       		.uleb128 0x25
+ 2158 087f 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 44
+
+
+ 2159 0880 12       		.uleb128 0x12
+ 2160 0881 5A000000 		.4byte	.LVL118
+ 2161 0885 88040000 		.4byte	0x488
+ 2162 0889 12       		.uleb128 0x12
+ 2163 088a 70000000 		.4byte	.LVL122
+ 2164 088e 49010000 		.4byte	0x149
+ 2165 0892 0E       		.uleb128 0xe
+ 2166 0893 76000000 		.4byte	.LVL123
+ 2167 0897 88040000 		.4byte	0x488
+ 2168 089b A7080000 		.4byte	0x8a7
+ 2169 089f 0F       		.uleb128 0xf
+ 2170 08a0 01       		.uleb128 0x1
+ 2171 08a1 50       		.byte	0x50
+ 2172 08a2 03       		.uleb128 0x3
+ 2173 08a3 F5       		.byte	0xf5
+ 2174 08a4 07       		.uleb128 0x7
+ 2175 08a5 25       		.uleb128 0x25
+ 2176 08a6 00       		.byte	0
+ 2177 08a7 0E       		.uleb128 0xe
+ 2178 08a8 82000000 		.4byte	.LVL124
+ 2179 08ac 88040000 		.4byte	0x488
+ 2180 08b0 BC080000 		.4byte	0x8bc
+ 2181 08b4 0F       		.uleb128 0xf
+ 2182 08b5 01       		.uleb128 0x1
+ 2183 08b6 50       		.byte	0x50
+ 2184 08b7 03       		.uleb128 0x3
+ 2185 08b8 F5       		.byte	0xf5
+ 2186 08b9 07       		.uleb128 0x7
+ 2187 08ba 25       		.uleb128 0x25
+ 2188 08bb 00       		.byte	0
+ 2189 08bc 12       		.uleb128 0x12
+ 2190 08bd 8C000000 		.4byte	.LVL126
+ 2191 08c1 88040000 		.4byte	0x488
+ 2192 08c5 12       		.uleb128 0x12
+ 2193 08c6 A2000000 		.4byte	.LVL130
+ 2194 08ca 49010000 		.4byte	0x149
+ 2195 08ce 0E       		.uleb128 0xe
+ 2196 08cf A8000000 		.4byte	.LVL131
+ 2197 08d3 88040000 		.4byte	0x488
+ 2198 08d7 E3080000 		.4byte	0x8e3
+ 2199 08db 0F       		.uleb128 0xf
+ 2200 08dc 01       		.uleb128 0x1
+ 2201 08dd 50       		.byte	0x50
+ 2202 08de 03       		.uleb128 0x3
+ 2203 08df F5       		.byte	0xf5
+ 2204 08e0 07       		.uleb128 0x7
+ 2205 08e1 25       		.uleb128 0x25
+ 2206 08e2 00       		.byte	0
+ 2207 08e3 12       		.uleb128 0x12
+ 2208 08e4 B2000000 		.4byte	.LVL132
+ 2209 08e8 49010000 		.4byte	0x149
+ 2210 08ec 0E       		.uleb128 0xe
+ 2211 08ed C2000000 		.4byte	.LVL133
+ 2212 08f1 88040000 		.4byte	0x488
+ 2213 08f5 01090000 		.4byte	0x901
+ 2214 08f9 0F       		.uleb128 0xf
+ 2215 08fa 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 45
+
+
+ 2216 08fb 50       		.byte	0x50
+ 2217 08fc 03       		.uleb128 0x3
+ 2218 08fd F5       		.byte	0xf5
+ 2219 08fe 07       		.uleb128 0x7
+ 2220 08ff 25       		.uleb128 0x25
+ 2221 0900 00       		.byte	0
+ 2222 0901 12       		.uleb128 0x12
+ 2223 0902 CC000000 		.4byte	.LVL135
+ 2224 0906 88040000 		.4byte	0x488
+ 2225 090a 12       		.uleb128 0x12
+ 2226 090b E2000000 		.4byte	.LVL139
+ 2227 090f 49010000 		.4byte	0x149
+ 2228 0913 0E       		.uleb128 0xe
+ 2229 0914 E8000000 		.4byte	.LVL140
+ 2230 0918 88040000 		.4byte	0x488
+ 2231 091c 28090000 		.4byte	0x928
+ 2232 0920 0F       		.uleb128 0xf
+ 2233 0921 01       		.uleb128 0x1
+ 2234 0922 50       		.byte	0x50
+ 2235 0923 03       		.uleb128 0x3
+ 2236 0924 F5       		.byte	0xf5
+ 2237 0925 07       		.uleb128 0x7
+ 2238 0926 25       		.uleb128 0x25
+ 2239 0927 00       		.byte	0
+ 2240 0928 0E       		.uleb128 0xe
+ 2241 0929 F4000000 		.4byte	.LVL141
+ 2242 092d 88040000 		.4byte	0x488
+ 2243 0931 3D090000 		.4byte	0x93d
+ 2244 0935 0F       		.uleb128 0xf
+ 2245 0936 01       		.uleb128 0x1
+ 2246 0937 50       		.byte	0x50
+ 2247 0938 03       		.uleb128 0x3
+ 2248 0939 F5       		.byte	0xf5
+ 2249 093a 07       		.uleb128 0x7
+ 2250 093b 25       		.uleb128 0x25
+ 2251 093c 00       		.byte	0
+ 2252 093d 12       		.uleb128 0x12
+ 2253 093e FE000000 		.4byte	.LVL143
+ 2254 0942 88040000 		.4byte	0x488
+ 2255 0946 12       		.uleb128 0x12
+ 2256 0947 14010000 		.4byte	.LVL147
+ 2257 094b 49010000 		.4byte	0x149
+ 2258 094f 10       		.uleb128 0x10
+ 2259 0950 1A010000 		.4byte	.LVL148
+ 2260 0954 88040000 		.4byte	0x488
+ 2261 0958 0F       		.uleb128 0xf
+ 2262 0959 01       		.uleb128 0x1
+ 2263 095a 50       		.byte	0x50
+ 2264 095b 03       		.uleb128 0x3
+ 2265 095c F5       		.byte	0xf5
+ 2266 095d 07       		.uleb128 0x7
+ 2267 095e 25       		.uleb128 0x25
+ 2268 095f 00       		.byte	0
+ 2269 0960 00       		.byte	0
+ 2270 0961 13       		.uleb128 0x13
+ 2271 0962 1B020000 		.4byte	.LASF49
+ 2272 0966 01       		.byte	0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 46
+
+
+ 2273 0967 F4       		.byte	0xf4
+ 2274 0968 00000000 		.4byte	.LFB67
+ 2275 096c 0C000000 		.4byte	.LFE67-.LFB67
+ 2276 0970 01       		.uleb128 0x1
+ 2277 0971 9C       		.byte	0x9c
+ 2278 0972 14       		.uleb128 0x14
+ 2279 0973 BC010000 		.4byte	.LASF27
+ 2280 0977 01       		.byte	0x1
+ 2281 0978 F9       		.byte	0xf9
+ 2282 0979 00000000 		.4byte	.LFB68
+ 2283 097d 22000000 		.4byte	.LFE68-.LFB68
+ 2284 0981 01       		.uleb128 0x1
+ 2285 0982 9C       		.byte	0x9c
+ 2286 0983 110A0000 		.4byte	0xa11
+ 2287 0987 08       		.uleb128 0x8
+ 2288 0988 C5020000 		.4byte	.LASF28
+ 2289 098c 01       		.byte	0x1
+ 2290 098d F9       		.byte	0xf9
+ 2291 098e 6F000000 		.4byte	0x6f
+ 2292 0992 B2010000 		.4byte	.LLST13
+ 2293 0996 08       		.uleb128 0x8
+ 2294 0997 0B020000 		.4byte	.LASF29
+ 2295 099b 01       		.byte	0x1
+ 2296 099c F9       		.byte	0xf9
+ 2297 099d 6F000000 		.4byte	0x6f
+ 2298 09a1 D3010000 		.4byte	.LLST14
+ 2299 09a5 08       		.uleb128 0x8
+ 2300 09a6 CA020000 		.4byte	.LASF30
+ 2301 09aa 01       		.byte	0x1
+ 2302 09ab F9       		.byte	0xf9
+ 2303 09ac 6F000000 		.4byte	0x6f
+ 2304 09b0 F1010000 		.4byte	.LLST15
+ 2305 09b4 08       		.uleb128 0x8
+ 2306 09b5 78000000 		.4byte	.LASF31
+ 2307 09b9 01       		.byte	0x1
+ 2308 09ba F9       		.byte	0xf9
+ 2309 09bb 6F000000 		.4byte	0x6f
+ 2310 09bf 0F020000 		.4byte	.LLST16
+ 2311 09c3 0E       		.uleb128 0xe
+ 2312 09c4 0E000000 		.4byte	.LVL152
+ 2313 09c8 6D0A0000 		.4byte	0xa6d
+ 2314 09cc D8090000 		.4byte	0x9d8
+ 2315 09d0 0F       		.uleb128 0xf
+ 2316 09d1 01       		.uleb128 0x1
+ 2317 09d2 50       		.byte	0x50
+ 2318 09d3 03       		.uleb128 0x3
+ 2319 09d4 F3       		.byte	0xf3
+ 2320 09d5 01       		.uleb128 0x1
+ 2321 09d6 50       		.byte	0x50
+ 2322 09d7 00       		.byte	0
+ 2323 09d8 0E       		.uleb128 0xe
+ 2324 09d9 14000000 		.4byte	.LVL153
+ 2325 09dd 780A0000 		.4byte	0xa78
+ 2326 09e1 EC090000 		.4byte	0x9ec
+ 2327 09e5 0F       		.uleb128 0xf
+ 2328 09e6 01       		.uleb128 0x1
+ 2329 09e7 50       		.byte	0x50
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 47
+
+
+ 2330 09e8 02       		.uleb128 0x2
+ 2331 09e9 76       		.byte	0x76
+ 2332 09ea 00       		.sleb128 0
+ 2333 09eb 00       		.byte	0
+ 2334 09ec 0E       		.uleb128 0xe
+ 2335 09ed 1A000000 		.4byte	.LVL154
+ 2336 09f1 830A0000 		.4byte	0xa83
+ 2337 09f5 000A0000 		.4byte	0xa00
+ 2338 09f9 0F       		.uleb128 0xf
+ 2339 09fa 01       		.uleb128 0x1
+ 2340 09fb 50       		.byte	0x50
+ 2341 09fc 02       		.uleb128 0x2
+ 2342 09fd 75       		.byte	0x75
+ 2343 09fe 00       		.sleb128 0
+ 2344 09ff 00       		.byte	0
+ 2345 0a00 10       		.uleb128 0x10
+ 2346 0a01 20000000 		.4byte	.LVL155
+ 2347 0a05 8E0A0000 		.4byte	0xa8e
+ 2348 0a09 0F       		.uleb128 0xf
+ 2349 0a0a 01       		.uleb128 0x1
+ 2350 0a0b 50       		.byte	0x50
+ 2351 0a0c 02       		.uleb128 0x2
+ 2352 0a0d 74       		.byte	0x74
+ 2353 0a0e 00       		.sleb128 0
+ 2354 0a0f 00       		.byte	0
+ 2355 0a10 00       		.byte	0
+ 2356 0a11 15       		.uleb128 0x15
+ 2357 0a12 69010000 		.4byte	.LASF50
+ 2358 0a16 01       		.byte	0x1
+ 2359 0a17 0101     		.2byte	0x101
+ 2360 0a19 00000000 		.4byte	.LFB69
+ 2361 0a1d 18000000 		.4byte	.LFE69-.LFB69
+ 2362 0a21 01       		.uleb128 0x1
+ 2363 0a22 9C       		.byte	0x9c
+ 2364 0a23 3A0A0000 		.4byte	0xa3a
+ 2365 0a27 12       		.uleb128 0x12
+ 2366 0a28 08000000 		.4byte	.LVL156
+ 2367 0a2c 88040000 		.4byte	0x488
+ 2368 0a30 12       		.uleb128 0x12
+ 2369 0a31 0E000000 		.4byte	.LVL157
+ 2370 0a35 88040000 		.4byte	0x488
+ 2371 0a39 00       		.byte	0
+ 2372 0a3a 16       		.uleb128 0x16
+ 2373 0a3b D1010000 		.4byte	.LASF32
+ 2374 0a3f 04       		.byte	0x4
+ 2375 0a40 1207     		.2byte	0x712
+ 2376 0a42 460A0000 		.4byte	0xa46
+ 2377 0a46 17       		.uleb128 0x17
+ 2378 0a47 7D000000 		.4byte	0x7d
+ 2379 0a4b 18       		.uleb128 0x18
+ 2380 0a4c 41010000 		.4byte	.LASF33
+ 2381 0a50 05       		.byte	0x5
+ 2382 0a51 18       		.byte	0x18
+ 2383 0a52 6F000000 		.4byte	0x6f
+ 2384 0a56 05       		.uleb128 0x5
+ 2385 0a57 03       		.byte	0x3
+ 2386 0a58 00000000 		.4byte	currentSquare
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 48
+
+
+ 2387 0a5c 18       		.uleb128 0x18
+ 2388 0a5d EB010000 		.4byte	.LASF34
+ 2389 0a61 05       		.byte	0x5
+ 2390 0a62 19       		.byte	0x19
+ 2391 0a63 6F000000 		.4byte	0x6f
+ 2392 0a67 05       		.uleb128 0x5
+ 2393 0a68 03       		.byte	0x3
+ 2394 0a69 00000000 		.4byte	stepCase
+ 2395 0a6d 19       		.uleb128 0x19
+ 2396 0a6e 5C000000 		.4byte	.LASF35
+ 2397 0a72 5C000000 		.4byte	.LASF35
+ 2398 0a76 06       		.byte	0x6
+ 2399 0a77 26       		.byte	0x26
+ 2400 0a78 19       		.uleb128 0x19
+ 2401 0a79 19010000 		.4byte	.LASF36
+ 2402 0a7d 19010000 		.4byte	.LASF36
+ 2403 0a81 07       		.byte	0x7
+ 2404 0a82 26       		.byte	0x26
+ 2405 0a83 19       		.uleb128 0x19
+ 2406 0a84 4F010000 		.4byte	.LASF37
+ 2407 0a88 4F010000 		.4byte	.LASF37
+ 2408 0a8c 08       		.byte	0x8
+ 2409 0a8d 26       		.byte	0x26
+ 2410 0a8e 19       		.uleb128 0x19
+ 2411 0a8f C6010000 		.4byte	.LASF38
+ 2412 0a93 C6010000 		.4byte	.LASF38
+ 2413 0a97 09       		.byte	0x9
+ 2414 0a98 26       		.byte	0x26
+ 2415 0a99 19       		.uleb128 0x19
+ 2416 0a9a CF020000 		.4byte	.LASF39
+ 2417 0a9e CF020000 		.4byte	.LASF39
+ 2418 0aa2 0A       		.byte	0xa
+ 2419 0aa3 76       		.byte	0x76
+ 2420 0aa4 19       		.uleb128 0x19
+ 2421 0aa5 10020000 		.4byte	.LASF40
+ 2422 0aa9 10020000 		.4byte	.LASF40
+ 2423 0aad 0B       		.byte	0xb
+ 2424 0aae 26       		.byte	0x26
+ 2425 0aaf 19       		.uleb128 0x19
+ 2426 0ab0 48020000 		.4byte	.LASF41
+ 2427 0ab4 48020000 		.4byte	.LASF41
+ 2428 0ab8 0C       		.byte	0xc
+ 2429 0ab9 26       		.byte	0x26
+ 2430 0aba 19       		.uleb128 0x19
+ 2431 0abb 7B020000 		.4byte	.LASF42
+ 2432 0abf 7B020000 		.4byte	.LASF42
+ 2433 0ac3 0D       		.byte	0xd
+ 2434 0ac4 26       		.byte	0x26
+ 2435 0ac5 19       		.uleb128 0x19
+ 2436 0ac6 0C000000 		.4byte	.LASF43
+ 2437 0aca 0C000000 		.4byte	.LASF43
+ 2438 0ace 0E       		.byte	0xe
+ 2439 0acf 26       		.byte	0x26
+ 2440 0ad0 00       		.byte	0
+ 2441              		.section	.debug_abbrev,"",%progbits
+ 2442              	.Ldebug_abbrev0:
+ 2443 0000 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 49
+
+
+ 2444 0001 11       		.uleb128 0x11
+ 2445 0002 01       		.byte	0x1
+ 2446 0003 25       		.uleb128 0x25
+ 2447 0004 0E       		.uleb128 0xe
+ 2448 0005 13       		.uleb128 0x13
+ 2449 0006 0B       		.uleb128 0xb
+ 2450 0007 03       		.uleb128 0x3
+ 2451 0008 0E       		.uleb128 0xe
+ 2452 0009 1B       		.uleb128 0x1b
+ 2453 000a 0E       		.uleb128 0xe
+ 2454 000b 55       		.uleb128 0x55
+ 2455 000c 17       		.uleb128 0x17
+ 2456 000d 11       		.uleb128 0x11
+ 2457 000e 01       		.uleb128 0x1
+ 2458 000f 10       		.uleb128 0x10
+ 2459 0010 17       		.uleb128 0x17
+ 2460 0011 00       		.byte	0
+ 2461 0012 00       		.byte	0
+ 2462 0013 02       		.uleb128 0x2
+ 2463 0014 24       		.uleb128 0x24
+ 2464 0015 00       		.byte	0
+ 2465 0016 0B       		.uleb128 0xb
+ 2466 0017 0B       		.uleb128 0xb
+ 2467 0018 3E       		.uleb128 0x3e
+ 2468 0019 0B       		.uleb128 0xb
+ 2469 001a 03       		.uleb128 0x3
+ 2470 001b 0E       		.uleb128 0xe
+ 2471 001c 00       		.byte	0
+ 2472 001d 00       		.byte	0
+ 2473 001e 03       		.uleb128 0x3
+ 2474 001f 16       		.uleb128 0x16
+ 2475 0020 00       		.byte	0
+ 2476 0021 03       		.uleb128 0x3
+ 2477 0022 0E       		.uleb128 0xe
+ 2478 0023 3A       		.uleb128 0x3a
+ 2479 0024 0B       		.uleb128 0xb
+ 2480 0025 3B       		.uleb128 0x3b
+ 2481 0026 0B       		.uleb128 0xb
+ 2482 0027 49       		.uleb128 0x49
+ 2483 0028 13       		.uleb128 0x13
+ 2484 0029 00       		.byte	0
+ 2485 002a 00       		.byte	0
+ 2486 002b 04       		.uleb128 0x4
+ 2487 002c 24       		.uleb128 0x24
+ 2488 002d 00       		.byte	0
+ 2489 002e 0B       		.uleb128 0xb
+ 2490 002f 0B       		.uleb128 0xb
+ 2491 0030 3E       		.uleb128 0x3e
+ 2492 0031 0B       		.uleb128 0xb
+ 2493 0032 03       		.uleb128 0x3
+ 2494 0033 08       		.uleb128 0x8
+ 2495 0034 00       		.byte	0
+ 2496 0035 00       		.byte	0
+ 2497 0036 05       		.uleb128 0x5
+ 2498 0037 13       		.uleb128 0x13
+ 2499 0038 01       		.byte	0x1
+ 2500 0039 03       		.uleb128 0x3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 50
+
+
+ 2501 003a 0E       		.uleb128 0xe
+ 2502 003b 0B       		.uleb128 0xb
+ 2503 003c 0B       		.uleb128 0xb
+ 2504 003d 3A       		.uleb128 0x3a
+ 2505 003e 0B       		.uleb128 0xb
+ 2506 003f 3B       		.uleb128 0x3b
+ 2507 0040 0B       		.uleb128 0xb
+ 2508 0041 01       		.uleb128 0x1
+ 2509 0042 13       		.uleb128 0x13
+ 2510 0043 00       		.byte	0
+ 2511 0044 00       		.byte	0
+ 2512 0045 06       		.uleb128 0x6
+ 2513 0046 0D       		.uleb128 0xd
+ 2514 0047 00       		.byte	0
+ 2515 0048 03       		.uleb128 0x3
+ 2516 0049 08       		.uleb128 0x8
+ 2517 004a 3A       		.uleb128 0x3a
+ 2518 004b 0B       		.uleb128 0xb
+ 2519 004c 3B       		.uleb128 0x3b
+ 2520 004d 0B       		.uleb128 0xb
+ 2521 004e 49       		.uleb128 0x49
+ 2522 004f 13       		.uleb128 0x13
+ 2523 0050 38       		.uleb128 0x38
+ 2524 0051 0B       		.uleb128 0xb
+ 2525 0052 00       		.byte	0
+ 2526 0053 00       		.byte	0
+ 2527 0054 07       		.uleb128 0x7
+ 2528 0055 2E       		.uleb128 0x2e
+ 2529 0056 01       		.byte	0x1
+ 2530 0057 3F       		.uleb128 0x3f
+ 2531 0058 19       		.uleb128 0x19
+ 2532 0059 03       		.uleb128 0x3
+ 2533 005a 0E       		.uleb128 0xe
+ 2534 005b 3A       		.uleb128 0x3a
+ 2535 005c 0B       		.uleb128 0xb
+ 2536 005d 3B       		.uleb128 0x3b
+ 2537 005e 0B       		.uleb128 0xb
+ 2538 005f 27       		.uleb128 0x27
+ 2539 0060 19       		.uleb128 0x19
+ 2540 0061 49       		.uleb128 0x49
+ 2541 0062 13       		.uleb128 0x13
+ 2542 0063 11       		.uleb128 0x11
+ 2543 0064 01       		.uleb128 0x1
+ 2544 0065 12       		.uleb128 0x12
+ 2545 0066 06       		.uleb128 0x6
+ 2546 0067 40       		.uleb128 0x40
+ 2547 0068 18       		.uleb128 0x18
+ 2548 0069 9742     		.uleb128 0x2117
+ 2549 006b 19       		.uleb128 0x19
+ 2550 006c 01       		.uleb128 0x1
+ 2551 006d 13       		.uleb128 0x13
+ 2552 006e 00       		.byte	0
+ 2553 006f 00       		.byte	0
+ 2554 0070 08       		.uleb128 0x8
+ 2555 0071 05       		.uleb128 0x5
+ 2556 0072 00       		.byte	0
+ 2557 0073 03       		.uleb128 0x3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 51
+
+
+ 2558 0074 0E       		.uleb128 0xe
+ 2559 0075 3A       		.uleb128 0x3a
+ 2560 0076 0B       		.uleb128 0xb
+ 2561 0077 3B       		.uleb128 0x3b
+ 2562 0078 0B       		.uleb128 0xb
+ 2563 0079 49       		.uleb128 0x49
+ 2564 007a 13       		.uleb128 0x13
+ 2565 007b 02       		.uleb128 0x2
+ 2566 007c 17       		.uleb128 0x17
+ 2567 007d 00       		.byte	0
+ 2568 007e 00       		.byte	0
+ 2569 007f 09       		.uleb128 0x9
+ 2570 0080 34       		.uleb128 0x34
+ 2571 0081 00       		.byte	0
+ 2572 0082 03       		.uleb128 0x3
+ 2573 0083 0E       		.uleb128 0xe
+ 2574 0084 3A       		.uleb128 0x3a
+ 2575 0085 0B       		.uleb128 0xb
+ 2576 0086 3B       		.uleb128 0x3b
+ 2577 0087 0B       		.uleb128 0xb
+ 2578 0088 49       		.uleb128 0x49
+ 2579 0089 13       		.uleb128 0x13
+ 2580 008a 02       		.uleb128 0x2
+ 2581 008b 17       		.uleb128 0x17
+ 2582 008c 00       		.byte	0
+ 2583 008d 00       		.byte	0
+ 2584 008e 0A       		.uleb128 0xa
+ 2585 008f 34       		.uleb128 0x34
+ 2586 0090 00       		.byte	0
+ 2587 0091 03       		.uleb128 0x3
+ 2588 0092 08       		.uleb128 0x8
+ 2589 0093 3A       		.uleb128 0x3a
+ 2590 0094 0B       		.uleb128 0xb
+ 2591 0095 3B       		.uleb128 0x3b
+ 2592 0096 0B       		.uleb128 0xb
+ 2593 0097 49       		.uleb128 0x49
+ 2594 0098 13       		.uleb128 0x13
+ 2595 0099 02       		.uleb128 0x2
+ 2596 009a 17       		.uleb128 0x17
+ 2597 009b 00       		.byte	0
+ 2598 009c 00       		.byte	0
+ 2599 009d 0B       		.uleb128 0xb
+ 2600 009e 34       		.uleb128 0x34
+ 2601 009f 00       		.byte	0
+ 2602 00a0 03       		.uleb128 0x3
+ 2603 00a1 08       		.uleb128 0x8
+ 2604 00a2 3A       		.uleb128 0x3a
+ 2605 00a3 0B       		.uleb128 0xb
+ 2606 00a4 3B       		.uleb128 0x3b
+ 2607 00a5 0B       		.uleb128 0xb
+ 2608 00a6 49       		.uleb128 0x49
+ 2609 00a7 13       		.uleb128 0x13
+ 2610 00a8 02       		.uleb128 0x2
+ 2611 00a9 18       		.uleb128 0x18
+ 2612 00aa 00       		.byte	0
+ 2613 00ab 00       		.byte	0
+ 2614 00ac 0C       		.uleb128 0xc
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 52
+
+
+ 2615 00ad 2E       		.uleb128 0x2e
+ 2616 00ae 01       		.byte	0x1
+ 2617 00af 3F       		.uleb128 0x3f
+ 2618 00b0 19       		.uleb128 0x19
+ 2619 00b1 03       		.uleb128 0x3
+ 2620 00b2 0E       		.uleb128 0xe
+ 2621 00b3 3A       		.uleb128 0x3a
+ 2622 00b4 0B       		.uleb128 0xb
+ 2623 00b5 3B       		.uleb128 0x3b
+ 2624 00b6 0B       		.uleb128 0xb
+ 2625 00b7 27       		.uleb128 0x27
+ 2626 00b8 19       		.uleb128 0x19
+ 2627 00b9 11       		.uleb128 0x11
+ 2628 00ba 01       		.uleb128 0x1
+ 2629 00bb 12       		.uleb128 0x12
+ 2630 00bc 06       		.uleb128 0x6
+ 2631 00bd 40       		.uleb128 0x40
+ 2632 00be 18       		.uleb128 0x18
+ 2633 00bf 9642     		.uleb128 0x2116
+ 2634 00c1 19       		.uleb128 0x19
+ 2635 00c2 01       		.uleb128 0x1
+ 2636 00c3 13       		.uleb128 0x13
+ 2637 00c4 00       		.byte	0
+ 2638 00c5 00       		.byte	0
+ 2639 00c6 0D       		.uleb128 0xd
+ 2640 00c7 0B       		.uleb128 0xb
+ 2641 00c8 01       		.byte	0x1
+ 2642 00c9 11       		.uleb128 0x11
+ 2643 00ca 01       		.uleb128 0x1
+ 2644 00cb 12       		.uleb128 0x12
+ 2645 00cc 06       		.uleb128 0x6
+ 2646 00cd 00       		.byte	0
+ 2647 00ce 00       		.byte	0
+ 2648 00cf 0E       		.uleb128 0xe
+ 2649 00d0 898201   		.uleb128 0x4109
+ 2650 00d3 01       		.byte	0x1
+ 2651 00d4 11       		.uleb128 0x11
+ 2652 00d5 01       		.uleb128 0x1
+ 2653 00d6 31       		.uleb128 0x31
+ 2654 00d7 13       		.uleb128 0x13
+ 2655 00d8 01       		.uleb128 0x1
+ 2656 00d9 13       		.uleb128 0x13
+ 2657 00da 00       		.byte	0
+ 2658 00db 00       		.byte	0
+ 2659 00dc 0F       		.uleb128 0xf
+ 2660 00dd 8A8201   		.uleb128 0x410a
+ 2661 00e0 00       		.byte	0
+ 2662 00e1 02       		.uleb128 0x2
+ 2663 00e2 18       		.uleb128 0x18
+ 2664 00e3 9142     		.uleb128 0x2111
+ 2665 00e5 18       		.uleb128 0x18
+ 2666 00e6 00       		.byte	0
+ 2667 00e7 00       		.byte	0
+ 2668 00e8 10       		.uleb128 0x10
+ 2669 00e9 898201   		.uleb128 0x4109
+ 2670 00ec 01       		.byte	0x1
+ 2671 00ed 11       		.uleb128 0x11
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 53
+
+
+ 2672 00ee 01       		.uleb128 0x1
+ 2673 00ef 31       		.uleb128 0x31
+ 2674 00f0 13       		.uleb128 0x13
+ 2675 00f1 00       		.byte	0
+ 2676 00f2 00       		.byte	0
+ 2677 00f3 11       		.uleb128 0x11
+ 2678 00f4 34       		.uleb128 0x34
+ 2679 00f5 00       		.byte	0
+ 2680 00f6 03       		.uleb128 0x3
+ 2681 00f7 0E       		.uleb128 0xe
+ 2682 00f8 3A       		.uleb128 0x3a
+ 2683 00f9 0B       		.uleb128 0xb
+ 2684 00fa 3B       		.uleb128 0x3b
+ 2685 00fb 0B       		.uleb128 0xb
+ 2686 00fc 49       		.uleb128 0x49
+ 2687 00fd 13       		.uleb128 0x13
+ 2688 00fe 02       		.uleb128 0x2
+ 2689 00ff 18       		.uleb128 0x18
+ 2690 0100 00       		.byte	0
+ 2691 0101 00       		.byte	0
+ 2692 0102 12       		.uleb128 0x12
+ 2693 0103 898201   		.uleb128 0x4109
+ 2694 0106 00       		.byte	0
+ 2695 0107 11       		.uleb128 0x11
+ 2696 0108 01       		.uleb128 0x1
+ 2697 0109 31       		.uleb128 0x31
+ 2698 010a 13       		.uleb128 0x13
+ 2699 010b 00       		.byte	0
+ 2700 010c 00       		.byte	0
+ 2701 010d 13       		.uleb128 0x13
+ 2702 010e 2E       		.uleb128 0x2e
+ 2703 010f 00       		.byte	0
+ 2704 0110 3F       		.uleb128 0x3f
+ 2705 0111 19       		.uleb128 0x19
+ 2706 0112 03       		.uleb128 0x3
+ 2707 0113 0E       		.uleb128 0xe
+ 2708 0114 3A       		.uleb128 0x3a
+ 2709 0115 0B       		.uleb128 0xb
+ 2710 0116 3B       		.uleb128 0x3b
+ 2711 0117 0B       		.uleb128 0xb
+ 2712 0118 11       		.uleb128 0x11
+ 2713 0119 01       		.uleb128 0x1
+ 2714 011a 12       		.uleb128 0x12
+ 2715 011b 06       		.uleb128 0x6
+ 2716 011c 40       		.uleb128 0x40
+ 2717 011d 18       		.uleb128 0x18
+ 2718 011e 9742     		.uleb128 0x2117
+ 2719 0120 19       		.uleb128 0x19
+ 2720 0121 00       		.byte	0
+ 2721 0122 00       		.byte	0
+ 2722 0123 14       		.uleb128 0x14
+ 2723 0124 2E       		.uleb128 0x2e
+ 2724 0125 01       		.byte	0x1
+ 2725 0126 3F       		.uleb128 0x3f
+ 2726 0127 19       		.uleb128 0x19
+ 2727 0128 03       		.uleb128 0x3
+ 2728 0129 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 54
+
+
+ 2729 012a 3A       		.uleb128 0x3a
+ 2730 012b 0B       		.uleb128 0xb
+ 2731 012c 3B       		.uleb128 0x3b
+ 2732 012d 0B       		.uleb128 0xb
+ 2733 012e 27       		.uleb128 0x27
+ 2734 012f 19       		.uleb128 0x19
+ 2735 0130 11       		.uleb128 0x11
+ 2736 0131 01       		.uleb128 0x1
+ 2737 0132 12       		.uleb128 0x12
+ 2738 0133 06       		.uleb128 0x6
+ 2739 0134 40       		.uleb128 0x40
+ 2740 0135 18       		.uleb128 0x18
+ 2741 0136 9742     		.uleb128 0x2117
+ 2742 0138 19       		.uleb128 0x19
+ 2743 0139 01       		.uleb128 0x1
+ 2744 013a 13       		.uleb128 0x13
+ 2745 013b 00       		.byte	0
+ 2746 013c 00       		.byte	0
+ 2747 013d 15       		.uleb128 0x15
+ 2748 013e 2E       		.uleb128 0x2e
+ 2749 013f 01       		.byte	0x1
+ 2750 0140 3F       		.uleb128 0x3f
+ 2751 0141 19       		.uleb128 0x19
+ 2752 0142 03       		.uleb128 0x3
+ 2753 0143 0E       		.uleb128 0xe
+ 2754 0144 3A       		.uleb128 0x3a
+ 2755 0145 0B       		.uleb128 0xb
+ 2756 0146 3B       		.uleb128 0x3b
+ 2757 0147 05       		.uleb128 0x5
+ 2758 0148 11       		.uleb128 0x11
+ 2759 0149 01       		.uleb128 0x1
+ 2760 014a 12       		.uleb128 0x12
+ 2761 014b 06       		.uleb128 0x6
+ 2762 014c 40       		.uleb128 0x40
+ 2763 014d 18       		.uleb128 0x18
+ 2764 014e 9742     		.uleb128 0x2117
+ 2765 0150 19       		.uleb128 0x19
+ 2766 0151 01       		.uleb128 0x1
+ 2767 0152 13       		.uleb128 0x13
+ 2768 0153 00       		.byte	0
+ 2769 0154 00       		.byte	0
+ 2770 0155 16       		.uleb128 0x16
+ 2771 0156 34       		.uleb128 0x34
+ 2772 0157 00       		.byte	0
+ 2773 0158 03       		.uleb128 0x3
+ 2774 0159 0E       		.uleb128 0xe
+ 2775 015a 3A       		.uleb128 0x3a
+ 2776 015b 0B       		.uleb128 0xb
+ 2777 015c 3B       		.uleb128 0x3b
+ 2778 015d 05       		.uleb128 0x5
+ 2779 015e 49       		.uleb128 0x49
+ 2780 015f 13       		.uleb128 0x13
+ 2781 0160 3F       		.uleb128 0x3f
+ 2782 0161 19       		.uleb128 0x19
+ 2783 0162 3C       		.uleb128 0x3c
+ 2784 0163 19       		.uleb128 0x19
+ 2785 0164 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 55
+
+
+ 2786 0165 00       		.byte	0
+ 2787 0166 17       		.uleb128 0x17
+ 2788 0167 35       		.uleb128 0x35
+ 2789 0168 00       		.byte	0
+ 2790 0169 49       		.uleb128 0x49
+ 2791 016a 13       		.uleb128 0x13
+ 2792 016b 00       		.byte	0
+ 2793 016c 00       		.byte	0
+ 2794 016d 18       		.uleb128 0x18
+ 2795 016e 34       		.uleb128 0x34
+ 2796 016f 00       		.byte	0
+ 2797 0170 03       		.uleb128 0x3
+ 2798 0171 0E       		.uleb128 0xe
+ 2799 0172 3A       		.uleb128 0x3a
+ 2800 0173 0B       		.uleb128 0xb
+ 2801 0174 3B       		.uleb128 0x3b
+ 2802 0175 0B       		.uleb128 0xb
+ 2803 0176 49       		.uleb128 0x49
+ 2804 0177 13       		.uleb128 0x13
+ 2805 0178 3F       		.uleb128 0x3f
+ 2806 0179 19       		.uleb128 0x19
+ 2807 017a 02       		.uleb128 0x2
+ 2808 017b 18       		.uleb128 0x18
+ 2809 017c 00       		.byte	0
+ 2810 017d 00       		.byte	0
+ 2811 017e 19       		.uleb128 0x19
+ 2812 017f 2E       		.uleb128 0x2e
+ 2813 0180 00       		.byte	0
+ 2814 0181 3F       		.uleb128 0x3f
+ 2815 0182 19       		.uleb128 0x19
+ 2816 0183 3C       		.uleb128 0x3c
+ 2817 0184 19       		.uleb128 0x19
+ 2818 0185 6E       		.uleb128 0x6e
+ 2819 0186 0E       		.uleb128 0xe
+ 2820 0187 03       		.uleb128 0x3
+ 2821 0188 0E       		.uleb128 0xe
+ 2822 0189 3A       		.uleb128 0x3a
+ 2823 018a 0B       		.uleb128 0xb
+ 2824 018b 3B       		.uleb128 0x3b
+ 2825 018c 0B       		.uleb128 0xb
+ 2826 018d 00       		.byte	0
+ 2827 018e 00       		.byte	0
+ 2828 018f 00       		.byte	0
+ 2829              		.section	.debug_loc,"",%progbits
+ 2830              	.Ldebug_loc0:
+ 2831              	.LLST0:
+ 2832 0000 00000000 		.4byte	.LVL0
+ 2833 0004 2C000000 		.4byte	.LVL5
+ 2834 0008 0100     		.2byte	0x1
+ 2835 000a 51       		.byte	0x51
+ 2836 000b 2C000000 		.4byte	.LVL5
+ 2837 000f 44000000 		.4byte	.LFE64
+ 2838 0013 0400     		.2byte	0x4
+ 2839 0015 F3       		.byte	0xf3
+ 2840 0016 01       		.uleb128 0x1
+ 2841 0017 51       		.byte	0x51
+ 2842 0018 9F       		.byte	0x9f
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 56
+
+
+ 2843 0019 00000000 		.4byte	0
+ 2844 001d 00000000 		.4byte	0
+ 2845              	.LLST1:
+ 2846 0021 00000000 		.4byte	.LVL0
+ 2847 0025 30000000 		.4byte	.LVL6
+ 2848 0029 0100     		.2byte	0x1
+ 2849 002b 52       		.byte	0x52
+ 2850 002c 30000000 		.4byte	.LVL6
+ 2851 0030 32000000 		.4byte	.LVL7
+ 2852 0034 0100     		.2byte	0x1
+ 2853 0036 51       		.byte	0x51
+ 2854 0037 32000000 		.4byte	.LVL7
+ 2855 003b 44000000 		.4byte	.LFE64
+ 2856 003f 0100     		.2byte	0x1
+ 2857 0041 52       		.byte	0x52
+ 2858 0042 00000000 		.4byte	0
+ 2859 0046 00000000 		.4byte	0
+ 2860              	.LLST2:
+ 2861 004a 12000000 		.4byte	.LVL1
+ 2862 004e 14000000 		.4byte	.LVL2
+ 2863 0052 0100     		.2byte	0x1
+ 2864 0054 53       		.byte	0x53
+ 2865 0055 14000000 		.4byte	.LVL2
+ 2866 0059 3E000000 		.4byte	.LVL10
+ 2867 005d 0100     		.2byte	0x1
+ 2868 005f 54       		.byte	0x54
+ 2869 0060 00000000 		.4byte	0
+ 2870 0064 00000000 		.4byte	0
+ 2871              	.LLST3:
+ 2872 0068 20000000 		.4byte	.LVL3
+ 2873 006c 34000000 		.4byte	.LVL8
+ 2874 0070 0100     		.2byte	0x1
+ 2875 0072 53       		.byte	0x53
+ 2876 0073 00000000 		.4byte	0
+ 2877 0077 00000000 		.4byte	0
+ 2878              	.LLST4:
+ 2879 007b 2A000000 		.4byte	.LVL4
+ 2880 007f 3A000000 		.4byte	.LVL9
+ 2881 0083 0100     		.2byte	0x1
+ 2882 0085 55       		.byte	0x55
+ 2883 0086 00000000 		.4byte	0
+ 2884 008a 00000000 		.4byte	0
+ 2885              	.LLST5:
+ 2886 008e 00000000 		.4byte	.LVL11
+ 2887 0092 07000000 		.4byte	.LVL12-1
+ 2888 0096 0100     		.2byte	0x1
+ 2889 0098 50       		.byte	0x50
+ 2890 0099 07000000 		.4byte	.LVL12-1
+ 2891 009d 90010000 		.4byte	.LFE65
+ 2892 00a1 0600     		.2byte	0x6
+ 2893 00a3 F3       		.byte	0xf3
+ 2894 00a4 03       		.uleb128 0x3
+ 2895 00a5 F5       		.byte	0xf5
+ 2896 00a6 00       		.uleb128 0
+ 2897 00a7 25       		.uleb128 0x25
+ 2898 00a8 9F       		.byte	0x9f
+ 2899 00a9 00000000 		.4byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 57
+
+
+ 2900 00ad 00000000 		.4byte	0
+ 2901              	.LLST6:
+ 2902 00b1 0E000000 		.4byte	.LVL14
+ 2903 00b5 12000000 		.4byte	.LVL15
+ 2904 00b9 0100     		.2byte	0x1
+ 2905 00bb 50       		.byte	0x50
+ 2906 00bc 12000000 		.4byte	.LVL15
+ 2907 00c0 88010000 		.4byte	.LVL57
+ 2908 00c4 0100     		.2byte	0x1
+ 2909 00c6 55       		.byte	0x55
+ 2910 00c7 00000000 		.4byte	0
+ 2911 00cb 00000000 		.4byte	0
+ 2912              	.LLST7:
+ 2913 00cf 0E000000 		.4byte	.LVL14
+ 2914 00d3 12000000 		.4byte	.LVL15
+ 2915 00d7 0200     		.2byte	0x2
+ 2916 00d9 30       		.byte	0x30
+ 2917 00da 9F       		.byte	0x9f
+ 2918 00db 12000000 		.4byte	.LVL15
+ 2919 00df 88010000 		.4byte	.LVL57
+ 2920 00e3 0100     		.2byte	0x1
+ 2921 00e5 54       		.byte	0x54
+ 2922 00e6 00000000 		.4byte	0
+ 2923 00ea 00000000 		.4byte	0
+ 2924              	.LLST8:
+ 2925 00ee 00000000 		.4byte	.LVL58
+ 2926 00f2 07000000 		.4byte	.LVL59-1
+ 2927 00f6 0100     		.2byte	0x1
+ 2928 00f8 50       		.byte	0x50
+ 2929 00f9 07000000 		.4byte	.LVL59-1
+ 2930 00fd 90010000 		.4byte	.LFE66
+ 2931 0101 0600     		.2byte	0x6
+ 2932 0103 F3       		.byte	0xf3
+ 2933 0104 03       		.uleb128 0x3
+ 2934 0105 F5       		.byte	0xf5
+ 2935 0106 00       		.uleb128 0
+ 2936 0107 25       		.uleb128 0x25
+ 2937 0108 9F       		.byte	0x9f
+ 2938 0109 00000000 		.4byte	0
+ 2939 010d 00000000 		.4byte	0
+ 2940              	.LLST9:
+ 2941 0111 0E000000 		.4byte	.LVL61
+ 2942 0115 12000000 		.4byte	.LVL62
+ 2943 0119 0100     		.2byte	0x1
+ 2944 011b 50       		.byte	0x50
+ 2945 011c 12000000 		.4byte	.LVL62
+ 2946 0120 88010000 		.4byte	.LVL104
+ 2947 0124 0100     		.2byte	0x1
+ 2948 0126 55       		.byte	0x55
+ 2949 0127 00000000 		.4byte	0
+ 2950 012b 00000000 		.4byte	0
+ 2951              	.LLST10:
+ 2952 012f 0E000000 		.4byte	.LVL61
+ 2953 0133 12000000 		.4byte	.LVL62
+ 2954 0137 0200     		.2byte	0x2
+ 2955 0139 30       		.byte	0x30
+ 2956 013a 9F       		.byte	0x9f
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 58
+
+
+ 2957 013b 12000000 		.4byte	.LVL62
+ 2958 013f 88010000 		.4byte	.LVL104
+ 2959 0143 0100     		.2byte	0x1
+ 2960 0145 54       		.byte	0x54
+ 2961 0146 00000000 		.4byte	0
+ 2962 014a 00000000 		.4byte	0
+ 2963              	.LLST11:
+ 2964 014e 00000000 		.4byte	.LVL105
+ 2965 0152 10000000 		.4byte	.LVL107
+ 2966 0156 0100     		.2byte	0x1
+ 2967 0158 50       		.byte	0x50
+ 2968 0159 10000000 		.4byte	.LVL107
+ 2969 015d 13000000 		.4byte	.LVL108-1
+ 2970 0161 0100     		.2byte	0x1
+ 2971 0163 52       		.byte	0x52
+ 2972 0164 13000000 		.4byte	.LVL108-1
+ 2973 0168 34000000 		.4byte	.LVL114
+ 2974 016c 0100     		.2byte	0x1
+ 2975 016e 55       		.byte	0x55
+ 2976 016f 34000000 		.4byte	.LVL114
+ 2977 0173 2C010000 		.4byte	.LFE63
+ 2978 0177 0400     		.2byte	0x4
+ 2979 0179 F3       		.byte	0xf3
+ 2980 017a 01       		.uleb128 0x1
+ 2981 017b 50       		.byte	0x50
+ 2982 017c 9F       		.byte	0x9f
+ 2983 017d 00000000 		.4byte	0
+ 2984 0181 00000000 		.4byte	0
+ 2985              	.LLST12:
+ 2986 0185 00000000 		.4byte	.LVL105
+ 2987 0189 0E000000 		.4byte	.LVL106
+ 2988 018d 0100     		.2byte	0x1
+ 2989 018f 51       		.byte	0x51
+ 2990 0190 0E000000 		.4byte	.LVL106
+ 2991 0194 22010000 		.4byte	.LVL149
+ 2992 0198 0100     		.2byte	0x1
+ 2993 019a 54       		.byte	0x54
+ 2994 019b 22010000 		.4byte	.LVL149
+ 2995 019f 2C010000 		.4byte	.LFE63
+ 2996 01a3 0500     		.2byte	0x5
+ 2997 01a5 03       		.byte	0x3
+ 2998 01a6 00000000 		.4byte	currentSquare
+ 2999 01aa 00000000 		.4byte	0
+ 3000 01ae 00000000 		.4byte	0
+ 3001              	.LLST13:
+ 3002 01b2 00000000 		.4byte	.LVL150
+ 3003 01b6 0A000000 		.4byte	.LVL151
+ 3004 01ba 0100     		.2byte	0x1
+ 3005 01bc 50       		.byte	0x50
+ 3006 01bd 0A000000 		.4byte	.LVL151
+ 3007 01c1 22000000 		.4byte	.LFE68
+ 3008 01c5 0400     		.2byte	0x4
+ 3009 01c7 F3       		.byte	0xf3
+ 3010 01c8 01       		.uleb128 0x1
+ 3011 01c9 50       		.byte	0x50
+ 3012 01ca 9F       		.byte	0x9f
+ 3013 01cb 00000000 		.4byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 59
+
+
+ 3014 01cf 00000000 		.4byte	0
+ 3015              	.LLST14:
+ 3016 01d3 00000000 		.4byte	.LVL150
+ 3017 01d7 0D000000 		.4byte	.LVL152-1
+ 3018 01db 0100     		.2byte	0x1
+ 3019 01dd 51       		.byte	0x51
+ 3020 01de 0D000000 		.4byte	.LVL152-1
+ 3021 01e2 22000000 		.4byte	.LFE68
+ 3022 01e6 0100     		.2byte	0x1
+ 3023 01e8 56       		.byte	0x56
+ 3024 01e9 00000000 		.4byte	0
+ 3025 01ed 00000000 		.4byte	0
+ 3026              	.LLST15:
+ 3027 01f1 00000000 		.4byte	.LVL150
+ 3028 01f5 0D000000 		.4byte	.LVL152-1
+ 3029 01f9 0100     		.2byte	0x1
+ 3030 01fb 52       		.byte	0x52
+ 3031 01fc 0D000000 		.4byte	.LVL152-1
+ 3032 0200 22000000 		.4byte	.LFE68
+ 3033 0204 0100     		.2byte	0x1
+ 3034 0206 55       		.byte	0x55
+ 3035 0207 00000000 		.4byte	0
+ 3036 020b 00000000 		.4byte	0
+ 3037              	.LLST16:
+ 3038 020f 00000000 		.4byte	.LVL150
+ 3039 0213 0D000000 		.4byte	.LVL152-1
+ 3040 0217 0100     		.2byte	0x1
+ 3041 0219 53       		.byte	0x53
+ 3042 021a 0D000000 		.4byte	.LVL152-1
+ 3043 021e 22000000 		.4byte	.LFE68
+ 3044 0222 0100     		.2byte	0x1
+ 3045 0224 54       		.byte	0x54
+ 3046 0225 00000000 		.4byte	0
+ 3047 0229 00000000 		.4byte	0
+ 3048              		.section	.debug_aranges,"",%progbits
+ 3049 0000 4C000000 		.4byte	0x4c
+ 3050 0004 0200     		.2byte	0x2
+ 3051 0006 00000000 		.4byte	.Ldebug_info0
+ 3052 000a 04       		.byte	0x4
+ 3053 000b 00       		.byte	0
+ 3054 000c 0000     		.2byte	0
+ 3055 000e 0000     		.2byte	0
+ 3056 0010 00000000 		.4byte	.LFB64
+ 3057 0014 44000000 		.4byte	.LFE64-.LFB64
+ 3058 0018 00000000 		.4byte	.LFB65
+ 3059 001c 90010000 		.4byte	.LFE65-.LFB65
+ 3060 0020 00000000 		.4byte	.LFB66
+ 3061 0024 90010000 		.4byte	.LFE66-.LFB66
+ 3062 0028 00000000 		.4byte	.LFB63
+ 3063 002c 2C010000 		.4byte	.LFE63-.LFB63
+ 3064 0030 00000000 		.4byte	.LFB67
+ 3065 0034 0C000000 		.4byte	.LFE67-.LFB67
+ 3066 0038 00000000 		.4byte	.LFB68
+ 3067 003c 22000000 		.4byte	.LFE68-.LFB68
+ 3068 0040 00000000 		.4byte	.LFB69
+ 3069 0044 18000000 		.4byte	.LFE69-.LFB69
+ 3070 0048 00000000 		.4byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 60
+
+
+ 3071 004c 00000000 		.4byte	0
+ 3072              		.section	.debug_ranges,"",%progbits
+ 3073              	.Ldebug_ranges0:
+ 3074 0000 00000000 		.4byte	.LFB64
+ 3075 0004 44000000 		.4byte	.LFE64
+ 3076 0008 00000000 		.4byte	.LFB65
+ 3077 000c 90010000 		.4byte	.LFE65
+ 3078 0010 00000000 		.4byte	.LFB66
+ 3079 0014 90010000 		.4byte	.LFE66
+ 3080 0018 00000000 		.4byte	.LFB63
+ 3081 001c 2C010000 		.4byte	.LFE63
+ 3082 0020 00000000 		.4byte	.LFB67
+ 3083 0024 0C000000 		.4byte	.LFE67
+ 3084 0028 00000000 		.4byte	.LFB68
+ 3085 002c 22000000 		.4byte	.LFE68
+ 3086 0030 00000000 		.4byte	.LFB69
+ 3087 0034 18000000 		.4byte	.LFE69
+ 3088 0038 00000000 		.4byte	0
+ 3089 003c 00000000 		.4byte	0
+ 3090              		.section	.debug_line,"",%progbits
+ 3091              	.Ldebug_line0:
+ 3092 0000 EC020000 		.section	.debug_str,"MS",%progbits,1
+ 3092      0200B001 
+ 3092      00000201 
+ 3092      FB0E0D00 
+ 3092      01010101 
+ 3093              	.LASF25:
+ 3094 0000 6D6F7665 		.ascii	"moveToStart\000"
+ 3094      546F5374 
+ 3094      61727400 
+ 3095              	.LASF43:
+ 3096 000c 50335F36 		.ascii	"P3_6_Write\000"
+ 3096      5F577269 
+ 3096      746500
+ 3097              	.LASF24:
+ 3098 0017 6D6F7665 		.ascii	"moveChessPiece\000"
+ 3098      43686573 
+ 3098      73506965 
+ 3098      636500
+ 3099              	.LASF47:
+ 3100 0026 73746570 		.ascii	"stepDif\000"
+ 3100      44696600 
+ 3101              	.LASF10:
+ 3102 002e 5F5F696E 		.ascii	"__int32_t\000"
+ 3102      7433325F 
+ 3102      7400
+ 3103              	.LASF4:
+ 3104 0038 73686F72 		.ascii	"short unsigned int\000"
+ 3104      7420756E 
+ 3104      7369676E 
+ 3104      65642069 
+ 3104      6E7400
+ 3105              	.LASF21:
+ 3106 004b 6D6F7665 		.ascii	"moveSteps\000"
+ 3106      53746570 
+ 3106      7300
+ 3107              	.LASF12:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 61
+
+
+ 3108 0055 646F7562 		.ascii	"double\000"
+ 3108      6C6500
+ 3109              	.LASF35:
+ 3110 005c 50325F33 		.ascii	"P2_3_Write\000"
+ 3110      5F577269 
+ 3110      746500
+ 3111              	.LASF16:
+ 3112 0067 66726F6D 		.ascii	"fromSquare\000"
+ 3112      53717561 
+ 3112      726500
+ 3113              	.LASF0:
+ 3114 0072 666C6F61 		.ascii	"float\000"
+ 3114      7400
+ 3115              	.LASF31:
+ 3116 0078 50325F32 		.ascii	"P2_2\000"
+ 3116      00
+ 3117              	.LASF2:
+ 3118 007d 756E7369 		.ascii	"unsigned char\000"
+ 3118      676E6564 
+ 3118      20636861 
+ 3118      7200
+ 3119              	.LASF44:
+ 3120 008b 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3120      43313120 
+ 3120      352E342E 
+ 3120      31203230 
+ 3120      31363036 
+ 3121 00be 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 3121      20726576 
+ 3121      6973696F 
+ 3121      6E203233 
+ 3121      37373135 
+ 3122 00f1 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 3122      66756E63 
+ 3122      74696F6E 
+ 3122      2D736563 
+ 3122      74696F6E 
+ 3123              	.LASF36:
+ 3124 0119 50325F34 		.ascii	"P2_4_Write\000"
+ 3124      5F577269 
+ 3124      746500
+ 3125              	.LASF6:
+ 3126 0124 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3126      20756E73 
+ 3126      69676E65 
+ 3126      6420696E 
+ 3126      7400
+ 3127              	.LASF23:
+ 3128 0136 6D6F7665 		.ascii	"moveMotorY\000"
+ 3128      4D6F746F 
+ 3128      725900
+ 3129              	.LASF33:
+ 3130 0141 63757272 		.ascii	"currentSquare\000"
+ 3130      656E7453 
+ 3130      71756172 
+ 3130      6500
+ 3131              	.LASF37:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 62
+
+
+ 3132 014f 50325F35 		.ascii	"P2_5_Write\000"
+ 3132      5F577269 
+ 3132      746500
+ 3133              	.LASF48:
+ 3134 015a 63616C63 		.ascii	"calculateSteps\000"
+ 3134      756C6174 
+ 3134      65537465 
+ 3134      707300
+ 3135              	.LASF50:
+ 3136 0169 5859506C 		.ascii	"XYPlotterTest\000"
+ 3136      6F747465 
+ 3136      72546573 
+ 3136      7400
+ 3137              	.LASF46:
+ 3138 0177 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 3138      49545C52 
+ 3138      6F626F4D 
+ 3138      6174655C 
+ 3138      50536F43 
+ 3139 01a5 726F6C6C 		.ascii	"roller.cydsn\000"
+ 3139      65722E63 
+ 3139      7964736E 
+ 3139      00
+ 3140              	.LASF3:
+ 3141 01b2 73686F72 		.ascii	"short int\000"
+ 3141      7420696E 
+ 3141      7400
+ 3142              	.LASF27:
+ 3143 01bc 6D6F746F 		.ascii	"motorTest\000"
+ 3143      72546573 
+ 3143      7400
+ 3144              	.LASF38:
+ 3145 01c6 50325F36 		.ascii	"P2_6_Write\000"
+ 3145      5F577269 
+ 3145      746500
+ 3146              	.LASF32:
+ 3147 01d1 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 3147      52784275 
+ 3147      66666572 
+ 3147      00
+ 3148              	.LASF9:
+ 3149 01de 756E7369 		.ascii	"unsigned int\000"
+ 3149      676E6564 
+ 3149      20696E74 
+ 3149      00
+ 3150              	.LASF34:
+ 3151 01eb 73746570 		.ascii	"stepCase\000"
+ 3151      43617365 
+ 3151      00
+ 3152              	.LASF8:
+ 3153 01f4 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3153      206C6F6E 
+ 3153      6720756E 
+ 3153      7369676E 
+ 3153      65642069 
+ 3154              	.LASF29:
+ 3155 020b 50325F31 		.ascii	"P2_1\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 63
+
+
+ 3155      00
+ 3156              	.LASF40:
+ 3157 0210 50335F33 		.ascii	"P3_3_Write\000"
+ 3157      5F577269 
+ 3157      746500
+ 3158              	.LASF49:
+ 3159 021b 696E6974 		.ascii	"initXYPlotter\000"
+ 3159      5859506C 
+ 3159      6F747465 
+ 3159      7200
+ 3160              	.LASF18:
+ 3161 0229 66726F6D 		.ascii	"fromX\000"
+ 3161      5800
+ 3162              	.LASF19:
+ 3163 022f 66726F6D 		.ascii	"fromY\000"
+ 3163      5900
+ 3164              	.LASF11:
+ 3165 0235 696E7433 		.ascii	"int32_t\000"
+ 3165      325F7400 
+ 3166              	.LASF22:
+ 3167 023d 6D6F7665 		.ascii	"moveMotorX\000"
+ 3167      4D6F746F 
+ 3167      725800
+ 3168              	.LASF41:
+ 3169 0248 50335F34 		.ascii	"P3_4_Write\000"
+ 3169      5F577269 
+ 3169      746500
+ 3170              	.LASF7:
+ 3171 0253 6C6F6E67 		.ascii	"long long int\000"
+ 3171      206C6F6E 
+ 3171      6720696E 
+ 3171      7400
+ 3172              	.LASF15:
+ 3173 0261 73697A65 		.ascii	"sizetype\000"
+ 3173      74797065 
+ 3173      00
+ 3174              	.LASF20:
+ 3175 026a 73717561 		.ascii	"squares\000"
+ 3175      72657300 
+ 3176              	.LASF17:
+ 3177 0272 746F5371 		.ascii	"toSquare\000"
+ 3177      75617265 
+ 3177      00
+ 3178              	.LASF42:
+ 3179 027b 50335F35 		.ascii	"P3_5_Write\000"
+ 3179      5F577269 
+ 3179      746500
+ 3180              	.LASF26:
+ 3181 0286 73746570 		.ascii	"stepsToMove\000"
+ 3181      73546F4D 
+ 3181      6F766500 
+ 3182              	.LASF5:
+ 3183 0292 6C6F6E67 		.ascii	"long int\000"
+ 3183      20696E74 
+ 3183      00
+ 3184              	.LASF13:
+ 3185 029b 63686172 		.ascii	"char\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\cch78olc.s 			page 64
+
+
+ 3185      00
+ 3186              	.LASF45:
+ 3187 02a0 58595F50 		.ascii	"XY_Plotter.c\000"
+ 3187      6C6F7474 
+ 3187      65722E63 
+ 3187      00
+ 3188              	.LASF14:
+ 3189 02ad 6C6F6E67 		.ascii	"long double\000"
+ 3189      20646F75 
+ 3189      626C6500 
+ 3190              	.LASF1:
+ 3191 02b9 7369676E 		.ascii	"signed char\000"
+ 3191      65642063 
+ 3191      68617200 
+ 3192              	.LASF28:
+ 3193 02c5 50315F31 		.ascii	"P1_1\000"
+ 3193      00
+ 3194              	.LASF30:
+ 3195 02ca 50315F32 		.ascii	"P1_2\000"
+ 3195      00
+ 3196              	.LASF39:
+ 3197 02cf 43794465 		.ascii	"CyDelay\000"
+ 3197      6C617900 
+ 3198              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

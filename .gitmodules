@@ -1,0 +1,3 @@
+[submodule "RPI/Stockfish"]
+	path = RPI/Stockfish
+	url = https://github.com/official-stockfish/Stockfish.git

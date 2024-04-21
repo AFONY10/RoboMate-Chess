@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CyXmlSerializer>
+<!--This file is machine generated and read. It is not intended to be edited by hand.-->
+<!--Due to this, there is no schema for this file.-->
+<CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21 type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWrkspcCustomData" version="4">
+<CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997 type_name="CyDesigner.Common.Base.CyCustomData" version="2">
+<userData>
+<dataGuid v="1b906a0f-a7b6-4e4d-a428-82f98b53cb35">
+<CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35 type_name="CyDesigner.Common.ProjMgmt.GUI.CyExplorerWindow+CyExplorerWindowState" version="3" SelectedTab="Source">
+<TreeKeys>
+<v>Source</v>
+<v>Components</v>
+<v>Output</v>
+</TreeKeys>
+<TreeStates>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Microcontroller\Microcontroller\Source Files\main.c">
+<ExpandedNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\TopDesign</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Pins</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Analog</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Clocks</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Interrupts</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\DMA</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\System</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Directives</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Flash Security</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\EEPROM</v>
+<v>Microcontroller\Microcontroller\Header Files</v>
+<v>Microcontroller\Microcontroller\Header Files\cyapicallbacks.h</v>
+<v>Microcontroller\Microcontroller\Header Files\LedControl.h</v>
+<v>Microcontroller\Microcontroller\Header Files\Sensor.h</v>
+<v>Microcontroller\Microcontroller\Header Files\Servo.h</v>
+<v>Microcontroller\Microcontroller\Header Files\UART.h</v>
+<v>Microcontroller\Microcontroller\Header Files\XYPlotter.h</v>
+<v>Microcontroller\Microcontroller\Source Files</v>
+<v>Microcontroller\Microcontroller\Source Files\LedControl.c</v>
+<v>Microcontroller\Microcontroller\Source Files\main.c</v>
+<v>Microcontroller\Microcontroller\Source Files\Sensor.c</v>
+<v>Microcontroller\Microcontroller\Source Files\Servo.c</v>
+<v>Microcontroller\Microcontroller\Source Files\UART.c</v>
+<v>Microcontroller\Microcontroller\Source Files\XYPlotter.c</v>
+<v>Microcontroller\Microcontroller\Generated_Source</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\TopDesign</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Pins</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Analog</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Clocks</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Interrupts</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\DMA</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\System</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Directives</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\Flash Security</v>
+<v>Microcontroller\Microcontroller\Microcontroller.cydwr\EEPROM</v>
+<v>Microcontroller\Microcontroller\Header Files</v>
+<v>Microcontroller\Microcontroller\Header Files\cyapicallbacks.h</v>
+<v>Microcontroller\Microcontroller\Header Files\LedControl.h</v>
+<v>Microcontroller\Microcontroller\Header Files\Sensor.h</v>
+<v>Microcontroller\Microcontroller\Header Files\Servo.h</v>
+<v>Microcontroller\Microcontroller\Header Files\UART.h</v>
+<v>Microcontroller\Microcontroller\Header Files\XYPlotter.h</v>
+<v>Microcontroller\Microcontroller\Source Files</v>
+<v>Microcontroller\Microcontroller\Source Files\LedControl.c</v>
+<v>Microcontroller\Microcontroller\Source Files\main.c</v>
+<v>Microcontroller\Microcontroller\Source Files\Sensor.c</v>
+<v>Microcontroller\Microcontroller\Source Files\Servo.c</v>
+<v>Microcontroller\Microcontroller\Source Files\UART.c</v>
+<v>Microcontroller\Microcontroller\Source Files\XYPlotter.c</v>
+<v>Microcontroller\Microcontroller\Generated_Source</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\Clock_2</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\Control_Reg_1</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\cy_boot</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\Em_EEPROM_Dynamic</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\isr_PWM</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\isr_uart_rx</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\LED</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\LED_1</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\magnetControl</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P2_3</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P2_4</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P2_5</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P2_6</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P3_3</v>
+<v>Microcontroller\Microcontroller\Generated_Source\PSoC5\P3_4</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\TopDesign</v>
+<v>Microcontroller\Microcontroller\TopDesign\TopDesign.cysch</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\TopDesign</v>
+<v>Microcontroller\Microcontroller\TopDesign\TopDesign.cysch</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\CortexM3</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_2.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_1.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_1_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_PWM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_uart_rx.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\LED.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\LED_1.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\magnetControl.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_3.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_4.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_5.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_6.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_3.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_4.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_5.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_6.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Sensor.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorClk.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorReset.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorSignal.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Servo.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\ServoClk.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\servoControl.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\ServoPWM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\ServoPWM_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_BOOT.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_INT.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_IntClock.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\XYPlotter.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Microcontroller.elf</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Microcontroller.hex</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Microcontroller.map</v>
+<v>Microcontroller\Microcontroller\Microcontroller.gpdsc</v>
+<v>Microcontroller\Microcontroller\Microcontroller.rpt</v>
+<v>Microcontroller\Microcontroller\Microcontroller_timing.html</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\CortexM3</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_2.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_1.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_1_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_PWM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_uart_rx.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\LED.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\LED_1.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\magnetControl.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_3.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_4.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_5.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P2_6.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_3.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_4.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_5.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\P3_6.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_PM.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Sensor.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorClk.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorReset.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\sensorSignal.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\Servo.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\ServoClk.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\servoControl.lst</v>
+<v>Microcontroller\Microcontroller\CortexM3\ARM_GCC_541\Debug\Listing Files\ServoPWM.lst</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStates>
+<TreeKeysV2>
+<v>Datasheet</v>
+</TreeKeysV2>
+<TreeStatesV2>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\PSoC 5LP Architecture TRM</v>
+<v>Microcontroller\Microcontroller\CY8C58LP Family Datasheet</v>
+<v>Microcontroller\Microcontroller\System Reference Guides</v>
+<v>Microcontroller\Microcontroller\System Reference Guides\cy_boot_v6_10</v>
+<v>Microcontroller\Microcontroller\cy_clock_v2_20</v>
+<v>Microcontroller\Microcontroller\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>Microcontroller\Microcontroller\cy_isr_v1_71</v>
+<v>Microcontroller\Microcontroller\cy_isr_v1_71\cy_isr_v1_71.pdf</v>
+<v>Microcontroller\Microcontroller\cy_pins_v2_20</v>
+<v>Microcontroller\Microcontroller\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>Microcontroller\Microcontroller\CyControlReg_v1_80.pdf</v>
+<v>Microcontroller\Microcontroller\PWM_v3_30</v>
+<v>Microcontroller\Microcontroller\PWM_v3_30\PWM_v3_30.pdf</v>
+<v>Microcontroller\Microcontroller\UART_v2_50.pdf</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Microcontroller</v>
+<v>Microcontroller\Microcontroller</v>
+<v>Microcontroller\Microcontroller\PSoC 5LP Architecture TRM</v>
+<v>Microcontroller\Microcontroller\CY8C58LP Family Datasheet</v>
+<v>Microcontroller\Microcontroller\System Reference Guides</v>
+<v>Microcontroller\Microcontroller\System Reference Guides\cy_boot_v6_10</v>
+<v>Microcontroller\Microcontroller\cy_clock_v2_20</v>
+<v>Microcontroller\Microcontroller\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>Microcontroller\Microcontroller\cy_isr_v1_71</v>
+<v>Microcontroller\Microcontroller\cy_isr_v1_71\cy_isr_v1_71.pdf</v>
+<v>Microcontroller\Microcontroller\cy_pins_v2_20</v>
+<v>Microcontroller\Microcontroller\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>Microcontroller\Microcontroller\CyControlReg_v1_80.pdf</v>
+<v>Microcontroller\Microcontroller\PWM_v3_30</v>
+<v>Microcontroller\Microcontroller\PWM_v3_30\PWM_v3_30.pdf</v>
+<v>Microcontroller\Microcontroller\UART_v2_50.pdf</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStatesV2>
+</CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
+</dataGuid>
+</userData>
+</CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
+<Unloaded />
+<OpenDocs>
+<name v=".\Microcontroller.cydsn\UART.h" />
+<name v=".\Microcontroller.cydsn\UART.c" />
+<name v=".\Microcontroller.cydsn\main.c" />
+<name v=".\Microcontroller.cydsn\Sensor.h" />
+<name v=".\Microcontroller.cydsn\Sensor.c" />
+<name v=".\Microcontroller.cydsn\TopDesign\TopDesign.cysch" />
+<name v=".\Microcontroller.cydsn\XYPlotter.h" />
+<name v=".\Microcontroller.cydsn\XYPlotter.c" />
+<name v=".\Microcontroller.cydsn\Microcontroller.cydwr" />
+<name v=".\Microcontroller.cydsn\LedControl.h" />
+<name v=".\Microcontroller.cydsn\LedControl.c" />
+<name v=".\Microcontroller.cydsn\Servo.c" />
+<name v=".\Microcontroller.cydsn\Servo.h" />
+</OpenDocs>
+<OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
+
+  Actipro Docking/MDI for WinForms
+  Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
+  http://www.actiprosoftware.com
+
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1261, 654" SelectedTabbedMdiWindow="42a773f4-f436-4afc-bc52-00d7d1b75dc6"><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\UART.h" Guid="4f2ed267-dfa2-4efe-bb4f-b1d642888c6d" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\UART.c" Guid="5667c586-2eef-4363-a7a5-b87c8cc92378" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\main.c" Guid="42a773f4-f436-4afc-bc52-00d7d1b75dc6" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Sensor.h" Guid="dcde2691-241a-43fd-a86e-6a3cda4e8d85" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Sensor.c" Guid="597b7d4a-ff50-43b4-a5f8-dfaeb7d45da2" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\TopDesign\TopDesign.cysch" Guid="8af5cca5-248a-48c9-b311-22afbbd99d2d" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\XYPlotter.h" Guid="5647d9e0-fb32-4638-91ae-e1cdca2f0390" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\XYPlotter.c" Guid="682ae9fa-e34a-484b-b0c2-2201ad12d14c" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Microcontroller.cydwr" Guid="dfd7b0fc-a7e7-4183-a6b1-7c05ddd4620c" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\LedControl.h" Guid="82a3983d-e9ab-4e75-9bad-7f88a0ba9c98" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\LedControl.c" Guid="7e1287f2-2f01-4414-9867-615ab4eb991f" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Servo.c" Guid="48aa40d1-2c29-4876-a2db-2e7ded2d4643" /><DocumentWindow Key="C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Servo.h" Guid="8cb1b189-0236-47d3-a826-f165e27d96f2" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="ab17a7d9-7b51-4101-a668-ef0e9ca683d4" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="" />
+<AutoUpdate v="true" />
+</CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
+</CyXmlSerializer>

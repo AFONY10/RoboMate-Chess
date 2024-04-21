@@ -1,0 +1,2428 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"LEDRoboMate.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.PWM_ISR_handler,"ax",%progbits
+  20              		.align	2
+  21              		.global	PWM_ISR_handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	PWM_ISR_handler, %function
+  25              	PWM_ISR_handler:
+  26              	.LFB63:
+  27              		.file 1 "LEDRoboMate.c"
+   1:LEDRoboMate.c **** #include "LEDRoboMate.h"   
+   2:LEDRoboMate.c **** 
+   3:LEDRoboMate.c **** volatile int8_t bitIndex = 7;
+   4:LEDRoboMate.c **** volatile uint16_t byteIndex = 0;
+   5:LEDRoboMate.c **** volatile int end;
+   6:LEDRoboMate.c **** 
+   7:LEDRoboMate.c **** volatile uint8_t ledData[NUM_LEDS * 3];
+   8:LEDRoboMate.c ****  
+   9:LEDRoboMate.c **** 
+  10:LEDRoboMate.c **** /*
+  11:LEDRoboMate.c **** Gå under fanen "Clocks" <--. Dobbeltklik "PLL_Out"
+  12:LEDRoboMate.c **** Sæt "Desired" under PLL_OUT til 70 Mhz
+  13:LEDRoboMate.c **** Sæt Master clock til at modtage "PLL_OUT(70 mHz)"
+  14:LEDRoboMate.c **** Indstil Divider til 1
+  15:LEDRoboMate.c **** */
+  16:LEDRoboMate.c **** 
+  17:LEDRoboMate.c **** 
+  18:LEDRoboMate.c ****     /*     Array:
+  19:LEDRoboMate.c **** 
+  20:LEDRoboMate.c ****                   Byte1 Byte2 Byte3               
+  21:LEDRoboMate.c **** 
+  22:LEDRoboMate.c ****         Led 1    [[Grøn][Rød][Blå]]
+  23:LEDRoboMate.c ****         Led 2    [[Grøn][Rød][Blå]]
+  24:LEDRoboMate.c ****         ...      [...             ]
+  25:LEDRoboMate.c ****         Led 64   [[Grøn][Rød][Blå]]
+  26:LEDRoboMate.c ****     */
+  27:LEDRoboMate.c **** 
+  28:LEDRoboMate.c **** CY_ISR(PWM_ISR_handler)
+  29:LEDRoboMate.c **** {
+  28              		.loc 1 29 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 2
+
+
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  30:LEDRoboMate.c ****     if (ledData[byteIndex] & (1 << bitIndex) && bitIndex >= 0)
+  36              		.loc 1 30 0
+  37 0002 144B     		ldr	r3, .L5
+  38 0004 1B88     		ldrh	r3, [r3]
+  39 0006 9BB2     		uxth	r3, r3
+  40 0008 134A     		ldr	r2, .L5+4
+  41 000a D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+  42 000c DAB2     		uxtb	r2, r3
+  43 000e 134B     		ldr	r3, .L5+8
+  44 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  45 0012 5BB2     		sxtb	r3, r3
+  46 0014 42FA03F3 		asr	r3, r2, r3
+  47 0018 13F0010F 		tst	r3, #1
+  48 001c 0BD0     		beq	.L2
+  49              		.loc 1 30 0 is_stmt 0 discriminator 1
+  50 001e 0F4B     		ldr	r3, .L5+8
+  51 0020 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  52 0022 13F0800F 		tst	r3, #128
+  53 0026 06D1     		bne	.L2
+  31:LEDRoboMate.c ****     {
+  32:LEDRoboMate.c ****         PWM_WriteCompare(T_HIGH);
+  54              		.loc 1 32 0 is_stmt 1
+  55 0028 0020     		movs	r0, #0
+  56 002a FFF7FEFF 		bl	PWM_WriteCompare
+  57              	.LVL0:
+  33:LEDRoboMate.c ****         Control_Reg_1_Write(1);
+  58              		.loc 1 33 0
+  59 002e 0120     		movs	r0, #1
+  60 0030 FFF7FEFF 		bl	Control_Reg_1_Write
+  61              	.LVL1:
+  62 0034 05E0     		b	.L3
+  63              	.L2:
+  34:LEDRoboMate.c ****     }
+  35:LEDRoboMate.c ****     else
+  36:LEDRoboMate.c ****     {
+  37:LEDRoboMate.c ****         PWM_WriteCompare(T_LOW);
+  64              		.loc 1 37 0
+  65 0036 1B20     		movs	r0, #27
+  66 0038 FFF7FEFF 		bl	PWM_WriteCompare
+  67              	.LVL2:
+  38:LEDRoboMate.c ****         Control_Reg_1_Write(1);
+  68              		.loc 1 38 0
+  69 003c 0120     		movs	r0, #1
+  70 003e FFF7FEFF 		bl	Control_Reg_1_Write
+  71              	.LVL3:
+  72              	.L3:
+  39:LEDRoboMate.c ****     }
+  40:LEDRoboMate.c **** 
+  41:LEDRoboMate.c ****     bitIndex--;
+  73              		.loc 1 41 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 3
+
+
+  74 0042 064A     		ldr	r2, .L5+8
+  75 0044 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  76 0046 5BB2     		sxtb	r3, r3
+  77 0048 013B     		subs	r3, r3, #1
+  78 004a 5BB2     		sxtb	r3, r3
+  79 004c 1370     		strb	r3, [r2]
+  42:LEDRoboMate.c **** 
+  43:LEDRoboMate.c ****     PWM_ReadStatusRegister();
+  80              		.loc 1 43 0
+  81 004e FFF7FEFF 		bl	PWM_ReadStatusRegister
+  82              	.LVL4:
+  83 0052 08BD     		pop	{r3, pc}
+  84              	.L6:
+  85              		.align	2
+  86              	.L5:
+  87 0054 00000000 		.word	.LANCHOR0
+  88 0058 00000000 		.word	ledData
+  89 005c 00000000 		.word	.LANCHOR1
+  90              		.cfi_endproc
+  91              	.LFE63:
+  92              		.size	PWM_ISR_handler, .-PWM_ISR_handler
+  93              		.section	.text.pwmLedInterrupt,"ax",%progbits
+  94              		.align	2
+  95              		.global	pwmLedInterrupt
+  96              		.thumb
+  97              		.thumb_func
+  98              		.type	pwmLedInterrupt, %function
+  99              	pwmLedInterrupt:
+ 100              	.LFB65:
+  44:LEDRoboMate.c **** }
+  45:LEDRoboMate.c **** 
+  46:LEDRoboMate.c **** void setLEDs(uint8_t array[SIZE])
+  47:LEDRoboMate.c **** {
+  48:LEDRoboMate.c ****     end = 1;
+  49:LEDRoboMate.c ****     for(int i = 0; i < NUM_LEDS; i++)
+  50:LEDRoboMate.c ****     {
+  51:LEDRoboMate.c ****         ledArray[i] = array[i];
+  52:LEDRoboMate.c ****     }
+  53:LEDRoboMate.c ****     
+  54:LEDRoboMate.c ****     // Lav en forløkke der løber igennem. HUSK at det der modtages er fra RPI legalMoves.
+  55:LEDRoboMate.c ****     // i array[i]. Hvis gældene plads skal tændes(er et 1'tal), 
+  56:LEDRoboMate.c ****     // køres der nogle if-statement, der styrer hvilken farve led'erne har.
+  57:LEDRoboMate.c ****     
+  58:LEDRoboMate.c ****     sensorScan(); // Opdaterer squareReg[]
+  59:LEDRoboMate.c ****     
+  60:LEDRoboMate.c ****     for (uint8_t i = 0; i < 64; i++) // Opdaterer ledData[SIZE*3] med de rigtige farver på led'ern
+  61:LEDRoboMate.c ****     {   
+  62:LEDRoboMate.c ****         if(ledArray[i] == 1 && ledArray[i] == squareReg[i]) //
+  63:LEDRoboMate.c ****         {    
+  64:LEDRoboMate.c ****             //Vælg Farve//
+  65:LEDRoboMate.c ****             ledData[i * 3]     = 0;       //Grøn
+  66:LEDRoboMate.c ****             ledData[i * 3 + 1] = LED_INTESITY;     //Rød
+  67:LEDRoboMate.c ****             ledData[i * 3 + 2] = 0;     //Blå
+  68:LEDRoboMate.c ****         }
+  69:LEDRoboMate.c ****         if(ledArray[i] == 1 && ledArray[i] != squareReg[i])
+  70:LEDRoboMate.c ****         {
+  71:LEDRoboMate.c ****             //Vælg Farve//
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 4
+
+
+  72:LEDRoboMate.c ****             ledData[i * 3]     = 0;       //Grøn
+  73:LEDRoboMate.c ****             ledData[i * 3 + 1] = 0;       //Rød
+  74:LEDRoboMate.c ****             ledData[i * 3 + 2] = LED_INTESITY;     //Blå
+  75:LEDRoboMate.c ****         }
+  76:LEDRoboMate.c ****         if(ledArray[i] == 0)
+  77:LEDRoboMate.c ****         {
+  78:LEDRoboMate.c ****             //Vælg Farve//
+  79:LEDRoboMate.c ****             ledData[i * 3]     = 0;       //Grøn
+  80:LEDRoboMate.c ****             ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+  81:LEDRoboMate.c ****             ledData[i * 3 + 2] = 0;       //Blå
+  82:LEDRoboMate.c ****         }
+  83:LEDRoboMate.c ****     }  
+  84:LEDRoboMate.c **** 
+  85:LEDRoboMate.c ****     pwmLedInterrupt();
+  86:LEDRoboMate.c **** }
+  87:LEDRoboMate.c **** 
+  88:LEDRoboMate.c **** void pwmLedInterrupt()
+  89:LEDRoboMate.c **** {
+ 101              		.loc 1 89 0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105 0000 08B5     		push	{r3, lr}
+ 106              		.cfi_def_cfa_offset 8
+ 107              		.cfi_offset 3, -8
+ 108              		.cfi_offset 14, -4
+  90:LEDRoboMate.c ****     PWM_Start();
+ 109              		.loc 1 90 0
+ 110 0002 FFF7FEFF 		bl	PWM_Start
+ 111              	.LVL5:
+  91:LEDRoboMate.c ****     Control_Reg_1_Write(1);
+ 112              		.loc 1 91 0
+ 113 0006 0120     		movs	r0, #1
+ 114 0008 FFF7FEFF 		bl	Control_Reg_1_Write
+ 115              	.LVL6:
+  92:LEDRoboMate.c **** 
+  93:LEDRoboMate.c ****     // Vent indtil alle bits er sendt
+  94:LEDRoboMate.c ****     while(end)
+ 116              		.loc 1 94 0
+ 117 000c 18E0     		b	.L9
+ 118              	.L11:
+  95:LEDRoboMate.c ****     {
+  96:LEDRoboMate.c ****         // Tjek om vi har sendt alle 24 bits
+  97:LEDRoboMate.c ****         if (bitIndex < 0)
+ 119              		.loc 1 97 0
+ 120 000e 0F4B     		ldr	r3, .L13
+ 121 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 122 0012 13F0800F 		tst	r3, #128
+ 123 0016 13D0     		beq	.L9
+  98:LEDRoboMate.c ****         {
+  99:LEDRoboMate.c ****             bitIndex = 7;
+ 124              		.loc 1 99 0
+ 125 0018 0722     		movs	r2, #7
+ 126 001a 0C4B     		ldr	r3, .L13
+ 127 001c 1A70     		strb	r2, [r3]
+ 100:LEDRoboMate.c ****             byteIndex++;
+ 128              		.loc 1 100 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 5
+
+
+ 129 001e 0C4A     		ldr	r2, .L13+4
+ 130 0020 1388     		ldrh	r3, [r2]
+ 131 0022 9BB2     		uxth	r3, r3
+ 132 0024 0133     		adds	r3, r3, #1
+ 133 0026 9BB2     		uxth	r3, r3
+ 134 0028 1380     		strh	r3, [r2]	@ movhi
+ 101:LEDRoboMate.c ****             if(byteIndex >= (NUM_LEDS * 3))
+ 135              		.loc 1 101 0
+ 136 002a 1388     		ldrh	r3, [r2]
+ 137 002c 9BB2     		uxth	r3, r3
+ 138 002e BF2B     		cmp	r3, #191
+ 139 0030 06D9     		bls	.L9
+ 102:LEDRoboMate.c ****             {
+ 103:LEDRoboMate.c ****                 // Alle bits er blevet sendt, stop PWM
+ 104:LEDRoboMate.c ****                 PWM_Stop();
+ 140              		.loc 1 104 0
+ 141 0032 FFF7FEFF 		bl	PWM_Stop
+ 142              	.LVL7:
+ 105:LEDRoboMate.c ****                 byteIndex = 0;
+ 143              		.loc 1 105 0
+ 144 0036 0023     		movs	r3, #0
+ 145 0038 054A     		ldr	r2, .L13+4
+ 146 003a 1380     		strh	r3, [r2]	@ movhi
+ 106:LEDRoboMate.c ****                 end = 0;
+ 147              		.loc 1 106 0
+ 148 003c 054A     		ldr	r2, .L13+8
+ 149 003e 1360     		str	r3, [r2]
+ 150              	.L9:
+  94:LEDRoboMate.c ****     {
+ 151              		.loc 1 94 0
+ 152 0040 044B     		ldr	r3, .L13+8
+ 153 0042 1B68     		ldr	r3, [r3]
+ 154 0044 002B     		cmp	r3, #0
+ 155 0046 E2D1     		bne	.L11
+ 107:LEDRoboMate.c ****             }
+ 108:LEDRoboMate.c ****         }
+ 109:LEDRoboMate.c ****     }
+ 110:LEDRoboMate.c **** }
+ 156              		.loc 1 110 0
+ 157 0048 08BD     		pop	{r3, pc}
+ 158              	.L14:
+ 159 004a 00BF     		.align	2
+ 160              	.L13:
+ 161 004c 00000000 		.word	.LANCHOR1
+ 162 0050 00000000 		.word	.LANCHOR0
+ 163 0054 00000000 		.word	end
+ 164              		.cfi_endproc
+ 165              	.LFE65:
+ 166              		.size	pwmLedInterrupt, .-pwmLedInterrupt
+ 167              		.section	.text.setLEDs,"ax",%progbits
+ 168              		.align	2
+ 169              		.global	setLEDs
+ 170              		.thumb
+ 171              		.thumb_func
+ 172              		.type	setLEDs, %function
+ 173              	setLEDs:
+ 174              	.LFB64:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 6
+
+
+  47:LEDRoboMate.c ****     end = 1;
+ 175              		.loc 1 47 0
+ 176              		.cfi_startproc
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179              	.LVL8:
+ 180 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 181              		.cfi_def_cfa_offset 24
+ 182              		.cfi_offset 3, -24
+ 183              		.cfi_offset 4, -20
+ 184              		.cfi_offset 5, -16
+ 185              		.cfi_offset 6, -12
+ 186              		.cfi_offset 7, -8
+ 187              		.cfi_offset 14, -4
+  48:LEDRoboMate.c ****     for(int i = 0; i < NUM_LEDS; i++)
+ 188              		.loc 1 48 0
+ 189 0002 0122     		movs	r2, #1
+ 190 0004 204B     		ldr	r3, .L24
+ 191 0006 1A60     		str	r2, [r3]
+ 192              	.LVL9:
+ 193              	.LBB2:
+  49:LEDRoboMate.c ****     {
+ 194              		.loc 1 49 0
+ 195 0008 0023     		movs	r3, #0
+ 196 000a 03E0     		b	.L16
+ 197              	.LVL10:
+ 198              	.L17:
+  51:LEDRoboMate.c ****     }
+ 199              		.loc 1 51 0 discriminator 3
+ 200 000c C15C     		ldrb	r1, [r0, r3]	@ zero_extendqisi2
+ 201 000e 1F4A     		ldr	r2, .L24+4
+ 202 0010 D154     		strb	r1, [r2, r3]
+  49:LEDRoboMate.c ****     {
+ 203              		.loc 1 49 0 discriminator 3
+ 204 0012 0133     		adds	r3, r3, #1
+ 205              	.LVL11:
+ 206              	.L16:
+  49:LEDRoboMate.c ****     {
+ 207              		.loc 1 49 0 is_stmt 0 discriminator 1
+ 208 0014 3F2B     		cmp	r3, #63
+ 209 0016 F9DD     		ble	.L17
+ 210              	.LBE2:
+  58:LEDRoboMate.c ****     
+ 211              		.loc 1 58 0 is_stmt 1
+ 212 0018 FFF7FEFF 		bl	sensorScan
+ 213              	.LVL12:
+ 214              	.LBB3:
+  60:LEDRoboMate.c ****     {   
+ 215              		.loc 1 60 0
+ 216 001c 0023     		movs	r3, #0
+ 217 001e 2EE0     		b	.L18
+ 218              	.LVL13:
+ 219              	.L22:
+  62:LEDRoboMate.c ****         {    
+ 220              		.loc 1 62 0
+ 221 0020 1A46     		mov	r2, r3
+ 222 0022 1A49     		ldr	r1, .L24+4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 7
+
+
+ 223 0024 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 224 0026 0129     		cmp	r1, #1
+ 225 0028 0DD1     		bne	.L19
+  62:LEDRoboMate.c ****         {    
+ 226              		.loc 1 62 0 is_stmt 0 discriminator 1
+ 227 002a 1948     		ldr	r0, .L24+8
+ 228 002c C05C     		ldrb	r0, [r0, r3]	@ zero_extendqisi2
+ 229 002e 8142     		cmp	r1, r0
+ 230 0030 09D1     		bne	.L19
+  65:LEDRoboMate.c ****             ledData[i * 3 + 1] = LED_INTESITY;     //Rød
+ 231              		.loc 1 65 0 is_stmt 1
+ 232 0032 03EB4300 		add	r0, r3, r3, lsl #1
+ 233 0036 174C     		ldr	r4, .L24+12
+ 234 0038 0025     		movs	r5, #0
+ 235 003a 2554     		strb	r5, [r4, r0]
+  66:LEDRoboMate.c ****             ledData[i * 3 + 2] = 0;     //Blå
+ 236              		.loc 1 66 0
+ 237 003c 461C     		adds	r6, r0, #1
+ 238 003e 6427     		movs	r7, #100
+ 239 0040 A755     		strb	r7, [r4, r6]
+  67:LEDRoboMate.c ****         }
+ 240              		.loc 1 67 0
+ 241 0042 0230     		adds	r0, r0, #2
+ 242 0044 2554     		strb	r5, [r4, r0]
+ 243              	.L19:
+  69:LEDRoboMate.c ****         {
+ 244              		.loc 1 69 0
+ 245 0046 0129     		cmp	r1, #1
+ 246 0048 0DD1     		bne	.L20
+  69:LEDRoboMate.c ****         {
+ 247              		.loc 1 69 0 is_stmt 0 discriminator 1
+ 248 004a 1148     		ldr	r0, .L24+8
+ 249 004c 805C     		ldrb	r0, [r0, r2]	@ zero_extendqisi2
+ 250 004e 8142     		cmp	r1, r0
+ 251 0050 09D0     		beq	.L20
+  72:LEDRoboMate.c ****             ledData[i * 3 + 1] = 0;       //Rød
+ 252              		.loc 1 72 0 is_stmt 1
+ 253 0052 02EB4200 		add	r0, r2, r2, lsl #1
+ 254 0056 0F4C     		ldr	r4, .L24+12
+ 255 0058 0025     		movs	r5, #0
+ 256 005a 2554     		strb	r5, [r4, r0]
+  73:LEDRoboMate.c ****             ledData[i * 3 + 2] = LED_INTESITY;     //Blå
+ 257              		.loc 1 73 0
+ 258 005c 461C     		adds	r6, r0, #1
+ 259 005e A555     		strb	r5, [r4, r6]
+  74:LEDRoboMate.c ****         }
+ 260              		.loc 1 74 0
+ 261 0060 0230     		adds	r0, r0, #2
+ 262 0062 6425     		movs	r5, #100
+ 263 0064 2554     		strb	r5, [r4, r0]
+ 264              	.L20:
+  76:LEDRoboMate.c ****         {
+ 265              		.loc 1 76 0
+ 266 0066 41B9     		cbnz	r1, .L21
+  79:LEDRoboMate.c ****             ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+ 267              		.loc 1 79 0
+ 268 0068 02EB4202 		add	r2, r2, r2, lsl #1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 8
+
+
+ 269 006c 0949     		ldr	r1, .L24+12
+ 270 006e 0020     		movs	r0, #0
+ 271 0070 8854     		strb	r0, [r1, r2]
+  80:LEDRoboMate.c ****             ledData[i * 3 + 2] = 0;       //Blå
+ 272              		.loc 1 80 0
+ 273 0072 541C     		adds	r4, r2, #1
+ 274 0074 0855     		strb	r0, [r1, r4]
+  81:LEDRoboMate.c ****         }
+ 275              		.loc 1 81 0
+ 276 0076 0232     		adds	r2, r2, #2
+ 277 0078 8854     		strb	r0, [r1, r2]
+ 278              	.L21:
+  60:LEDRoboMate.c ****     {   
+ 279              		.loc 1 60 0 discriminator 2
+ 280 007a 0133     		adds	r3, r3, #1
+ 281              	.LVL14:
+ 282 007c DBB2     		uxtb	r3, r3
+ 283              	.LVL15:
+ 284              	.L18:
+  60:LEDRoboMate.c ****     {   
+ 285              		.loc 1 60 0 is_stmt 0 discriminator 1
+ 286 007e 3F2B     		cmp	r3, #63
+ 287 0080 CED9     		bls	.L22
+ 288              	.LBE3:
+  85:LEDRoboMate.c **** }
+ 289              		.loc 1 85 0 is_stmt 1
+ 290 0082 FFF7FEFF 		bl	pwmLedInterrupt
+ 291              	.LVL16:
+ 292 0086 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 293              	.L25:
+ 294              		.align	2
+ 295              	.L24:
+ 296 0088 00000000 		.word	end
+ 297 008c 00000000 		.word	ledArray
+ 298 0090 00000000 		.word	squareReg
+ 299 0094 00000000 		.word	ledData
+ 300              		.cfi_endproc
+ 301              	.LFE64:
+ 302              		.size	setLEDs, .-setLEDs
+ 303              		.section	.text.onlyDeadPosLED,"ax",%progbits
+ 304              		.align	2
+ 305              		.global	onlyDeadPosLED
+ 306              		.thumb
+ 307              		.thumb_func
+ 308              		.type	onlyDeadPosLED, %function
+ 309              	onlyDeadPosLED:
+ 310              	.LFB66:
+ 111:LEDRoboMate.c **** 
+ 112:LEDRoboMate.c **** void onlyDeadPosLED(int ledNr)
+ 113:LEDRoboMate.c **** {
+ 311              		.loc 1 113 0
+ 312              		.cfi_startproc
+ 313              		@ args = 0, pretend = 0, frame = 0
+ 314              		@ frame_needed = 0, uses_anonymous_args = 0
+ 315              	.LVL17:
+ 316 0000 70B5     		push	{r4, r5, r6, lr}
+ 317              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 9
+
+
+ 318              		.cfi_offset 4, -16
+ 319              		.cfi_offset 5, -12
+ 320              		.cfi_offset 6, -8
+ 321              		.cfi_offset 14, -4
+ 114:LEDRoboMate.c ****     end = 1;
+ 322              		.loc 1 114 0
+ 323 0002 0122     		movs	r2, #1
+ 324 0004 0E4B     		ldr	r3, .L31
+ 325 0006 1A60     		str	r2, [r3]
+ 326              	.LVL18:
+ 327              	.LBB4:
+ 115:LEDRoboMate.c ****     for (uint8_t i = 0; i < 64; i++)
+ 328              		.loc 1 115 0
+ 329 0008 0023     		movs	r3, #0
+ 330 000a 14E0     		b	.L27
+ 331              	.LVL19:
+ 332              	.L29:
+ 116:LEDRoboMate.c ****     {
+ 117:LEDRoboMate.c ****         ledData[i * 3]     = 0;          //Grøn
+ 333              		.loc 1 117 0
+ 334 000c 03EB4302 		add	r2, r3, r3, lsl #1
+ 335 0010 0C49     		ldr	r1, .L31+4
+ 336 0012 0024     		movs	r4, #0
+ 337 0014 8C54     		strb	r4, [r1, r2]
+ 118:LEDRoboMate.c ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 338              		.loc 1 118 0
+ 339 0016 551C     		adds	r5, r2, #1
+ 340 0018 4C55     		strb	r4, [r1, r5]
+ 119:LEDRoboMate.c ****         ledData[i * 3 + 2] = 0;          //Blå
+ 341              		.loc 1 119 0
+ 342 001a 0232     		adds	r2, r2, #2
+ 343 001c 8C54     		strb	r4, [r1, r2]
+ 120:LEDRoboMate.c ****         if(i == ledNr)
+ 344              		.loc 1 120 0
+ 345 001e 8342     		cmp	r3, r0
+ 346 0020 07D1     		bne	.L28
+ 121:LEDRoboMate.c ****         {
+ 122:LEDRoboMate.c ****             ledData[ledNr * 3]     = 0;      //Grøn
+ 347              		.loc 1 122 0
+ 348 0022 00EB4002 		add	r2, r0, r0, lsl #1
+ 349 0026 8C54     		strb	r4, [r1, r2]
+ 123:LEDRoboMate.c ****             ledData[ledNr * 3 + 1] = LED_INTESITY;                 //Rød  
+ 350              		.loc 1 123 0
+ 351 0028 551C     		adds	r5, r2, #1
+ 352 002a 6426     		movs	r6, #100
+ 353 002c 4E55     		strb	r6, [r1, r5]
+ 124:LEDRoboMate.c ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 354              		.loc 1 124 0
+ 355 002e 0232     		adds	r2, r2, #2
+ 356 0030 8C54     		strb	r4, [r1, r2]
+ 357              	.L28:
+ 115:LEDRoboMate.c ****     {
+ 358              		.loc 1 115 0 discriminator 2
+ 359 0032 0133     		adds	r3, r3, #1
+ 360              	.LVL20:
+ 361 0034 DBB2     		uxtb	r3, r3
+ 362              	.LVL21:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 10
+
+
+ 363              	.L27:
+ 115:LEDRoboMate.c ****     {
+ 364              		.loc 1 115 0 is_stmt 0 discriminator 1
+ 365 0036 3F2B     		cmp	r3, #63
+ 366 0038 E8D9     		bls	.L29
+ 367              	.LBE4:
+ 125:LEDRoboMate.c ****         }
+ 126:LEDRoboMate.c ****     }
+ 127:LEDRoboMate.c ****     
+ 128:LEDRoboMate.c ****     pwmLedInterrupt();
+ 368              		.loc 1 128 0 is_stmt 1
+ 369 003a FFF7FEFF 		bl	pwmLedInterrupt
+ 370              	.LVL22:
+ 371 003e 70BD     		pop	{r4, r5, r6, pc}
+ 372              	.L32:
+ 373              		.align	2
+ 374              	.L31:
+ 375 0040 00000000 		.word	end
+ 376 0044 00000000 		.word	ledData
+ 377              		.cfi_endproc
+ 378              	.LFE66:
+ 379              		.size	onlyDeadPosLED, .-onlyDeadPosLED
+ 380              		.section	.text.turnOffLEDs,"ax",%progbits
+ 381              		.align	2
+ 382              		.global	turnOffLEDs
+ 383              		.thumb
+ 384              		.thumb_func
+ 385              		.type	turnOffLEDs, %function
+ 386              	turnOffLEDs:
+ 387              	.LFB69:
+ 129:LEDRoboMate.c **** }
+ 130:LEDRoboMate.c **** 
+ 131:LEDRoboMate.c **** void moveAcceptedLED(int ledNr)
+ 132:LEDRoboMate.c **** {   
+ 133:LEDRoboMate.c ****     end = 1;
+ 134:LEDRoboMate.c ****     for (uint8_t i = 0; i < 64; i++)
+ 135:LEDRoboMate.c ****     {
+ 136:LEDRoboMate.c ****         ledData[i * 3]     = 0;          //Grøn
+ 137:LEDRoboMate.c ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 138:LEDRoboMate.c ****         ledData[i * 3 + 2] = 0;          //Blå
+ 139:LEDRoboMate.c ****         if(i == ledNr)
+ 140:LEDRoboMate.c ****         {
+ 141:LEDRoboMate.c ****             ledData[ledNr * 3]     = LED_INTESITY;      //Grøn
+ 142:LEDRoboMate.c ****             ledData[ledNr * 3 + 1] = 0;                 //Rød  
+ 143:LEDRoboMate.c ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 144:LEDRoboMate.c ****         }
+ 145:LEDRoboMate.c ****     }
+ 146:LEDRoboMate.c ****     
+ 147:LEDRoboMate.c ****     pwmLedInterrupt();
+ 148:LEDRoboMate.c ****     
+ 149:LEDRoboMate.c ****     CyDelay(2000);
+ 150:LEDRoboMate.c ****     
+ 151:LEDRoboMate.c ****     turnOffLEDs();
+ 152:LEDRoboMate.c **** }
+ 153:LEDRoboMate.c **** 
+ 154:LEDRoboMate.c **** void initLED()
+ 155:LEDRoboMate.c **** {
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 11
+
+
+ 156:LEDRoboMate.c ****     isr_PWM_StartEx(PWM_ISR_handler);
+ 157:LEDRoboMate.c ****     turnOffLEDs();
+ 158:LEDRoboMate.c **** }
+ 159:LEDRoboMate.c **** 
+ 160:LEDRoboMate.c **** void turnOffLEDs()
+ 161:LEDRoboMate.c **** {
+ 388              		.loc 1 161 0
+ 389              		.cfi_startproc
+ 390              		@ args = 0, pretend = 0, frame = 64
+ 391              		@ frame_needed = 0, uses_anonymous_args = 0
+ 392 0000 00B5     		push	{lr}
+ 393              		.cfi_def_cfa_offset 4
+ 394              		.cfi_offset 14, -4
+ 395 0002 91B0     		sub	sp, sp, #68
+ 396              		.cfi_def_cfa_offset 72
+ 162:LEDRoboMate.c ****     uint8_t offArray[64] = {0};
+ 397              		.loc 1 162 0
+ 398 0004 4022     		movs	r2, #64
+ 399 0006 0021     		movs	r1, #0
+ 400 0008 6846     		mov	r0, sp
+ 401 000a FFF7FEFF 		bl	memset
+ 402              	.LVL23:
+ 163:LEDRoboMate.c ****     
+ 164:LEDRoboMate.c ****     setLEDs(offArray);
+ 403              		.loc 1 164 0
+ 404 000e 6846     		mov	r0, sp
+ 405 0010 FFF7FEFF 		bl	setLEDs
+ 406              	.LVL24:
+ 165:LEDRoboMate.c **** }
+ 407              		.loc 1 165 0
+ 408 0014 11B0     		add	sp, sp, #68
+ 409              		.cfi_def_cfa_offset 4
+ 410              		@ sp needed
+ 411 0016 5DF804FB 		ldr	pc, [sp], #4
+ 412              		.cfi_endproc
+ 413              	.LFE69:
+ 414              		.size	turnOffLEDs, .-turnOffLEDs
+ 415 001a 00BF     		.section	.text.moveAcceptedLED,"ax",%progbits
+ 416              		.align	2
+ 417              		.global	moveAcceptedLED
+ 418              		.thumb
+ 419              		.thumb_func
+ 420              		.type	moveAcceptedLED, %function
+ 421              	moveAcceptedLED:
+ 422              	.LFB67:
+ 132:LEDRoboMate.c ****     end = 1;
+ 423              		.loc 1 132 0
+ 424              		.cfi_startproc
+ 425              		@ args = 0, pretend = 0, frame = 0
+ 426              		@ frame_needed = 0, uses_anonymous_args = 0
+ 427              	.LVL25:
+ 428 0000 38B5     		push	{r3, r4, r5, lr}
+ 429              		.cfi_def_cfa_offset 16
+ 430              		.cfi_offset 3, -16
+ 431              		.cfi_offset 4, -12
+ 432              		.cfi_offset 5, -8
+ 433              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 12
+
+
+ 133:LEDRoboMate.c ****     for (uint8_t i = 0; i < 64; i++)
+ 434              		.loc 1 133 0
+ 435 0002 0122     		movs	r2, #1
+ 436 0004 124B     		ldr	r3, .L40
+ 437 0006 1A60     		str	r2, [r3]
+ 438              	.LVL26:
+ 439              	.LBB5:
+ 134:LEDRoboMate.c ****     {
+ 440              		.loc 1 134 0
+ 441 0008 0023     		movs	r3, #0
+ 442 000a 15E0     		b	.L36
+ 443              	.LVL27:
+ 444              	.L38:
+ 136:LEDRoboMate.c ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 445              		.loc 1 136 0
+ 446 000c 03EB4302 		add	r2, r3, r3, lsl #1
+ 447 0010 1049     		ldr	r1, .L40+4
+ 448 0012 0024     		movs	r4, #0
+ 449 0014 8C54     		strb	r4, [r1, r2]
+ 137:LEDRoboMate.c ****         ledData[i * 3 + 2] = 0;          //Blå
+ 450              		.loc 1 137 0
+ 451 0016 551C     		adds	r5, r2, #1
+ 452 0018 4C55     		strb	r4, [r1, r5]
+ 138:LEDRoboMate.c ****         if(i == ledNr)
+ 453              		.loc 1 138 0
+ 454 001a 0232     		adds	r2, r2, #2
+ 455 001c 8C54     		strb	r4, [r1, r2]
+ 139:LEDRoboMate.c ****         {
+ 456              		.loc 1 139 0
+ 457 001e 8342     		cmp	r3, r0
+ 458 0020 08D1     		bne	.L37
+ 141:LEDRoboMate.c ****             ledData[ledNr * 3 + 1] = 0;                 //Rød  
+ 459              		.loc 1 141 0
+ 460 0022 00EB4002 		add	r2, r0, r0, lsl #1
+ 461 0026 6424     		movs	r4, #100
+ 462 0028 8C54     		strb	r4, [r1, r2]
+ 142:LEDRoboMate.c ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 463              		.loc 1 142 0
+ 464 002a 551C     		adds	r5, r2, #1
+ 465 002c 0024     		movs	r4, #0
+ 466 002e 4C55     		strb	r4, [r1, r5]
+ 143:LEDRoboMate.c ****         }
+ 467              		.loc 1 143 0
+ 468 0030 0232     		adds	r2, r2, #2
+ 469 0032 8C54     		strb	r4, [r1, r2]
+ 470              	.L37:
+ 134:LEDRoboMate.c ****     {
+ 471              		.loc 1 134 0 discriminator 2
+ 472 0034 0133     		adds	r3, r3, #1
+ 473              	.LVL28:
+ 474 0036 DBB2     		uxtb	r3, r3
+ 475              	.LVL29:
+ 476              	.L36:
+ 134:LEDRoboMate.c ****     {
+ 477              		.loc 1 134 0 is_stmt 0 discriminator 1
+ 478 0038 3F2B     		cmp	r3, #63
+ 479 003a E7D9     		bls	.L38
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 13
+
+
+ 480              	.LBE5:
+ 147:LEDRoboMate.c ****     
+ 481              		.loc 1 147 0 is_stmt 1
+ 482 003c FFF7FEFF 		bl	pwmLedInterrupt
+ 483              	.LVL30:
+ 149:LEDRoboMate.c ****     
+ 484              		.loc 1 149 0
+ 485 0040 4FF4FA60 		mov	r0, #2000
+ 486 0044 FFF7FEFF 		bl	CyDelay
+ 487              	.LVL31:
+ 151:LEDRoboMate.c **** }
+ 488              		.loc 1 151 0
+ 489 0048 FFF7FEFF 		bl	turnOffLEDs
+ 490              	.LVL32:
+ 491 004c 38BD     		pop	{r3, r4, r5, pc}
+ 492              	.L41:
+ 493 004e 00BF     		.align	2
+ 494              	.L40:
+ 495 0050 00000000 		.word	end
+ 496 0054 00000000 		.word	ledData
+ 497              		.cfi_endproc
+ 498              	.LFE67:
+ 499              		.size	moveAcceptedLED, .-moveAcceptedLED
+ 500              		.section	.text.initLED,"ax",%progbits
+ 501              		.align	2
+ 502              		.global	initLED
+ 503              		.thumb
+ 504              		.thumb_func
+ 505              		.type	initLED, %function
+ 506              	initLED:
+ 507              	.LFB68:
+ 155:LEDRoboMate.c ****     isr_PWM_StartEx(PWM_ISR_handler);
+ 508              		.loc 1 155 0
+ 509              		.cfi_startproc
+ 510              		@ args = 0, pretend = 0, frame = 0
+ 511              		@ frame_needed = 0, uses_anonymous_args = 0
+ 512 0000 08B5     		push	{r3, lr}
+ 513              		.cfi_def_cfa_offset 8
+ 514              		.cfi_offset 3, -8
+ 515              		.cfi_offset 14, -4
+ 156:LEDRoboMate.c ****     turnOffLEDs();
+ 516              		.loc 1 156 0
+ 517 0002 0348     		ldr	r0, .L44
+ 518 0004 FFF7FEFF 		bl	isr_PWM_StartEx
+ 519              	.LVL33:
+ 157:LEDRoboMate.c **** }
+ 520              		.loc 1 157 0
+ 521 0008 FFF7FEFF 		bl	turnOffLEDs
+ 522              	.LVL34:
+ 523 000c 08BD     		pop	{r3, pc}
+ 524              	.L45:
+ 525 000e 00BF     		.align	2
+ 526              	.L44:
+ 527 0010 00000000 		.word	PWM_ISR_handler
+ 528              		.cfi_endproc
+ 529              	.LFE68:
+ 530              		.size	initLED, .-initLED
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 14
+
+
+ 531              		.section	.text.LEDtest,"ax",%progbits
+ 532              		.align	2
+ 533              		.global	LEDtest
+ 534              		.thumb
+ 535              		.thumb_func
+ 536              		.type	LEDtest, %function
+ 537              	LEDtest:
+ 538              	.LFB70:
+ 166:LEDRoboMate.c **** 
+ 167:LEDRoboMate.c **** 
+ 168:LEDRoboMate.c **** void LEDtest()
+ 169:LEDRoboMate.c **** {
+ 539              		.loc 1 169 0
+ 540              		.cfi_startproc
+ 541              		@ args = 0, pretend = 0, frame = 192
+ 542              		@ frame_needed = 0, uses_anonymous_args = 0
+ 543 0000 00B5     		push	{lr}
+ 544              		.cfi_def_cfa_offset 4
+ 545              		.cfi_offset 14, -4
+ 546 0002 B1B0     		sub	sp, sp, #196
+ 547              		.cfi_def_cfa_offset 200
+ 548              	.LVL35:
+ 549              	.LBB6:
+ 170:LEDRoboMate.c ****     uint8_t array [SIZE * 3];
+ 171:LEDRoboMate.c ****     
+ 172:LEDRoboMate.c ****     //Sluk / Tænd alle Led'er
+ 173:LEDRoboMate.c ****     for(int i = 0; i < SIZE ; i++)
+ 550              		.loc 1 173 0
+ 551 0004 0022     		movs	r2, #0
+ 552 0006 11E0     		b	.L47
+ 553              	.LVL36:
+ 554              	.L48:
+ 174:LEDRoboMate.c ****     {
+ 175:LEDRoboMate.c ****      array[i * 3] = 0;
+ 555              		.loc 1 175 0 discriminator 3
+ 556 0008 02EB4203 		add	r3, r2, r2, lsl #1
+ 557 000c 30A9     		add	r1, sp, #192
+ 558 000e C818     		adds	r0, r1, r3
+ 559 0010 0021     		movs	r1, #0
+ 560 0012 00F8C01C 		strb	r1, [r0, #-192]
+ 176:LEDRoboMate.c ****      array[i * 3 + 1] = 0;
+ 561              		.loc 1 176 0 discriminator 3
+ 562 0016 581C     		adds	r0, r3, #1
+ 563 0018 0DF1C00E 		add	lr, sp, #192
+ 564 001c 7044     		add	r0, r0, lr
+ 565 001e 00F8C01C 		strb	r1, [r0, #-192]
+ 177:LEDRoboMate.c ****      array[i * 3 + 2] = 0;
+ 566              		.loc 1 177 0 discriminator 3
+ 567 0022 0233     		adds	r3, r3, #2
+ 568 0024 7344     		add	r3, r3, lr
+ 569 0026 03F8C01C 		strb	r1, [r3, #-192]
+ 173:LEDRoboMate.c ****     {
+ 570              		.loc 1 173 0 discriminator 3
+ 571 002a 0132     		adds	r2, r2, #1
+ 572              	.LVL37:
+ 573              	.L47:
+ 173:LEDRoboMate.c ****     {
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 15
+
+
+ 574              		.loc 1 173 0 is_stmt 0 discriminator 1
+ 575 002c 3F2A     		cmp	r2, #63
+ 576 002e EBDD     		ble	.L48
+ 577              	.LVL38:
+ 578              	.LBE6:
+ 178:LEDRoboMate.c ****     }
+ 179:LEDRoboMate.c ****     
+ 180:LEDRoboMate.c ****     /*     Array:
+ 181:LEDRoboMate.c **** 
+ 182:LEDRoboMate.c ****                   Byte1 Byte2 Byte3               
+ 183:LEDRoboMate.c **** 
+ 184:LEDRoboMate.c ****         Led 1    [[Grøn][Rød][Blå]]
+ 185:LEDRoboMate.c ****         Led 2    [[Grøn][Rød][Blå]]
+ 186:LEDRoboMate.c ****         ...      [...             ]
+ 187:LEDRoboMate.c ****         Led 64   [[Grøn][Rød][Blå]]
+ 188:LEDRoboMate.c ****     */
+ 189:LEDRoboMate.c ****     
+ 190:LEDRoboMate.c ****     //Tænd en LED//
+ 191:LEDRoboMate.c ****     
+ 192:LEDRoboMate.c ****     //Vælg LED nr//
+ 193:LEDRoboMate.c ****     int ledNr = 10;  
+ 194:LEDRoboMate.c ****     
+ 195:LEDRoboMate.c ****     //Vælg Farve//
+ 196:LEDRoboMate.c ****     array[ledNr * 3]     = 0;       //Grøn
+ 579              		.loc 1 196 0 is_stmt 1
+ 580 0030 0023     		movs	r3, #0
+ 581 0032 8DF81E30 		strb	r3, [sp, #30]
+ 197:LEDRoboMate.c ****     array[ledNr * 3 + 1] = 0;     //Rød
+ 582              		.loc 1 197 0
+ 583 0036 8DF81F30 		strb	r3, [sp, #31]
+ 198:LEDRoboMate.c ****     array[ledNr * 3 + 2] = 255;     //Blå
+ 584              		.loc 1 198 0
+ 585 003a FF23     		movs	r3, #255
+ 586 003c 8DF82030 		strb	r3, [sp, #32]
+ 199:LEDRoboMate.c ****     
+ 200:LEDRoboMate.c ****     
+ 201:LEDRoboMate.c ****     setLEDs(array);
+ 587              		.loc 1 201 0
+ 588 0040 6846     		mov	r0, sp
+ 589 0042 FFF7FEFF 		bl	setLEDs
+ 590              	.LVL39:
+ 202:LEDRoboMate.c ****     }...
+ 591              		.loc 1 202 0
+ 592 0046 31B0     		add	sp, sp, #196
+ 593              		.cfi_def_cfa_offset 4
+ 594              		@ sp needed
+ 595 0048 5DF804FB 		ldr	pc, [sp], #4
+ 596              		.cfi_endproc
+ 597              	.LFE70:
+ 598              		.size	LEDtest, .-LEDtest
+ 599              		.comm	ledData,192,4
+ 600              		.comm	end,4,4
+ 601              		.global	byteIndex
+ 602              		.global	bitIndex
+ 603              		.comm	ledArray,64,4
+ 604              		.comm	deadLiftPos,1,1
+ 605              		.comm	deadPieceLifted,1,1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 16
+
+
+ 606              		.comm	pieceLiftPos,1,1
+ 607              		.comm	pieceLifted,1,1
+ 608              		.comm	newPos,1,1
+ 609              		.comm	squareReg,64,4
+ 610              		.comm	lastSquareReg,64,4
+ 611              		.comm	legalMoves,64,4
+ 612              		.comm	startChar,1,1
+ 613              		.comm	stepCase,4,4
+ 614              		.comm	currentSquare,4,4
+ 615              		.data
+ 616              		.set	.LANCHOR1,. + 0
+ 617              		.type	bitIndex, %object
+ 618              		.size	bitIndex, 1
+ 619              	bitIndex:
+ 620 0000 07       		.byte	7
+ 621              		.bss
+ 622              		.align	1
+ 623              		.set	.LANCHOR0,. + 0
+ 624              		.type	byteIndex, %object
+ 625              		.size	byteIndex, 2
+ 626              	byteIndex:
+ 627 0000 0000     		.space	2
+ 628              		.text
+ 629              	.Letext0:
+ 630              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 631              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 632              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 633              		.file 5 "XYPlotter.h"
+ 634              		.file 6 "UART.h"
+ 635              		.file 7 "Sensor.h"
+ 636              		.file 8 "LEDRoboMate.h"
+ 637              		.file 9 "Generated_Source\\PSoC5/PWM.h"
+ 638              		.file 10 "Generated_Source\\PSoC5/Control_Reg_1.h"
+ 639              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
+ 640              		.file 12 "Generated_Source\\PSoC5/isr_PWM.h"
+ 641              		.section	.debug_info,"",%progbits
+ 642              	.Ldebug_info0:
+ 643 0000 5D050000 		.4byte	0x55d
+ 644 0004 0400     		.2byte	0x4
+ 645 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 646 000a 04       		.byte	0x4
+ 647 000b 01       		.uleb128 0x1
+ 648 000c 91020000 		.4byte	.LASF57
+ 649 0010 0C       		.byte	0xc
+ 650 0011 BD010000 		.4byte	.LASF58
+ 651 0015 31030000 		.4byte	.LASF59
+ 652 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 653 001d 00000000 		.4byte	0
+ 654 0021 00000000 		.4byte	.Ldebug_line0
+ 655 0025 02       		.uleb128 0x2
+ 656 0026 F2010000 		.4byte	.LASF0
+ 657 002a 02       		.byte	0x2
+ 658 002b 1B       		.byte	0x1b
+ 659 002c 30000000 		.4byte	0x30
+ 660 0030 03       		.uleb128 0x3
+ 661 0031 01       		.byte	0x1
+ 662 0032 06       		.byte	0x6
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 17
+
+
+ 663 0033 67010000 		.4byte	.LASF2
+ 664 0037 02       		.uleb128 0x2
+ 665 0038 E3000000 		.4byte	.LASF1
+ 666 003c 02       		.byte	0x2
+ 667 003d 1D       		.byte	0x1d
+ 668 003e 42000000 		.4byte	0x42
+ 669 0042 03       		.uleb128 0x3
+ 670 0043 01       		.byte	0x1
+ 671 0044 08       		.byte	0x8
+ 672 0045 3F010000 		.4byte	.LASF3
+ 673 0049 03       		.uleb128 0x3
+ 674 004a 02       		.byte	0x2
+ 675 004b 05       		.byte	0x5
+ 676 004c 1E000000 		.4byte	.LASF4
+ 677 0050 02       		.uleb128 0x2
+ 678 0051 4F000000 		.4byte	.LASF5
+ 679 0055 02       		.byte	0x2
+ 680 0056 2B       		.byte	0x2b
+ 681 0057 5B000000 		.4byte	0x5b
+ 682 005b 03       		.uleb128 0x3
+ 683 005c 02       		.byte	0x2
+ 684 005d 07       		.byte	0x7
+ 685 005e DF010000 		.4byte	.LASF6
+ 686 0062 02       		.uleb128 0x2
+ 687 0063 49020000 		.4byte	.LASF7
+ 688 0067 02       		.byte	0x2
+ 689 0068 3F       		.byte	0x3f
+ 690 0069 6D000000 		.4byte	0x6d
+ 691 006d 03       		.uleb128 0x3
+ 692 006e 04       		.byte	0x4
+ 693 006f 05       		.byte	0x5
+ 694 0070 DA000000 		.4byte	.LASF8
+ 695 0074 03       		.uleb128 0x3
+ 696 0075 04       		.byte	0x4
+ 697 0076 07       		.byte	0x7
+ 698 0077 24020000 		.4byte	.LASF9
+ 699 007b 03       		.uleb128 0x3
+ 700 007c 08       		.byte	0x8
+ 701 007d 05       		.byte	0x5
+ 702 007e A0000000 		.4byte	.LASF10
+ 703 0082 03       		.uleb128 0x3
+ 704 0083 08       		.byte	0x8
+ 705 0084 07       		.byte	0x7
+ 706 0085 73010000 		.4byte	.LASF11
+ 707 0089 04       		.uleb128 0x4
+ 708 008a 04       		.byte	0x4
+ 709 008b 05       		.byte	0x5
+ 710 008c 696E7400 		.ascii	"int\000"
+ 711 0090 03       		.uleb128 0x3
+ 712 0091 04       		.byte	0x4
+ 713 0092 07       		.byte	0x7
+ 714 0093 8A010000 		.4byte	.LASF12
+ 715 0097 02       		.uleb128 0x2
+ 716 0098 0B000000 		.4byte	.LASF13
+ 717 009c 03       		.byte	0x3
+ 718 009d 14       		.byte	0x14
+ 719 009e 25000000 		.4byte	0x25
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 18
+
+
+ 720 00a2 02       		.uleb128 0x2
+ 721 00a3 53020000 		.4byte	.LASF14
+ 722 00a7 03       		.byte	0x3
+ 723 00a8 18       		.byte	0x18
+ 724 00a9 37000000 		.4byte	0x37
+ 725 00ad 02       		.uleb128 0x2
+ 726 00ae 97010000 		.4byte	.LASF15
+ 727 00b2 03       		.byte	0x3
+ 728 00b3 24       		.byte	0x24
+ 729 00b4 50000000 		.4byte	0x50
+ 730 00b8 02       		.uleb128 0x2
+ 731 00b9 14020000 		.4byte	.LASF16
+ 732 00bd 03       		.byte	0x3
+ 733 00be 2C       		.byte	0x2c
+ 734 00bf 62000000 		.4byte	0x62
+ 735 00c3 03       		.uleb128 0x3
+ 736 00c4 04       		.byte	0x4
+ 737 00c5 04       		.byte	0x4
+ 738 00c6 90000000 		.4byte	.LASF17
+ 739 00ca 03       		.uleb128 0x3
+ 740 00cb 08       		.byte	0x8
+ 741 00cc 04       		.byte	0x4
+ 742 00cd 36020000 		.4byte	.LASF18
+ 743 00d1 03       		.uleb128 0x3
+ 744 00d2 01       		.byte	0x1
+ 745 00d3 08       		.byte	0x8
+ 746 00d4 07020000 		.4byte	.LASF19
+ 747 00d8 03       		.uleb128 0x3
+ 748 00d9 08       		.byte	0x8
+ 749 00da 04       		.byte	0x4
+ 750 00db 26010000 		.4byte	.LASF20
+ 751 00df 03       		.uleb128 0x3
+ 752 00e0 04       		.byte	0x4
+ 753 00e1 07       		.byte	0x7
+ 754 00e2 28000000 		.4byte	.LASF21
+ 755 00e6 05       		.uleb128 0x5
+ 756 00e7 A2000000 		.4byte	0xa2
+ 757 00eb 05       		.uleb128 0x5
+ 758 00ec AD000000 		.4byte	0xad
+ 759 00f0 06       		.uleb128 0x6
+ 760 00f1 CA000000 		.4byte	.LASF22
+ 761 00f5 01       		.byte	0x1
+ 762 00f6 1C       		.byte	0x1c
+ 763 00f7 00000000 		.4byte	.LFB63
+ 764 00fb 60000000 		.4byte	.LFE63-.LFB63
+ 765 00ff 01       		.uleb128 0x1
+ 766 0100 9C       		.byte	0x9c
+ 767 0101 5B010000 		.4byte	0x15b
+ 768 0105 07       		.uleb128 0x7
+ 769 0106 2E000000 		.4byte	.LVL0
+ 770 010a FF040000 		.4byte	0x4ff
+ 771 010e 18010000 		.4byte	0x118
+ 772 0112 08       		.uleb128 0x8
+ 773 0113 01       		.uleb128 0x1
+ 774 0114 50       		.byte	0x50
+ 775 0115 01       		.uleb128 0x1
+ 776 0116 30       		.byte	0x30
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 19
+
+
+ 777 0117 00       		.byte	0
+ 778 0118 07       		.uleb128 0x7
+ 779 0119 34000000 		.4byte	.LVL1
+ 780 011d 0A050000 		.4byte	0x50a
+ 781 0121 2B010000 		.4byte	0x12b
+ 782 0125 08       		.uleb128 0x8
+ 783 0126 01       		.uleb128 0x1
+ 784 0127 50       		.byte	0x50
+ 785 0128 01       		.uleb128 0x1
+ 786 0129 31       		.byte	0x31
+ 787 012a 00       		.byte	0
+ 788 012b 07       		.uleb128 0x7
+ 789 012c 3C000000 		.4byte	.LVL2
+ 790 0130 FF040000 		.4byte	0x4ff
+ 791 0134 3E010000 		.4byte	0x13e
+ 792 0138 08       		.uleb128 0x8
+ 793 0139 01       		.uleb128 0x1
+ 794 013a 50       		.byte	0x50
+ 795 013b 01       		.uleb128 0x1
+ 796 013c 4B       		.byte	0x4b
+ 797 013d 00       		.byte	0
+ 798 013e 07       		.uleb128 0x7
+ 799 013f 42000000 		.4byte	.LVL3
+ 800 0143 0A050000 		.4byte	0x50a
+ 801 0147 51010000 		.4byte	0x151
+ 802 014b 08       		.uleb128 0x8
+ 803 014c 01       		.uleb128 0x1
+ 804 014d 50       		.byte	0x50
+ 805 014e 01       		.uleb128 0x1
+ 806 014f 31       		.byte	0x31
+ 807 0150 00       		.byte	0
+ 808 0151 09       		.uleb128 0x9
+ 809 0152 52000000 		.4byte	.LVL4
+ 810 0156 15050000 		.4byte	0x515
+ 811 015a 00       		.byte	0
+ 812 015b 0A       		.uleb128 0xa
+ 813 015c 31000000 		.4byte	.LASF27
+ 814 0160 01       		.byte	0x1
+ 815 0161 58       		.byte	0x58
+ 816 0162 00000000 		.4byte	.LFB65
+ 817 0166 58000000 		.4byte	.LFE65-.LFB65
+ 818 016a 01       		.uleb128 0x1
+ 819 016b 9C       		.byte	0x9c
+ 820 016c 96010000 		.4byte	0x196
+ 821 0170 09       		.uleb128 0x9
+ 822 0171 06000000 		.4byte	.LVL5
+ 823 0175 20050000 		.4byte	0x520
+ 824 0179 07       		.uleb128 0x7
+ 825 017a 0C000000 		.4byte	.LVL6
+ 826 017e 0A050000 		.4byte	0x50a
+ 827 0182 8C010000 		.4byte	0x18c
+ 828 0186 08       		.uleb128 0x8
+ 829 0187 01       		.uleb128 0x1
+ 830 0188 50       		.byte	0x50
+ 831 0189 01       		.uleb128 0x1
+ 832 018a 31       		.byte	0x31
+ 833 018b 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 20
+
+
+ 834 018c 09       		.uleb128 0x9
+ 835 018d 36000000 		.4byte	.LVL7
+ 836 0191 2B050000 		.4byte	0x52b
+ 837 0195 00       		.byte	0
+ 838 0196 06       		.uleb128 0x6
+ 839 0197 1C020000 		.4byte	.LASF23
+ 840 019b 01       		.byte	0x1
+ 841 019c 2E       		.byte	0x2e
+ 842 019d 00000000 		.4byte	.LFB64
+ 843 01a1 98000000 		.4byte	.LFE64-.LFB64
+ 844 01a5 01       		.uleb128 0x1
+ 845 01a6 9C       		.byte	0x9c
+ 846 01a7 03020000 		.4byte	0x203
+ 847 01ab 0B       		.uleb128 0xb
+ 848 01ac 3D020000 		.4byte	.LASF25
+ 849 01b0 01       		.byte	0x1
+ 850 01b1 2E       		.byte	0x2e
+ 851 01b2 03020000 		.4byte	0x203
+ 852 01b6 00000000 		.4byte	.LLST0
+ 853 01ba 0C       		.uleb128 0xc
+ 854 01bb 08000000 		.4byte	.LBB2
+ 855 01bf 10000000 		.4byte	.LBE2-.LBB2
+ 856 01c3 D5010000 		.4byte	0x1d5
+ 857 01c7 0D       		.uleb128 0xd
+ 858 01c8 6900     		.ascii	"i\000"
+ 859 01ca 01       		.byte	0x1
+ 860 01cb 31       		.byte	0x31
+ 861 01cc 89000000 		.4byte	0x89
+ 862 01d0 21000000 		.4byte	.LLST1
+ 863 01d4 00       		.byte	0
+ 864 01d5 0C       		.uleb128 0xc
+ 865 01d6 1C000000 		.4byte	.LBB3
+ 866 01da 66000000 		.4byte	.LBE3-.LBB3
+ 867 01de F0010000 		.4byte	0x1f0
+ 868 01e2 0D       		.uleb128 0xd
+ 869 01e3 6900     		.ascii	"i\000"
+ 870 01e5 01       		.byte	0x1
+ 871 01e6 3C       		.byte	0x3c
+ 872 01e7 A2000000 		.4byte	0xa2
+ 873 01eb 40000000 		.4byte	.LLST2
+ 874 01ef 00       		.byte	0
+ 875 01f0 09       		.uleb128 0x9
+ 876 01f1 1C000000 		.4byte	.LVL12
+ 877 01f5 36050000 		.4byte	0x536
+ 878 01f9 09       		.uleb128 0x9
+ 879 01fa 86000000 		.4byte	.LVL16
+ 880 01fe 5B010000 		.4byte	0x15b
+ 881 0202 00       		.byte	0
+ 882 0203 0E       		.uleb128 0xe
+ 883 0204 04       		.byte	0x4
+ 884 0205 A2000000 		.4byte	0xa2
+ 885 0209 06       		.uleb128 0x6
+ 886 020a 75020000 		.4byte	.LASF24
+ 887 020e 01       		.byte	0x1
+ 888 020f 70       		.byte	0x70
+ 889 0210 00000000 		.4byte	.LFB66
+ 890 0214 48000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 21
+
+
+ 891 0218 01       		.uleb128 0x1
+ 892 0219 9C       		.byte	0x9c
+ 893 021a 52020000 		.4byte	0x252
+ 894 021e 0B       		.uleb128 0xb
+ 895 021f 43020000 		.4byte	.LASF26
+ 896 0223 01       		.byte	0x1
+ 897 0224 70       		.byte	0x70
+ 898 0225 89000000 		.4byte	0x89
+ 899 0229 6A000000 		.4byte	.LLST3
+ 900 022d 0C       		.uleb128 0xc
+ 901 022e 08000000 		.4byte	.LBB4
+ 902 0232 32000000 		.4byte	.LBE4-.LBB4
+ 903 0236 48020000 		.4byte	0x248
+ 904 023a 0D       		.uleb128 0xd
+ 905 023b 6900     		.ascii	"i\000"
+ 906 023d 01       		.byte	0x1
+ 907 023e 73       		.byte	0x73
+ 908 023f A2000000 		.4byte	0xa2
+ 909 0243 8B000000 		.4byte	.LLST4
+ 910 0247 00       		.byte	0
+ 911 0248 09       		.uleb128 0x9
+ 912 0249 3E000000 		.4byte	.LVL22
+ 913 024d 5B010000 		.4byte	0x15b
+ 914 0251 00       		.byte	0
+ 915 0252 0A       		.uleb128 0xa
+ 916 0253 12000000 		.4byte	.LASF28
+ 917 0257 01       		.byte	0x1
+ 918 0258 A0       		.byte	0xa0
+ 919 0259 00000000 		.4byte	.LFB69
+ 920 025d 1A000000 		.4byte	.LFE69-.LFB69
+ 921 0261 01       		.uleb128 0x1
+ 922 0262 9C       		.byte	0x9c
+ 923 0263 A6020000 		.4byte	0x2a6
+ 924 0267 0F       		.uleb128 0xf
+ 925 0268 4D010000 		.4byte	.LASF29
+ 926 026c 01       		.byte	0x1
+ 927 026d A2       		.byte	0xa2
+ 928 026e A6020000 		.4byte	0x2a6
+ 929 0272 03       		.uleb128 0x3
+ 930 0273 91       		.byte	0x91
+ 931 0274 B87F     		.sleb128 -72
+ 932 0276 07       		.uleb128 0x7
+ 933 0277 0E000000 		.4byte	.LVL23
+ 934 027b 41050000 		.4byte	0x541
+ 935 027f 95020000 		.4byte	0x295
+ 936 0283 08       		.uleb128 0x8
+ 937 0284 01       		.uleb128 0x1
+ 938 0285 50       		.byte	0x50
+ 939 0286 02       		.uleb128 0x2
+ 940 0287 7D       		.byte	0x7d
+ 941 0288 00       		.sleb128 0
+ 942 0289 08       		.uleb128 0x8
+ 943 028a 01       		.uleb128 0x1
+ 944 028b 51       		.byte	0x51
+ 945 028c 01       		.uleb128 0x1
+ 946 028d 30       		.byte	0x30
+ 947 028e 08       		.uleb128 0x8
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 22
+
+
+ 948 028f 01       		.uleb128 0x1
+ 949 0290 52       		.byte	0x52
+ 950 0291 02       		.uleb128 0x2
+ 951 0292 08       		.byte	0x8
+ 952 0293 40       		.byte	0x40
+ 953 0294 00       		.byte	0
+ 954 0295 10       		.uleb128 0x10
+ 955 0296 14000000 		.4byte	.LVL24
+ 956 029a 96010000 		.4byte	0x196
+ 957 029e 08       		.uleb128 0x8
+ 958 029f 01       		.uleb128 0x1
+ 959 02a0 50       		.byte	0x50
+ 960 02a1 02       		.uleb128 0x2
+ 961 02a2 7D       		.byte	0x7d
+ 962 02a3 00       		.sleb128 0
+ 963 02a4 00       		.byte	0
+ 964 02a5 00       		.byte	0
+ 965 02a6 11       		.uleb128 0x11
+ 966 02a7 A2000000 		.4byte	0xa2
+ 967 02ab B6020000 		.4byte	0x2b6
+ 968 02af 12       		.uleb128 0x12
+ 969 02b0 DF000000 		.4byte	0xdf
+ 970 02b4 3F       		.byte	0x3f
+ 971 02b5 00       		.byte	0
+ 972 02b6 06       		.uleb128 0x6
+ 973 02b7 80000000 		.4byte	.LASF30
+ 974 02bb 01       		.byte	0x1
+ 975 02bc 83       		.byte	0x83
+ 976 02bd 00000000 		.4byte	.LFB67
+ 977 02c1 58000000 		.4byte	.LFE67-.LFB67
+ 978 02c5 01       		.uleb128 0x1
+ 979 02c6 9C       		.byte	0x9c
+ 980 02c7 1D030000 		.4byte	0x31d
+ 981 02cb 0B       		.uleb128 0xb
+ 982 02cc 43020000 		.4byte	.LASF26
+ 983 02d0 01       		.byte	0x1
+ 984 02d1 83       		.byte	0x83
+ 985 02d2 89000000 		.4byte	0x89
+ 986 02d6 B5000000 		.4byte	.LLST5
+ 987 02da 0C       		.uleb128 0xc
+ 988 02db 08000000 		.4byte	.LBB5
+ 989 02df 34000000 		.4byte	.LBE5-.LBB5
+ 990 02e3 F5020000 		.4byte	0x2f5
+ 991 02e7 0D       		.uleb128 0xd
+ 992 02e8 6900     		.ascii	"i\000"
+ 993 02ea 01       		.byte	0x1
+ 994 02eb 86       		.byte	0x86
+ 995 02ec A2000000 		.4byte	0xa2
+ 996 02f0 D6000000 		.4byte	.LLST6
+ 997 02f4 00       		.byte	0
+ 998 02f5 09       		.uleb128 0x9
+ 999 02f6 40000000 		.4byte	.LVL30
+ 1000 02fa 5B010000 		.4byte	0x15b
+ 1001 02fe 07       		.uleb128 0x7
+ 1002 02ff 48000000 		.4byte	.LVL31
+ 1003 0303 4A050000 		.4byte	0x54a
+ 1004 0307 13030000 		.4byte	0x313
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 23
+
+
+ 1005 030b 08       		.uleb128 0x8
+ 1006 030c 01       		.uleb128 0x1
+ 1007 030d 50       		.byte	0x50
+ 1008 030e 03       		.uleb128 0x3
+ 1009 030f 0A       		.byte	0xa
+ 1010 0310 D007     		.2byte	0x7d0
+ 1011 0312 00       		.byte	0
+ 1012 0313 09       		.uleb128 0x9
+ 1013 0314 4C000000 		.4byte	.LVL32
+ 1014 0318 52020000 		.4byte	0x252
+ 1015 031c 00       		.byte	0
+ 1016 031d 0A       		.uleb128 0xa
+ 1017 031e 56010000 		.4byte	.LASF31
+ 1018 0322 01       		.byte	0x1
+ 1019 0323 9A       		.byte	0x9a
+ 1020 0324 00000000 		.4byte	.LFB68
+ 1021 0328 14000000 		.4byte	.LFE68-.LFB68
+ 1022 032c 01       		.uleb128 0x1
+ 1023 032d 9C       		.byte	0x9c
+ 1024 032e 53030000 		.4byte	0x353
+ 1025 0332 07       		.uleb128 0x7
+ 1026 0333 08000000 		.4byte	.LVL33
+ 1027 0337 55050000 		.4byte	0x555
+ 1028 033b 49030000 		.4byte	0x349
+ 1029 033f 08       		.uleb128 0x8
+ 1030 0340 01       		.uleb128 0x1
+ 1031 0341 50       		.byte	0x50
+ 1032 0342 05       		.uleb128 0x5
+ 1033 0343 03       		.byte	0x3
+ 1034 0344 00000000 		.4byte	PWM_ISR_handler
+ 1035 0348 00       		.byte	0
+ 1036 0349 09       		.uleb128 0x9
+ 1037 034a 0C000000 		.4byte	.LVL34
+ 1038 034e 52020000 		.4byte	0x252
+ 1039 0352 00       		.byte	0
+ 1040 0353 0A       		.uleb128 0xa
+ 1041 0354 0C020000 		.4byte	.LASF32
+ 1042 0358 01       		.byte	0x1
+ 1043 0359 A8       		.byte	0xa8
+ 1044 035a 00000000 		.4byte	.LFB70
+ 1045 035e 4C000000 		.4byte	.LFE70-.LFB70
+ 1046 0362 01       		.uleb128 0x1
+ 1047 0363 9C       		.byte	0x9c
+ 1048 0364 AF030000 		.4byte	0x3af
+ 1049 0368 0F       		.uleb128 0xf
+ 1050 0369 3D020000 		.4byte	.LASF25
+ 1051 036d 01       		.byte	0x1
+ 1052 036e AA       		.byte	0xaa
+ 1053 036f AF030000 		.4byte	0x3af
+ 1054 0373 03       		.uleb128 0x3
+ 1055 0374 91       		.byte	0x91
+ 1056 0375 B87E     		.sleb128 -200
+ 1057 0377 13       		.uleb128 0x13
+ 1058 0378 43020000 		.4byte	.LASF26
+ 1059 037c 01       		.byte	0x1
+ 1060 037d C1       		.byte	0xc1
+ 1061 037e 89000000 		.4byte	0x89
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 24
+
+
+ 1062 0382 0A       		.byte	0xa
+ 1063 0383 0C       		.uleb128 0xc
+ 1064 0384 04000000 		.4byte	.LBB6
+ 1065 0388 2C000000 		.4byte	.LBE6-.LBB6
+ 1066 038c 9E030000 		.4byte	0x39e
+ 1067 0390 0D       		.uleb128 0xd
+ 1068 0391 6900     		.ascii	"i\000"
+ 1069 0393 01       		.byte	0x1
+ 1070 0394 AD       		.byte	0xad
+ 1071 0395 89000000 		.4byte	0x89
+ 1072 0399 00010000 		.4byte	.LLST7
+ 1073 039d 00       		.byte	0
+ 1074 039e 10       		.uleb128 0x10
+ 1075 039f 46000000 		.4byte	.LVL39
+ 1076 03a3 96010000 		.4byte	0x196
+ 1077 03a7 08       		.uleb128 0x8
+ 1078 03a8 01       		.uleb128 0x1
+ 1079 03a9 50       		.byte	0x50
+ 1080 03aa 02       		.uleb128 0x2
+ 1081 03ab 7D       		.byte	0x7d
+ 1082 03ac 00       		.sleb128 0
+ 1083 03ad 00       		.byte	0
+ 1084 03ae 00       		.byte	0
+ 1085 03af 11       		.uleb128 0x11
+ 1086 03b0 A2000000 		.4byte	0xa2
+ 1087 03b4 BF030000 		.4byte	0x3bf
+ 1088 03b8 12       		.uleb128 0x12
+ 1089 03b9 DF000000 		.4byte	0xdf
+ 1090 03bd BF       		.byte	0xbf
+ 1091 03be 00       		.byte	0
+ 1092 03bf 14       		.uleb128 0x14
+ 1093 03c0 84020000 		.4byte	.LASF33
+ 1094 03c4 04       		.byte	0x4
+ 1095 03c5 1207     		.2byte	0x712
+ 1096 03c7 CB030000 		.4byte	0x3cb
+ 1097 03cb 05       		.uleb128 0x5
+ 1098 03cc B8000000 		.4byte	0xb8
+ 1099 03d0 15       		.uleb128 0x15
+ 1100 03d1 41000000 		.4byte	.LASF34
+ 1101 03d5 05       		.byte	0x5
+ 1102 03d6 19       		.byte	0x19
+ 1103 03d7 89000000 		.4byte	0x89
+ 1104 03db 05       		.uleb128 0x5
+ 1105 03dc 03       		.byte	0x3
+ 1106 03dd 00000000 		.4byte	currentSquare
+ 1107 03e1 15       		.uleb128 0x15
+ 1108 03e2 1D010000 		.4byte	.LASF35
+ 1109 03e6 05       		.byte	0x5
+ 1110 03e7 1A       		.byte	0x1a
+ 1111 03e8 89000000 		.4byte	0x89
+ 1112 03ec 05       		.uleb128 0x5
+ 1113 03ed 03       		.byte	0x3
+ 1114 03ee 00000000 		.4byte	stepCase
+ 1115 03f2 15       		.uleb128 0x15
+ 1116 03f3 96000000 		.4byte	.LASF36
+ 1117 03f7 06       		.byte	0x6
+ 1118 03f8 14       		.byte	0x14
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 25
+
+
+ 1119 03f9 A2000000 		.4byte	0xa2
+ 1120 03fd 05       		.uleb128 0x5
+ 1121 03fe 03       		.byte	0x3
+ 1122 03ff 00000000 		.4byte	startChar
+ 1123 0403 15       		.uleb128 0x15
+ 1124 0404 00000000 		.4byte	.LASF37
+ 1125 0408 06       		.byte	0x6
+ 1126 0409 15       		.byte	0x15
+ 1127 040a A6020000 		.4byte	0x2a6
+ 1128 040e 05       		.uleb128 0x5
+ 1129 040f 03       		.byte	0x3
+ 1130 0410 00000000 		.4byte	legalMoves
+ 1131 0414 15       		.uleb128 0x15
+ 1132 0415 ED000000 		.4byte	.LASF38
+ 1133 0419 07       		.byte	0x7
+ 1134 041a 15       		.byte	0x15
+ 1135 041b A6020000 		.4byte	0x2a6
+ 1136 041f 05       		.uleb128 0x5
+ 1137 0420 03       		.byte	0x3
+ 1138 0421 00000000 		.4byte	lastSquareReg
+ 1139 0425 15       		.uleb128 0x15
+ 1140 0426 AE000000 		.4byte	.LASF39
+ 1141 042a 07       		.byte	0x7
+ 1142 042b 16       		.byte	0x16
+ 1143 042c A6020000 		.4byte	0x2a6
+ 1144 0430 05       		.uleb128 0x5
+ 1145 0431 03       		.byte	0x3
+ 1146 0432 00000000 		.4byte	squareReg
+ 1147 0436 15       		.uleb128 0x15
+ 1148 0437 71000000 		.4byte	.LASF40
+ 1149 043b 07       		.byte	0x7
+ 1150 043c 18       		.byte	0x18
+ 1151 043d A2000000 		.4byte	0xa2
+ 1152 0441 05       		.uleb128 0x5
+ 1153 0442 03       		.byte	0x3
+ 1154 0443 00000000 		.4byte	newPos
+ 1155 0447 15       		.uleb128 0x15
+ 1156 0448 FB010000 		.4byte	.LASF41
+ 1157 044c 07       		.byte	0x7
+ 1158 044d 19       		.byte	0x19
+ 1159 044e A2000000 		.4byte	0xa2
+ 1160 0452 05       		.uleb128 0x5
+ 1161 0453 03       		.byte	0x3
+ 1162 0454 00000000 		.4byte	pieceLifted
+ 1163 0458 15       		.uleb128 0x15
+ 1164 0459 32010000 		.4byte	.LASF42
+ 1165 045d 07       		.byte	0x7
+ 1166 045e 1A       		.byte	0x1a
+ 1167 045f A2000000 		.4byte	0xa2
+ 1168 0463 05       		.uleb128 0x5
+ 1169 0464 03       		.byte	0x3
+ 1170 0465 00000000 		.4byte	pieceLiftPos
+ 1171 0469 15       		.uleb128 0x15
+ 1172 046a 04010000 		.4byte	.LASF43
+ 1173 046e 07       		.byte	0x7
+ 1174 046f 1B       		.byte	0x1b
+ 1175 0470 A2000000 		.4byte	0xa2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 26
+
+
+ 1176 0474 05       		.uleb128 0x5
+ 1177 0475 03       		.byte	0x3
+ 1178 0476 00000000 		.4byte	deadPieceLifted
+ 1179 047a 15       		.uleb128 0x15
+ 1180 047b A0010000 		.4byte	.LASF44
+ 1181 047f 07       		.byte	0x7
+ 1182 0480 1C       		.byte	0x1c
+ 1183 0481 A2000000 		.4byte	0xa2
+ 1184 0485 05       		.uleb128 0x5
+ 1185 0486 03       		.byte	0x3
+ 1186 0487 00000000 		.4byte	deadLiftPos
+ 1187 048b 15       		.uleb128 0x15
+ 1188 048c FB000000 		.4byte	.LASF45
+ 1189 0490 08       		.byte	0x8
+ 1190 0491 0E       		.byte	0xe
+ 1191 0492 A6020000 		.4byte	0x2a6
+ 1192 0496 05       		.uleb128 0x5
+ 1193 0497 03       		.byte	0x3
+ 1194 0498 00000000 		.4byte	ledArray
+ 1195 049c 15       		.uleb128 0x15
+ 1196 049d 5E010000 		.4byte	.LASF46
+ 1197 04a1 01       		.byte	0x1
+ 1198 04a2 03       		.byte	0x3
+ 1199 04a3 AD040000 		.4byte	0x4ad
+ 1200 04a7 05       		.uleb128 0x5
+ 1201 04a8 03       		.byte	0x3
+ 1202 04a9 00000000 		.4byte	bitIndex
+ 1203 04ad 05       		.uleb128 0x5
+ 1204 04ae 97000000 		.4byte	0x97
+ 1205 04b2 15       		.uleb128 0x15
+ 1206 04b3 27030000 		.4byte	.LASF47
+ 1207 04b7 01       		.byte	0x1
+ 1208 04b8 04       		.byte	0x4
+ 1209 04b9 EB000000 		.4byte	0xeb
+ 1210 04bd 05       		.uleb128 0x5
+ 1211 04be 03       		.byte	0x3
+ 1212 04bf 00000000 		.4byte	byteIndex
+ 1213 04c3 16       		.uleb128 0x16
+ 1214 04c4 656E6400 		.ascii	"end\000"
+ 1215 04c8 01       		.byte	0x1
+ 1216 04c9 05       		.byte	0x5
+ 1217 04ca D4040000 		.4byte	0x4d4
+ 1218 04ce 05       		.uleb128 0x5
+ 1219 04cf 03       		.byte	0x3
+ 1220 04d0 00000000 		.4byte	end
+ 1221 04d4 05       		.uleb128 0x5
+ 1222 04d5 89000000 		.4byte	0x89
+ 1223 04d9 11       		.uleb128 0x11
+ 1224 04da E6000000 		.4byte	0xe6
+ 1225 04de E9040000 		.4byte	0x4e9
+ 1226 04e2 12       		.uleb128 0x12
+ 1227 04e3 DF000000 		.4byte	0xdf
+ 1228 04e7 BF       		.byte	0xbf
+ 1229 04e8 00       		.byte	0
+ 1230 04e9 15       		.uleb128 0x15
+ 1231 04ea 78000000 		.4byte	.LASF48
+ 1232 04ee 01       		.byte	0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 27
+
+
+ 1233 04ef 07       		.byte	0x7
+ 1234 04f0 FA040000 		.4byte	0x4fa
+ 1235 04f4 05       		.uleb128 0x5
+ 1236 04f5 03       		.byte	0x3
+ 1237 04f6 00000000 		.4byte	ledData
+ 1238 04fa 05       		.uleb128 0x5
+ 1239 04fb D9040000 		.4byte	0x4d9
+ 1240 04ff 17       		.uleb128 0x17
+ 1241 0500 AC010000 		.4byte	.LASF49
+ 1242 0504 AC010000 		.4byte	.LASF49
+ 1243 0508 09       		.byte	0x9
+ 1244 0509 C3       		.byte	0xc3
+ 1245 050a 17       		.uleb128 0x17
+ 1246 050b CB010000 		.4byte	.LASF50
+ 1247 050f CB010000 		.4byte	.LASF50
+ 1248 0513 0A       		.byte	0xa
+ 1249 0514 2F       		.byte	0x2f
+ 1250 0515 17       		.uleb128 0x17
+ 1251 0516 5A000000 		.4byte	.LASF51
+ 1252 051a 5A000000 		.4byte	.LASF51
+ 1253 051e 09       		.byte	0x9
+ 1254 051f 97       		.byte	0x97
+ 1255 0520 17       		.uleb128 0x17
+ 1256 0521 5B020000 		.4byte	.LASF52
+ 1257 0525 5B020000 		.4byte	.LASF52
+ 1258 0529 09       		.byte	0x9
+ 1259 052a 92       		.byte	0x92
+ 1260 052b 17       		.uleb128 0x17
+ 1261 052c 14010000 		.4byte	.LASF53
+ 1262 0530 14010000 		.4byte	.LASF53
+ 1263 0534 09       		.byte	0x9
+ 1264 0535 93       		.byte	0x93
+ 1265 0536 17       		.uleb128 0x17
+ 1266 0537 B8000000 		.4byte	.LASF54
+ 1267 053b B8000000 		.4byte	.LASF54
+ 1268 053f 07       		.byte	0x7
+ 1269 0540 24       		.byte	0x24
+ 1270 0541 18       		.uleb128 0x18
+ 1271 0542 C3000000 		.4byte	.LASF60
+ 1272 0546 C3000000 		.4byte	.LASF60
+ 1273 054a 17       		.uleb128 0x17
+ 1274 054b 1F030000 		.4byte	.LASF55
+ 1275 054f 1F030000 		.4byte	.LASF55
+ 1276 0553 0B       		.byte	0xb
+ 1277 0554 76       		.byte	0x76
+ 1278 0555 17       		.uleb128 0x17
+ 1279 0556 65020000 		.4byte	.LASF56
+ 1280 055a 65020000 		.4byte	.LASF56
+ 1281 055e 0C       		.byte	0xc
+ 1282 055f 18       		.byte	0x18
+ 1283 0560 00       		.byte	0
+ 1284              		.section	.debug_abbrev,"",%progbits
+ 1285              	.Ldebug_abbrev0:
+ 1286 0000 01       		.uleb128 0x1
+ 1287 0001 11       		.uleb128 0x11
+ 1288 0002 01       		.byte	0x1
+ 1289 0003 25       		.uleb128 0x25
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 28
+
+
+ 1290 0004 0E       		.uleb128 0xe
+ 1291 0005 13       		.uleb128 0x13
+ 1292 0006 0B       		.uleb128 0xb
+ 1293 0007 03       		.uleb128 0x3
+ 1294 0008 0E       		.uleb128 0xe
+ 1295 0009 1B       		.uleb128 0x1b
+ 1296 000a 0E       		.uleb128 0xe
+ 1297 000b 55       		.uleb128 0x55
+ 1298 000c 17       		.uleb128 0x17
+ 1299 000d 11       		.uleb128 0x11
+ 1300 000e 01       		.uleb128 0x1
+ 1301 000f 10       		.uleb128 0x10
+ 1302 0010 17       		.uleb128 0x17
+ 1303 0011 00       		.byte	0
+ 1304 0012 00       		.byte	0
+ 1305 0013 02       		.uleb128 0x2
+ 1306 0014 16       		.uleb128 0x16
+ 1307 0015 00       		.byte	0
+ 1308 0016 03       		.uleb128 0x3
+ 1309 0017 0E       		.uleb128 0xe
+ 1310 0018 3A       		.uleb128 0x3a
+ 1311 0019 0B       		.uleb128 0xb
+ 1312 001a 3B       		.uleb128 0x3b
+ 1313 001b 0B       		.uleb128 0xb
+ 1314 001c 49       		.uleb128 0x49
+ 1315 001d 13       		.uleb128 0x13
+ 1316 001e 00       		.byte	0
+ 1317 001f 00       		.byte	0
+ 1318 0020 03       		.uleb128 0x3
+ 1319 0021 24       		.uleb128 0x24
+ 1320 0022 00       		.byte	0
+ 1321 0023 0B       		.uleb128 0xb
+ 1322 0024 0B       		.uleb128 0xb
+ 1323 0025 3E       		.uleb128 0x3e
+ 1324 0026 0B       		.uleb128 0xb
+ 1325 0027 03       		.uleb128 0x3
+ 1326 0028 0E       		.uleb128 0xe
+ 1327 0029 00       		.byte	0
+ 1328 002a 00       		.byte	0
+ 1329 002b 04       		.uleb128 0x4
+ 1330 002c 24       		.uleb128 0x24
+ 1331 002d 00       		.byte	0
+ 1332 002e 0B       		.uleb128 0xb
+ 1333 002f 0B       		.uleb128 0xb
+ 1334 0030 3E       		.uleb128 0x3e
+ 1335 0031 0B       		.uleb128 0xb
+ 1336 0032 03       		.uleb128 0x3
+ 1337 0033 08       		.uleb128 0x8
+ 1338 0034 00       		.byte	0
+ 1339 0035 00       		.byte	0
+ 1340 0036 05       		.uleb128 0x5
+ 1341 0037 35       		.uleb128 0x35
+ 1342 0038 00       		.byte	0
+ 1343 0039 49       		.uleb128 0x49
+ 1344 003a 13       		.uleb128 0x13
+ 1345 003b 00       		.byte	0
+ 1346 003c 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 29
+
+
+ 1347 003d 06       		.uleb128 0x6
+ 1348 003e 2E       		.uleb128 0x2e
+ 1349 003f 01       		.byte	0x1
+ 1350 0040 3F       		.uleb128 0x3f
+ 1351 0041 19       		.uleb128 0x19
+ 1352 0042 03       		.uleb128 0x3
+ 1353 0043 0E       		.uleb128 0xe
+ 1354 0044 3A       		.uleb128 0x3a
+ 1355 0045 0B       		.uleb128 0xb
+ 1356 0046 3B       		.uleb128 0x3b
+ 1357 0047 0B       		.uleb128 0xb
+ 1358 0048 27       		.uleb128 0x27
+ 1359 0049 19       		.uleb128 0x19
+ 1360 004a 11       		.uleb128 0x11
+ 1361 004b 01       		.uleb128 0x1
+ 1362 004c 12       		.uleb128 0x12
+ 1363 004d 06       		.uleb128 0x6
+ 1364 004e 40       		.uleb128 0x40
+ 1365 004f 18       		.uleb128 0x18
+ 1366 0050 9742     		.uleb128 0x2117
+ 1367 0052 19       		.uleb128 0x19
+ 1368 0053 01       		.uleb128 0x1
+ 1369 0054 13       		.uleb128 0x13
+ 1370 0055 00       		.byte	0
+ 1371 0056 00       		.byte	0
+ 1372 0057 07       		.uleb128 0x7
+ 1373 0058 898201   		.uleb128 0x4109
+ 1374 005b 01       		.byte	0x1
+ 1375 005c 11       		.uleb128 0x11
+ 1376 005d 01       		.uleb128 0x1
+ 1377 005e 31       		.uleb128 0x31
+ 1378 005f 13       		.uleb128 0x13
+ 1379 0060 01       		.uleb128 0x1
+ 1380 0061 13       		.uleb128 0x13
+ 1381 0062 00       		.byte	0
+ 1382 0063 00       		.byte	0
+ 1383 0064 08       		.uleb128 0x8
+ 1384 0065 8A8201   		.uleb128 0x410a
+ 1385 0068 00       		.byte	0
+ 1386 0069 02       		.uleb128 0x2
+ 1387 006a 18       		.uleb128 0x18
+ 1388 006b 9142     		.uleb128 0x2111
+ 1389 006d 18       		.uleb128 0x18
+ 1390 006e 00       		.byte	0
+ 1391 006f 00       		.byte	0
+ 1392 0070 09       		.uleb128 0x9
+ 1393 0071 898201   		.uleb128 0x4109
+ 1394 0074 00       		.byte	0
+ 1395 0075 11       		.uleb128 0x11
+ 1396 0076 01       		.uleb128 0x1
+ 1397 0077 31       		.uleb128 0x31
+ 1398 0078 13       		.uleb128 0x13
+ 1399 0079 00       		.byte	0
+ 1400 007a 00       		.byte	0
+ 1401 007b 0A       		.uleb128 0xa
+ 1402 007c 2E       		.uleb128 0x2e
+ 1403 007d 01       		.byte	0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 30
+
+
+ 1404 007e 3F       		.uleb128 0x3f
+ 1405 007f 19       		.uleb128 0x19
+ 1406 0080 03       		.uleb128 0x3
+ 1407 0081 0E       		.uleb128 0xe
+ 1408 0082 3A       		.uleb128 0x3a
+ 1409 0083 0B       		.uleb128 0xb
+ 1410 0084 3B       		.uleb128 0x3b
+ 1411 0085 0B       		.uleb128 0xb
+ 1412 0086 11       		.uleb128 0x11
+ 1413 0087 01       		.uleb128 0x1
+ 1414 0088 12       		.uleb128 0x12
+ 1415 0089 06       		.uleb128 0x6
+ 1416 008a 40       		.uleb128 0x40
+ 1417 008b 18       		.uleb128 0x18
+ 1418 008c 9742     		.uleb128 0x2117
+ 1419 008e 19       		.uleb128 0x19
+ 1420 008f 01       		.uleb128 0x1
+ 1421 0090 13       		.uleb128 0x13
+ 1422 0091 00       		.byte	0
+ 1423 0092 00       		.byte	0
+ 1424 0093 0B       		.uleb128 0xb
+ 1425 0094 05       		.uleb128 0x5
+ 1426 0095 00       		.byte	0
+ 1427 0096 03       		.uleb128 0x3
+ 1428 0097 0E       		.uleb128 0xe
+ 1429 0098 3A       		.uleb128 0x3a
+ 1430 0099 0B       		.uleb128 0xb
+ 1431 009a 3B       		.uleb128 0x3b
+ 1432 009b 0B       		.uleb128 0xb
+ 1433 009c 49       		.uleb128 0x49
+ 1434 009d 13       		.uleb128 0x13
+ 1435 009e 02       		.uleb128 0x2
+ 1436 009f 17       		.uleb128 0x17
+ 1437 00a0 00       		.byte	0
+ 1438 00a1 00       		.byte	0
+ 1439 00a2 0C       		.uleb128 0xc
+ 1440 00a3 0B       		.uleb128 0xb
+ 1441 00a4 01       		.byte	0x1
+ 1442 00a5 11       		.uleb128 0x11
+ 1443 00a6 01       		.uleb128 0x1
+ 1444 00a7 12       		.uleb128 0x12
+ 1445 00a8 06       		.uleb128 0x6
+ 1446 00a9 01       		.uleb128 0x1
+ 1447 00aa 13       		.uleb128 0x13
+ 1448 00ab 00       		.byte	0
+ 1449 00ac 00       		.byte	0
+ 1450 00ad 0D       		.uleb128 0xd
+ 1451 00ae 34       		.uleb128 0x34
+ 1452 00af 00       		.byte	0
+ 1453 00b0 03       		.uleb128 0x3
+ 1454 00b1 08       		.uleb128 0x8
+ 1455 00b2 3A       		.uleb128 0x3a
+ 1456 00b3 0B       		.uleb128 0xb
+ 1457 00b4 3B       		.uleb128 0x3b
+ 1458 00b5 0B       		.uleb128 0xb
+ 1459 00b6 49       		.uleb128 0x49
+ 1460 00b7 13       		.uleb128 0x13
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 31
+
+
+ 1461 00b8 02       		.uleb128 0x2
+ 1462 00b9 17       		.uleb128 0x17
+ 1463 00ba 00       		.byte	0
+ 1464 00bb 00       		.byte	0
+ 1465 00bc 0E       		.uleb128 0xe
+ 1466 00bd 0F       		.uleb128 0xf
+ 1467 00be 00       		.byte	0
+ 1468 00bf 0B       		.uleb128 0xb
+ 1469 00c0 0B       		.uleb128 0xb
+ 1470 00c1 49       		.uleb128 0x49
+ 1471 00c2 13       		.uleb128 0x13
+ 1472 00c3 00       		.byte	0
+ 1473 00c4 00       		.byte	0
+ 1474 00c5 0F       		.uleb128 0xf
+ 1475 00c6 34       		.uleb128 0x34
+ 1476 00c7 00       		.byte	0
+ 1477 00c8 03       		.uleb128 0x3
+ 1478 00c9 0E       		.uleb128 0xe
+ 1479 00ca 3A       		.uleb128 0x3a
+ 1480 00cb 0B       		.uleb128 0xb
+ 1481 00cc 3B       		.uleb128 0x3b
+ 1482 00cd 0B       		.uleb128 0xb
+ 1483 00ce 49       		.uleb128 0x49
+ 1484 00cf 13       		.uleb128 0x13
+ 1485 00d0 02       		.uleb128 0x2
+ 1486 00d1 18       		.uleb128 0x18
+ 1487 00d2 00       		.byte	0
+ 1488 00d3 00       		.byte	0
+ 1489 00d4 10       		.uleb128 0x10
+ 1490 00d5 898201   		.uleb128 0x4109
+ 1491 00d8 01       		.byte	0x1
+ 1492 00d9 11       		.uleb128 0x11
+ 1493 00da 01       		.uleb128 0x1
+ 1494 00db 31       		.uleb128 0x31
+ 1495 00dc 13       		.uleb128 0x13
+ 1496 00dd 00       		.byte	0
+ 1497 00de 00       		.byte	0
+ 1498 00df 11       		.uleb128 0x11
+ 1499 00e0 01       		.uleb128 0x1
+ 1500 00e1 01       		.byte	0x1
+ 1501 00e2 49       		.uleb128 0x49
+ 1502 00e3 13       		.uleb128 0x13
+ 1503 00e4 01       		.uleb128 0x1
+ 1504 00e5 13       		.uleb128 0x13
+ 1505 00e6 00       		.byte	0
+ 1506 00e7 00       		.byte	0
+ 1507 00e8 12       		.uleb128 0x12
+ 1508 00e9 21       		.uleb128 0x21
+ 1509 00ea 00       		.byte	0
+ 1510 00eb 49       		.uleb128 0x49
+ 1511 00ec 13       		.uleb128 0x13
+ 1512 00ed 2F       		.uleb128 0x2f
+ 1513 00ee 0B       		.uleb128 0xb
+ 1514 00ef 00       		.byte	0
+ 1515 00f0 00       		.byte	0
+ 1516 00f1 13       		.uleb128 0x13
+ 1517 00f2 34       		.uleb128 0x34
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 32
+
+
+ 1518 00f3 00       		.byte	0
+ 1519 00f4 03       		.uleb128 0x3
+ 1520 00f5 0E       		.uleb128 0xe
+ 1521 00f6 3A       		.uleb128 0x3a
+ 1522 00f7 0B       		.uleb128 0xb
+ 1523 00f8 3B       		.uleb128 0x3b
+ 1524 00f9 0B       		.uleb128 0xb
+ 1525 00fa 49       		.uleb128 0x49
+ 1526 00fb 13       		.uleb128 0x13
+ 1527 00fc 1C       		.uleb128 0x1c
+ 1528 00fd 0B       		.uleb128 0xb
+ 1529 00fe 00       		.byte	0
+ 1530 00ff 00       		.byte	0
+ 1531 0100 14       		.uleb128 0x14
+ 1532 0101 34       		.uleb128 0x34
+ 1533 0102 00       		.byte	0
+ 1534 0103 03       		.uleb128 0x3
+ 1535 0104 0E       		.uleb128 0xe
+ 1536 0105 3A       		.uleb128 0x3a
+ 1537 0106 0B       		.uleb128 0xb
+ 1538 0107 3B       		.uleb128 0x3b
+ 1539 0108 05       		.uleb128 0x5
+ 1540 0109 49       		.uleb128 0x49
+ 1541 010a 13       		.uleb128 0x13
+ 1542 010b 3F       		.uleb128 0x3f
+ 1543 010c 19       		.uleb128 0x19
+ 1544 010d 3C       		.uleb128 0x3c
+ 1545 010e 19       		.uleb128 0x19
+ 1546 010f 00       		.byte	0
+ 1547 0110 00       		.byte	0
+ 1548 0111 15       		.uleb128 0x15
+ 1549 0112 34       		.uleb128 0x34
+ 1550 0113 00       		.byte	0
+ 1551 0114 03       		.uleb128 0x3
+ 1552 0115 0E       		.uleb128 0xe
+ 1553 0116 3A       		.uleb128 0x3a
+ 1554 0117 0B       		.uleb128 0xb
+ 1555 0118 3B       		.uleb128 0x3b
+ 1556 0119 0B       		.uleb128 0xb
+ 1557 011a 49       		.uleb128 0x49
+ 1558 011b 13       		.uleb128 0x13
+ 1559 011c 3F       		.uleb128 0x3f
+ 1560 011d 19       		.uleb128 0x19
+ 1561 011e 02       		.uleb128 0x2
+ 1562 011f 18       		.uleb128 0x18
+ 1563 0120 00       		.byte	0
+ 1564 0121 00       		.byte	0
+ 1565 0122 16       		.uleb128 0x16
+ 1566 0123 34       		.uleb128 0x34
+ 1567 0124 00       		.byte	0
+ 1568 0125 03       		.uleb128 0x3
+ 1569 0126 08       		.uleb128 0x8
+ 1570 0127 3A       		.uleb128 0x3a
+ 1571 0128 0B       		.uleb128 0xb
+ 1572 0129 3B       		.uleb128 0x3b
+ 1573 012a 0B       		.uleb128 0xb
+ 1574 012b 49       		.uleb128 0x49
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 33
+
+
+ 1575 012c 13       		.uleb128 0x13
+ 1576 012d 3F       		.uleb128 0x3f
+ 1577 012e 19       		.uleb128 0x19
+ 1578 012f 02       		.uleb128 0x2
+ 1579 0130 18       		.uleb128 0x18
+ 1580 0131 00       		.byte	0
+ 1581 0132 00       		.byte	0
+ 1582 0133 17       		.uleb128 0x17
+ 1583 0134 2E       		.uleb128 0x2e
+ 1584 0135 00       		.byte	0
+ 1585 0136 3F       		.uleb128 0x3f
+ 1586 0137 19       		.uleb128 0x19
+ 1587 0138 3C       		.uleb128 0x3c
+ 1588 0139 19       		.uleb128 0x19
+ 1589 013a 6E       		.uleb128 0x6e
+ 1590 013b 0E       		.uleb128 0xe
+ 1591 013c 03       		.uleb128 0x3
+ 1592 013d 0E       		.uleb128 0xe
+ 1593 013e 3A       		.uleb128 0x3a
+ 1594 013f 0B       		.uleb128 0xb
+ 1595 0140 3B       		.uleb128 0x3b
+ 1596 0141 0B       		.uleb128 0xb
+ 1597 0142 00       		.byte	0
+ 1598 0143 00       		.byte	0
+ 1599 0144 18       		.uleb128 0x18
+ 1600 0145 2E       		.uleb128 0x2e
+ 1601 0146 00       		.byte	0
+ 1602 0147 3F       		.uleb128 0x3f
+ 1603 0148 19       		.uleb128 0x19
+ 1604 0149 3C       		.uleb128 0x3c
+ 1605 014a 19       		.uleb128 0x19
+ 1606 014b 6E       		.uleb128 0x6e
+ 1607 014c 0E       		.uleb128 0xe
+ 1608 014d 03       		.uleb128 0x3
+ 1609 014e 0E       		.uleb128 0xe
+ 1610 014f 00       		.byte	0
+ 1611 0150 00       		.byte	0
+ 1612 0151 00       		.byte	0
+ 1613              		.section	.debug_loc,"",%progbits
+ 1614              	.Ldebug_loc0:
+ 1615              	.LLST0:
+ 1616 0000 00000000 		.4byte	.LVL8
+ 1617 0004 1B000000 		.4byte	.LVL12-1
+ 1618 0008 0100     		.2byte	0x1
+ 1619 000a 50       		.byte	0x50
+ 1620 000b 1B000000 		.4byte	.LVL12-1
+ 1621 000f 98000000 		.4byte	.LFE64
+ 1622 0013 0400     		.2byte	0x4
+ 1623 0015 F3       		.byte	0xf3
+ 1624 0016 01       		.uleb128 0x1
+ 1625 0017 50       		.byte	0x50
+ 1626 0018 9F       		.byte	0x9f
+ 1627 0019 00000000 		.4byte	0
+ 1628 001d 00000000 		.4byte	0
+ 1629              	.LLST1:
+ 1630 0021 08000000 		.4byte	.LVL9
+ 1631 0025 0C000000 		.4byte	.LVL10
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 34
+
+
+ 1632 0029 0200     		.2byte	0x2
+ 1633 002b 30       		.byte	0x30
+ 1634 002c 9F       		.byte	0x9f
+ 1635 002d 0C000000 		.4byte	.LVL10
+ 1636 0031 1B000000 		.4byte	.LVL12-1
+ 1637 0035 0100     		.2byte	0x1
+ 1638 0037 53       		.byte	0x53
+ 1639 0038 00000000 		.4byte	0
+ 1640 003c 00000000 		.4byte	0
+ 1641              	.LLST2:
+ 1642 0040 1C000000 		.4byte	.LVL12
+ 1643 0044 20000000 		.4byte	.LVL13
+ 1644 0048 0200     		.2byte	0x2
+ 1645 004a 30       		.byte	0x30
+ 1646 004b 9F       		.byte	0x9f
+ 1647 004c 20000000 		.4byte	.LVL13
+ 1648 0050 7C000000 		.4byte	.LVL14
+ 1649 0054 0100     		.2byte	0x1
+ 1650 0056 53       		.byte	0x53
+ 1651 0057 7E000000 		.4byte	.LVL15
+ 1652 005b 85000000 		.4byte	.LVL16-1
+ 1653 005f 0100     		.2byte	0x1
+ 1654 0061 53       		.byte	0x53
+ 1655 0062 00000000 		.4byte	0
+ 1656 0066 00000000 		.4byte	0
+ 1657              	.LLST3:
+ 1658 006a 00000000 		.4byte	.LVL17
+ 1659 006e 3D000000 		.4byte	.LVL22-1
+ 1660 0072 0100     		.2byte	0x1
+ 1661 0074 50       		.byte	0x50
+ 1662 0075 3D000000 		.4byte	.LVL22-1
+ 1663 0079 48000000 		.4byte	.LFE66
+ 1664 007d 0400     		.2byte	0x4
+ 1665 007f F3       		.byte	0xf3
+ 1666 0080 01       		.uleb128 0x1
+ 1667 0081 50       		.byte	0x50
+ 1668 0082 9F       		.byte	0x9f
+ 1669 0083 00000000 		.4byte	0
+ 1670 0087 00000000 		.4byte	0
+ 1671              	.LLST4:
+ 1672 008b 08000000 		.4byte	.LVL18
+ 1673 008f 0C000000 		.4byte	.LVL19
+ 1674 0093 0200     		.2byte	0x2
+ 1675 0095 30       		.byte	0x30
+ 1676 0096 9F       		.byte	0x9f
+ 1677 0097 0C000000 		.4byte	.LVL19
+ 1678 009b 34000000 		.4byte	.LVL20
+ 1679 009f 0100     		.2byte	0x1
+ 1680 00a1 53       		.byte	0x53
+ 1681 00a2 36000000 		.4byte	.LVL21
+ 1682 00a6 3D000000 		.4byte	.LVL22-1
+ 1683 00aa 0100     		.2byte	0x1
+ 1684 00ac 53       		.byte	0x53
+ 1685 00ad 00000000 		.4byte	0
+ 1686 00b1 00000000 		.4byte	0
+ 1687              	.LLST5:
+ 1688 00b5 00000000 		.4byte	.LVL25
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 35
+
+
+ 1689 00b9 3F000000 		.4byte	.LVL30-1
+ 1690 00bd 0100     		.2byte	0x1
+ 1691 00bf 50       		.byte	0x50
+ 1692 00c0 3F000000 		.4byte	.LVL30-1
+ 1693 00c4 58000000 		.4byte	.LFE67
+ 1694 00c8 0400     		.2byte	0x4
+ 1695 00ca F3       		.byte	0xf3
+ 1696 00cb 01       		.uleb128 0x1
+ 1697 00cc 50       		.byte	0x50
+ 1698 00cd 9F       		.byte	0x9f
+ 1699 00ce 00000000 		.4byte	0
+ 1700 00d2 00000000 		.4byte	0
+ 1701              	.LLST6:
+ 1702 00d6 08000000 		.4byte	.LVL26
+ 1703 00da 0C000000 		.4byte	.LVL27
+ 1704 00de 0200     		.2byte	0x2
+ 1705 00e0 30       		.byte	0x30
+ 1706 00e1 9F       		.byte	0x9f
+ 1707 00e2 0C000000 		.4byte	.LVL27
+ 1708 00e6 36000000 		.4byte	.LVL28
+ 1709 00ea 0100     		.2byte	0x1
+ 1710 00ec 53       		.byte	0x53
+ 1711 00ed 38000000 		.4byte	.LVL29
+ 1712 00f1 3F000000 		.4byte	.LVL30-1
+ 1713 00f5 0100     		.2byte	0x1
+ 1714 00f7 53       		.byte	0x53
+ 1715 00f8 00000000 		.4byte	0
+ 1716 00fc 00000000 		.4byte	0
+ 1717              	.LLST7:
+ 1718 0100 04000000 		.4byte	.LVL35
+ 1719 0104 08000000 		.4byte	.LVL36
+ 1720 0108 0200     		.2byte	0x2
+ 1721 010a 30       		.byte	0x30
+ 1722 010b 9F       		.byte	0x9f
+ 1723 010c 08000000 		.4byte	.LVL36
+ 1724 0110 45000000 		.4byte	.LVL39-1
+ 1725 0114 0100     		.2byte	0x1
+ 1726 0116 52       		.byte	0x52
+ 1727 0117 00000000 		.4byte	0
+ 1728 011b 00000000 		.4byte	0
+ 1729              		.section	.debug_aranges,"",%progbits
+ 1730 0000 54000000 		.4byte	0x54
+ 1731 0004 0200     		.2byte	0x2
+ 1732 0006 00000000 		.4byte	.Ldebug_info0
+ 1733 000a 04       		.byte	0x4
+ 1734 000b 00       		.byte	0
+ 1735 000c 0000     		.2byte	0
+ 1736 000e 0000     		.2byte	0
+ 1737 0010 00000000 		.4byte	.LFB63
+ 1738 0014 60000000 		.4byte	.LFE63-.LFB63
+ 1739 0018 00000000 		.4byte	.LFB65
+ 1740 001c 58000000 		.4byte	.LFE65-.LFB65
+ 1741 0020 00000000 		.4byte	.LFB64
+ 1742 0024 98000000 		.4byte	.LFE64-.LFB64
+ 1743 0028 00000000 		.4byte	.LFB66
+ 1744 002c 48000000 		.4byte	.LFE66-.LFB66
+ 1745 0030 00000000 		.4byte	.LFB69
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 36
+
+
+ 1746 0034 1A000000 		.4byte	.LFE69-.LFB69
+ 1747 0038 00000000 		.4byte	.LFB67
+ 1748 003c 58000000 		.4byte	.LFE67-.LFB67
+ 1749 0040 00000000 		.4byte	.LFB68
+ 1750 0044 14000000 		.4byte	.LFE68-.LFB68
+ 1751 0048 00000000 		.4byte	.LFB70
+ 1752 004c 4C000000 		.4byte	.LFE70-.LFB70
+ 1753 0050 00000000 		.4byte	0
+ 1754 0054 00000000 		.4byte	0
+ 1755              		.section	.debug_ranges,"",%progbits
+ 1756              	.Ldebug_ranges0:
+ 1757 0000 00000000 		.4byte	.LFB63
+ 1758 0004 60000000 		.4byte	.LFE63
+ 1759 0008 00000000 		.4byte	.LFB65
+ 1760 000c 58000000 		.4byte	.LFE65
+ 1761 0010 00000000 		.4byte	.LFB64
+ 1762 0014 98000000 		.4byte	.LFE64
+ 1763 0018 00000000 		.4byte	.LFB66
+ 1764 001c 48000000 		.4byte	.LFE66
+ 1765 0020 00000000 		.4byte	.LFB69
+ 1766 0024 1A000000 		.4byte	.LFE69
+ 1767 0028 00000000 		.4byte	.LFB67
+ 1768 002c 58000000 		.4byte	.LFE67
+ 1769 0030 00000000 		.4byte	.LFB68
+ 1770 0034 14000000 		.4byte	.LFE68
+ 1771 0038 00000000 		.4byte	.LFB70
+ 1772 003c 4C000000 		.4byte	.LFE70
+ 1773 0040 00000000 		.4byte	0
+ 1774 0044 00000000 		.4byte	0
+ 1775              		.section	.debug_line,"",%progbits
+ 1776              	.Ldebug_line0:
+ 1777 0000 F2020000 		.section	.debug_str,"MS",%progbits,1
+ 1777      0200B001 
+ 1777      00000201 
+ 1777      FB0E0D00 
+ 1777      01010101 
+ 1778              	.LASF37:
+ 1779 0000 6C656761 		.ascii	"legalMoves\000"
+ 1779      6C4D6F76 
+ 1779      657300
+ 1780              	.LASF13:
+ 1781 000b 696E7438 		.ascii	"int8_t\000"
+ 1781      5F7400
+ 1782              	.LASF28:
+ 1783 0012 7475726E 		.ascii	"turnOffLEDs\000"
+ 1783      4F66664C 
+ 1783      45447300 
+ 1784              	.LASF4:
+ 1785 001e 73686F72 		.ascii	"short int\000"
+ 1785      7420696E 
+ 1785      7400
+ 1786              	.LASF21:
+ 1787 0028 73697A65 		.ascii	"sizetype\000"
+ 1787      74797065 
+ 1787      00
+ 1788              	.LASF27:
+ 1789 0031 70776D4C 		.ascii	"pwmLedInterrupt\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 37
+
+
+ 1789      6564496E 
+ 1789      74657272 
+ 1789      75707400 
+ 1790              	.LASF34:
+ 1791 0041 63757272 		.ascii	"currentSquare\000"
+ 1791      656E7453 
+ 1791      71756172 
+ 1791      6500
+ 1792              	.LASF5:
+ 1793 004f 5F5F7569 		.ascii	"__uint16_t\000"
+ 1793      6E743136 
+ 1793      5F7400
+ 1794              	.LASF51:
+ 1795 005a 50574D5F 		.ascii	"PWM_ReadStatusRegister\000"
+ 1795      52656164 
+ 1795      53746174 
+ 1795      75735265 
+ 1795      67697374 
+ 1796              	.LASF40:
+ 1797 0071 6E657750 		.ascii	"newPos\000"
+ 1797      6F7300
+ 1798              	.LASF48:
+ 1799 0078 6C656444 		.ascii	"ledData\000"
+ 1799      61746100 
+ 1800              	.LASF30:
+ 1801 0080 6D6F7665 		.ascii	"moveAcceptedLED\000"
+ 1801      41636365 
+ 1801      70746564 
+ 1801      4C454400 
+ 1802              	.LASF17:
+ 1803 0090 666C6F61 		.ascii	"float\000"
+ 1803      7400
+ 1804              	.LASF36:
+ 1805 0096 73746172 		.ascii	"startChar\000"
+ 1805      74436861 
+ 1805      7200
+ 1806              	.LASF10:
+ 1807 00a0 6C6F6E67 		.ascii	"long long int\000"
+ 1807      206C6F6E 
+ 1807      6720696E 
+ 1807      7400
+ 1808              	.LASF39:
+ 1809 00ae 73717561 		.ascii	"squareReg\000"
+ 1809      72655265 
+ 1809      6700
+ 1810              	.LASF54:
+ 1811 00b8 73656E73 		.ascii	"sensorScan\000"
+ 1811      6F725363 
+ 1811      616E00
+ 1812              	.LASF60:
+ 1813 00c3 6D656D73 		.ascii	"memset\000"
+ 1813      657400
+ 1814              	.LASF22:
+ 1815 00ca 50574D5F 		.ascii	"PWM_ISR_handler\000"
+ 1815      4953525F 
+ 1815      68616E64 
+ 1815      6C657200 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 38
+
+
+ 1816              	.LASF8:
+ 1817 00da 6C6F6E67 		.ascii	"long int\000"
+ 1817      20696E74 
+ 1817      00
+ 1818              	.LASF1:
+ 1819 00e3 5F5F7569 		.ascii	"__uint8_t\000"
+ 1819      6E74385F 
+ 1819      7400
+ 1820              	.LASF38:
+ 1821 00ed 6C617374 		.ascii	"lastSquareReg\000"
+ 1821      53717561 
+ 1821      72655265 
+ 1821      6700
+ 1822              	.LASF45:
+ 1823 00fb 6C656441 		.ascii	"ledArray\000"
+ 1823      72726179 
+ 1823      00
+ 1824              	.LASF43:
+ 1825 0104 64656164 		.ascii	"deadPieceLifted\000"
+ 1825      50696563 
+ 1825      654C6966 
+ 1825      74656400 
+ 1826              	.LASF53:
+ 1827 0114 50574D5F 		.ascii	"PWM_Stop\000"
+ 1827      53746F70 
+ 1827      00
+ 1828              	.LASF35:
+ 1829 011d 73746570 		.ascii	"stepCase\000"
+ 1829      43617365 
+ 1829      00
+ 1830              	.LASF20:
+ 1831 0126 6C6F6E67 		.ascii	"long double\000"
+ 1831      20646F75 
+ 1831      626C6500 
+ 1832              	.LASF42:
+ 1833 0132 70696563 		.ascii	"pieceLiftPos\000"
+ 1833      654C6966 
+ 1833      74506F73 
+ 1833      00
+ 1834              	.LASF3:
+ 1835 013f 756E7369 		.ascii	"unsigned char\000"
+ 1835      676E6564 
+ 1835      20636861 
+ 1835      7200
+ 1836              	.LASF29:
+ 1837 014d 6F666641 		.ascii	"offArray\000"
+ 1837      72726179 
+ 1837      00
+ 1838              	.LASF31:
+ 1839 0156 696E6974 		.ascii	"initLED\000"
+ 1839      4C454400 
+ 1840              	.LASF46:
+ 1841 015e 62697449 		.ascii	"bitIndex\000"
+ 1841      6E646578 
+ 1841      00
+ 1842              	.LASF2:
+ 1843 0167 7369676E 		.ascii	"signed char\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 39
+
+
+ 1843      65642063 
+ 1843      68617200 
+ 1844              	.LASF11:
+ 1845 0173 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1845      206C6F6E 
+ 1845      6720756E 
+ 1845      7369676E 
+ 1845      65642069 
+ 1846              	.LASF12:
+ 1847 018a 756E7369 		.ascii	"unsigned int\000"
+ 1847      676E6564 
+ 1847      20696E74 
+ 1847      00
+ 1848              	.LASF15:
+ 1849 0197 75696E74 		.ascii	"uint16_t\000"
+ 1849      31365F74 
+ 1849      00
+ 1850              	.LASF44:
+ 1851 01a0 64656164 		.ascii	"deadLiftPos\000"
+ 1851      4C696674 
+ 1851      506F7300 
+ 1852              	.LASF49:
+ 1853 01ac 50574D5F 		.ascii	"PWM_WriteCompare\000"
+ 1853      57726974 
+ 1853      65436F6D 
+ 1853      70617265 
+ 1853      00
+ 1854              	.LASF58:
+ 1855 01bd 4C454452 		.ascii	"LEDRoboMate.c\000"
+ 1855      6F626F4D 
+ 1855      6174652E 
+ 1855      6300
+ 1856              	.LASF50:
+ 1857 01cb 436F6E74 		.ascii	"Control_Reg_1_Write\000"
+ 1857      726F6C5F 
+ 1857      5265675F 
+ 1857      315F5772 
+ 1857      69746500 
+ 1858              	.LASF6:
+ 1859 01df 73686F72 		.ascii	"short unsigned int\000"
+ 1859      7420756E 
+ 1859      7369676E 
+ 1859      65642069 
+ 1859      6E7400
+ 1860              	.LASF0:
+ 1861 01f2 5F5F696E 		.ascii	"__int8_t\000"
+ 1861      74385F74 
+ 1861      00
+ 1862              	.LASF41:
+ 1863 01fb 70696563 		.ascii	"pieceLifted\000"
+ 1863      654C6966 
+ 1863      74656400 
+ 1864              	.LASF19:
+ 1865 0207 63686172 		.ascii	"char\000"
+ 1865      00
+ 1866              	.LASF32:
+ 1867 020c 4C454474 		.ascii	"LEDtest\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 40
+
+
+ 1867      65737400 
+ 1868              	.LASF16:
+ 1869 0214 696E7433 		.ascii	"int32_t\000"
+ 1869      325F7400 
+ 1870              	.LASF23:
+ 1871 021c 7365744C 		.ascii	"setLEDs\000"
+ 1871      45447300 
+ 1872              	.LASF9:
+ 1873 0224 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1873      20756E73 
+ 1873      69676E65 
+ 1873      6420696E 
+ 1873      7400
+ 1874              	.LASF18:
+ 1875 0236 646F7562 		.ascii	"double\000"
+ 1875      6C6500
+ 1876              	.LASF25:
+ 1877 023d 61727261 		.ascii	"array\000"
+ 1877      7900
+ 1878              	.LASF26:
+ 1879 0243 6C65644E 		.ascii	"ledNr\000"
+ 1879      7200
+ 1880              	.LASF7:
+ 1881 0249 5F5F696E 		.ascii	"__int32_t\000"
+ 1881      7433325F 
+ 1881      7400
+ 1882              	.LASF14:
+ 1883 0253 75696E74 		.ascii	"uint8_t\000"
+ 1883      385F7400 
+ 1884              	.LASF52:
+ 1885 025b 50574D5F 		.ascii	"PWM_Start\000"
+ 1885      53746172 
+ 1885      7400
+ 1886              	.LASF56:
+ 1887 0265 6973725F 		.ascii	"isr_PWM_StartEx\000"
+ 1887      50574D5F 
+ 1887      53746172 
+ 1887      74457800 
+ 1888              	.LASF24:
+ 1889 0275 6F6E6C79 		.ascii	"onlyDeadPosLED\000"
+ 1889      44656164 
+ 1889      506F734C 
+ 1889      454400
+ 1890              	.LASF33:
+ 1891 0284 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1891      52784275 
+ 1891      66666572 
+ 1891      00
+ 1892              	.LASF57:
+ 1893 0291 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1893      43313120 
+ 1893      352E342E 
+ 1893      31203230 
+ 1893      31363036 
+ 1894 02c4 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1894      20726576 
+ 1894      6973696F 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccpjuKrO.s 			page 41
+
+
+ 1894      6E203233 
+ 1894      37373135 
+ 1895 02f7 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1895      66756E63 
+ 1895      74696F6E 
+ 1895      2D736563 
+ 1895      74696F6E 
+ 1896              	.LASF55:
+ 1897 031f 43794465 		.ascii	"CyDelay\000"
+ 1897      6C617900 
+ 1898              	.LASF47:
+ 1899 0327 62797465 		.ascii	"byteIndex\000"
+ 1899      496E6465 
+ 1899      7800
+ 1900              	.LASF59:
+ 1901 0331 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 1901      49545C52 
+ 1901      6F626F4D 
+ 1901      6174655C 
+ 1901      50536F43 
+ 1902 035f 726F6C6C 		.ascii	"roller.cydsn\000"
+ 1902      65722E63 
+ 1902      7964736E 
+ 1902      00
+ 1903              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

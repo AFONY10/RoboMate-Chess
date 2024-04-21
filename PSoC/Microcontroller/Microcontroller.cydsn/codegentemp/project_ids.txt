@@ -1,0 +1,6 @@
+C:\GIT\RoboMate\PSoC\Microcontroller\Microcontroller.cydsn\Microcontroller.cyprj|58c40466-e9ff-45b2-858b-9ebea160fed4
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|1e7c7e55-f781-483b-a3cc-d9bb7bca785a
+C:\Users\Simon\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\Downloads ( 4.4).cyprj|e8028d46-947b-4e81-b870-e693fa31657c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|36d63b80-bb5a-4346-865c-c5cb9658c339
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|a795e578-2090-450d-833f-c1c1eb480827
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|d239f6fe-da37-4b03-949c-3e710036535e

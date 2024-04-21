@@ -1,0 +1,2608 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"LedControl.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.PWM_ISR_handler,"ax",%progbits
+  20              		.align	2
+  21              		.global	PWM_ISR_handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	PWM_ISR_handler, %function
+  25              	PWM_ISR_handler:
+  26              	.LFB64:
+  27              		.file 1 "LedControl.c"
+   1:LedControl.c  **** #include "LedControl.h"   
+   2:LedControl.c  **** 
+   3:LedControl.c  **** 
+   4:LedControl.c  **** uint8_t whiteSquareArray[64] = {
+   5:LedControl.c  ****         0, 1, 0, 1, 0, 1, 0, 1,
+   6:LedControl.c  ****         1, 0, 1, 0, 1, 0, 1, 0,
+   7:LedControl.c  ****         0, 1, 0, 1, 0, 1, 0, 1,
+   8:LedControl.c  ****         1, 0, 1, 0, 1, 0, 1, 0,
+   9:LedControl.c  ****         0, 1, 0, 1, 0, 1, 0, 1,
+  10:LedControl.c  ****         1, 0, 1, 0, 1, 0, 1, 0,
+  11:LedControl.c  ****         0, 1, 0, 1, 0, 1, 0, 1,
+  12:LedControl.c  ****         1, 0, 1, 0, 1, 0, 1, 0};
+  13:LedControl.c  ****  
+  14:LedControl.c  **** 
+  15:LedControl.c  **** /*
+  16:LedControl.c  **** Gå under fanen "Clocks" <--. Dobbeltklik "PLL_Out"
+  17:LedControl.c  **** Sæt "Desired" under PLL_OUT til 70 Mhz
+  18:LedControl.c  **** Sæt Master clock til at modtage "PLL_OUT(70 mHz)"
+  19:LedControl.c  **** Indstil Divider til 1
+  20:LedControl.c  **** */
+  21:LedControl.c  **** 
+  22:LedControl.c  **** 
+  23:LedControl.c  ****     /*     Array:
+  24:LedControl.c  **** 
+  25:LedControl.c  ****                   Byte1 Byte2 Byte3               
+  26:LedControl.c  **** 
+  27:LedControl.c  ****         Led 1    [[Grøn][Rød][Blå]]
+  28:LedControl.c  ****         Led 2    [[Grøn][Rød][Blå]]
+  29:LedControl.c  ****         ...      [...             ]
+  30:LedControl.c  ****         Led 64   [[Grøn][Rød][Blå]]
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 2
+
+
+  31:LedControl.c  ****     */
+  32:LedControl.c  **** 
+  33:LedControl.c  **** CY_ISR(PWM_ISR_handler)
+  34:LedControl.c  **** {
+  28              		.loc 1 34 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  35:LedControl.c  ****     if (ledData[byteIndex] & (1 << bitIndex) && bitIndex >= 0)
+  36              		.loc 1 35 0
+  37 0002 104B     		ldr	r3, .L5
+  38 0004 1B88     		ldrh	r3, [r3]
+  39 0006 104A     		ldr	r2, .L5+4
+  40 0008 D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+  41 000a 104A     		ldr	r2, .L5+8
+  42 000c 92F90020 		ldrsb	r2, [r2]
+  43 0010 1341     		asrs	r3, r3, r2
+  44 0012 13F0010F 		tst	r3, #1
+  45 0016 08D0     		beq	.L2
+  46              		.loc 1 35 0 is_stmt 0 discriminator 1
+  47 0018 002A     		cmp	r2, #0
+  48 001a 06DB     		blt	.L2
+  36:LedControl.c  ****     {
+  37:LedControl.c  ****         PWM_WriteCompare(T_HIGH);
+  49              		.loc 1 37 0 is_stmt 1
+  50 001c 2820     		movs	r0, #40
+  51 001e FFF7FEFF 		bl	PWM_WriteCompare
+  52              	.LVL0:
+  38:LedControl.c  ****         Control_Reg_1_Write(1);
+  53              		.loc 1 38 0
+  54 0022 0120     		movs	r0, #1
+  55 0024 FFF7FEFF 		bl	Control_Reg_1_Write
+  56              	.LVL1:
+  57 0028 05E0     		b	.L3
+  58              	.L2:
+  39:LedControl.c  ****     }
+  40:LedControl.c  ****     else
+  41:LedControl.c  ****     {
+  42:LedControl.c  ****         PWM_WriteCompare(T_LOW);
+  59              		.loc 1 42 0
+  60 002a 5A20     		movs	r0, #90
+  61 002c FFF7FEFF 		bl	PWM_WriteCompare
+  62              	.LVL2:
+  43:LedControl.c  ****         Control_Reg_1_Write(1);
+  63              		.loc 1 43 0
+  64 0030 0120     		movs	r0, #1
+  65 0032 FFF7FEFF 		bl	Control_Reg_1_Write
+  66              	.LVL3:
+  67              	.L3:
+  44:LedControl.c  ****     }
+  45:LedControl.c  **** 
+  46:LedControl.c  ****     bitIndex--;
+  68              		.loc 1 46 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 3
+
+
+  69 0036 054A     		ldr	r2, .L5+8
+  70 0038 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  71 003a 013B     		subs	r3, r3, #1
+  72 003c 1370     		strb	r3, [r2]
+  47:LedControl.c  **** 
+  48:LedControl.c  ****     PWM_ReadStatusRegister();
+  73              		.loc 1 48 0
+  74 003e FFF7FEFF 		bl	PWM_ReadStatusRegister
+  75              	.LVL4:
+  76 0042 08BD     		pop	{r3, pc}
+  77              	.L6:
+  78              		.align	2
+  79              	.L5:
+  80 0044 00000000 		.word	byteIndex
+  81 0048 00000000 		.word	ledData
+  82 004c 00000000 		.word	bitIndex
+  83              		.cfi_endproc
+  84              	.LFE64:
+  85              		.size	PWM_ISR_handler, .-PWM_ISR_handler
+  86              		.section	.text.pwmLedInterrupt,"ax",%progbits
+  87              		.align	2
+  88              		.global	pwmLedInterrupt
+  89              		.thumb
+  90              		.thumb_func
+  91              		.type	pwmLedInterrupt, %function
+  92              	pwmLedInterrupt:
+  93              	.LFB66:
+  49:LedControl.c  **** }
+  50:LedControl.c  **** 
+  51:LedControl.c  **** void setLEDs(uint8_t array[SIZE])
+  52:LedControl.c  **** {
+  53:LedControl.c  ****     end = 1;
+  54:LedControl.c  ****     for(int i = 0; i < NUM_LEDS; i++)
+  55:LedControl.c  ****     {
+  56:LedControl.c  ****         ledArray[i] = array[i];
+  57:LedControl.c  ****     }
+  58:LedControl.c  ****     
+  59:LedControl.c  ****     // Lav en forløkke der løber igennem. HUSK at det der modtages er fra RPI legalMoves.
+  60:LedControl.c  ****     // i array[i]. Hvis gældene plads skal tændes(er et 1'tal), 
+  61:LedControl.c  ****     // køres der nogle if-statement, der styrer hvilken farve led'erne har.
+  62:LedControl.c  ****     
+  63:LedControl.c  ****     sensorScan(); // Opdaterer squareReg[]
+  64:LedControl.c  ****     
+  65:LedControl.c  ****     for (uint8_t i = 0; i < 64; i++) // Opdaterer ledData[SIZE*3] med de rigtige farver på led'ern
+  66:LedControl.c  ****     {   
+  67:LedControl.c  ****         if(whiteSquareArray[i]==1) //Hvis hvidt felt
+  68:LedControl.c  ****         {
+  69:LedControl.c  ****             if(ledArray[i] == 1 && ledArray[i] == squareReg[i]) //
+  70:LedControl.c  ****             {    
+  71:LedControl.c  ****                 //Vælg Farve//
+  72:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+  73:LedControl.c  ****                 ledData[i * 3 + 1] = WHITE_LED_INTESITY;     //Rød
+  74:LedControl.c  ****                 ledData[i * 3 + 2] = 0;     //Blå
+  75:LedControl.c  ****             }
+  76:LedControl.c  ****             if(ledArray[i] == 1 && ledArray[i] != squareReg[i])
+  77:LedControl.c  ****             {
+  78:LedControl.c  ****                 //Vælg Farve//
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 4
+
+
+  79:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+  80:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød
+  81:LedControl.c  ****                 ledData[i * 3 + 2] = WHITE_LED_INTESITY;     //Blå
+  82:LedControl.c  ****             }
+  83:LedControl.c  ****             if(ledArray[i] == 0)
+  84:LedControl.c  ****             {
+  85:LedControl.c  ****                 //Vælg Farve//
+  86:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+  87:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+  88:LedControl.c  ****                 ledData[i * 3 + 2] = 0;       //Blå
+  89:LedControl.c  ****             }
+  90:LedControl.c  ****         }
+  91:LedControl.c  ****         else // Hvis sort felt
+  92:LedControl.c  ****         {
+  93:LedControl.c  ****             if(ledArray[i] == 1 && ledArray[i] == squareReg[i]) //
+  94:LedControl.c  ****             {    
+  95:LedControl.c  ****                 //Vælg Farve//
+  96:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+  97:LedControl.c  ****                 ledData[i * 3 + 1] = BLACK_LED_INTESITY;     //Rød
+  98:LedControl.c  ****                 ledData[i * 3 + 2] = 0;     //Blå
+  99:LedControl.c  ****             }
+ 100:LedControl.c  ****             if(ledArray[i] == 1 && ledArray[i] != squareReg[i])
+ 101:LedControl.c  ****             {
+ 102:LedControl.c  ****                 //Vælg Farve//
+ 103:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+ 104:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød
+ 105:LedControl.c  ****                 ledData[i * 3 + 2] = BLACK_LED_INTESITY;     //Blå
+ 106:LedControl.c  ****             }
+ 107:LedControl.c  ****             if(ledArray[i] == 0)
+ 108:LedControl.c  ****             {
+ 109:LedControl.c  ****                 //Vælg Farve//
+ 110:LedControl.c  ****                 ledData[i * 3]     = 0;       //Grøn
+ 111:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+ 112:LedControl.c  ****                 ledData[i * 3 + 2] = 0;       //Blå
+ 113:LedControl.c  ****             }
+ 114:LedControl.c  ****         }
+ 115:LedControl.c  ****     }  
+ 116:LedControl.c  **** 
+ 117:LedControl.c  ****     pwmLedInterrupt();
+ 118:LedControl.c  **** }
+ 119:LedControl.c  **** 
+ 120:LedControl.c  **** void pwmLedInterrupt()
+ 121:LedControl.c  **** {
+  94              		.loc 1 121 0
+  95              		.cfi_startproc
+  96              		@ args = 0, pretend = 0, frame = 0
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98 0000 08B5     		push	{r3, lr}
+  99              		.cfi_def_cfa_offset 8
+ 100              		.cfi_offset 3, -8
+ 101              		.cfi_offset 14, -4
+ 122:LedControl.c  ****     PWM_Start();
+ 102              		.loc 1 122 0
+ 103 0002 FFF7FEFF 		bl	PWM_Start
+ 104              	.LVL5:
+ 123:LedControl.c  ****     Control_Reg_1_Write(1);
+ 105              		.loc 1 123 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 5
+
+
+ 106 0006 0120     		movs	r0, #1
+ 107 0008 FFF7FEFF 		bl	Control_Reg_1_Write
+ 108              	.LVL6:
+ 124:LedControl.c  **** 
+ 125:LedControl.c  ****     // Vent indtil alle bits er sendt
+ 126:LedControl.c  ****     while(end)
+ 109              		.loc 1 126 0
+ 110 000c 15E0     		b	.L9
+ 111              	.L11:
+ 127:LedControl.c  ****     {
+ 128:LedControl.c  ****         // Tjek om vi har sendt alle 24 bits
+ 129:LedControl.c  ****         if (bitIndex < 0)
+ 112              		.loc 1 129 0
+ 113 000e 0D4B     		ldr	r3, .L13
+ 114 0010 93F90030 		ldrsb	r3, [r3]
+ 115 0014 002B     		cmp	r3, #0
+ 116 0016 10DA     		bge	.L9
+ 130:LedControl.c  ****         {
+ 131:LedControl.c  ****             bitIndex = 7;
+ 117              		.loc 1 131 0
+ 118 0018 0722     		movs	r2, #7
+ 119 001a 0A4B     		ldr	r3, .L13
+ 120 001c 1A70     		strb	r2, [r3]
+ 132:LedControl.c  ****             byteIndex++;
+ 121              		.loc 1 132 0
+ 122 001e 0A4A     		ldr	r2, .L13+4
+ 123 0020 1388     		ldrh	r3, [r2]
+ 124 0022 0133     		adds	r3, r3, #1
+ 125 0024 9BB2     		uxth	r3, r3
+ 126 0026 1380     		strh	r3, [r2]	@ movhi
+ 133:LedControl.c  ****             if(byteIndex >= (NUM_LEDS * 3))
+ 127              		.loc 1 133 0
+ 128 0028 BF2B     		cmp	r3, #191
+ 129 002a 06D9     		bls	.L9
+ 134:LedControl.c  ****             {
+ 135:LedControl.c  ****                 // Alle bits er blevet sendt, stop PWM
+ 136:LedControl.c  ****                 PWM_Stop();
+ 130              		.loc 1 136 0
+ 131 002c FFF7FEFF 		bl	PWM_Stop
+ 132              	.LVL7:
+ 137:LedControl.c  ****                 byteIndex = 0;
+ 133              		.loc 1 137 0
+ 134 0030 0023     		movs	r3, #0
+ 135 0032 054A     		ldr	r2, .L13+4
+ 136 0034 1380     		strh	r3, [r2]	@ movhi
+ 138:LedControl.c  ****                 end = 0;
+ 137              		.loc 1 138 0
+ 138 0036 054A     		ldr	r2, .L13+8
+ 139 0038 1360     		str	r3, [r2]
+ 140              	.L9:
+ 126:LedControl.c  ****     {
+ 141              		.loc 1 126 0
+ 142 003a 044B     		ldr	r3, .L13+8
+ 143 003c 1B68     		ldr	r3, [r3]
+ 144 003e 002B     		cmp	r3, #0
+ 145 0040 E5D1     		bne	.L11
+ 139:LedControl.c  ****             }
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 6
+
+
+ 140:LedControl.c  ****         }
+ 141:LedControl.c  ****     }
+ 142:LedControl.c  **** }
+ 146              		.loc 1 142 0
+ 147 0042 08BD     		pop	{r3, pc}
+ 148              	.L14:
+ 149              		.align	2
+ 150              	.L13:
+ 151 0044 00000000 		.word	bitIndex
+ 152 0048 00000000 		.word	byteIndex
+ 153 004c 00000000 		.word	end
+ 154              		.cfi_endproc
+ 155              	.LFE66:
+ 156              		.size	pwmLedInterrupt, .-pwmLedInterrupt
+ 157              		.section	.text.setLEDs,"ax",%progbits
+ 158              		.align	2
+ 159              		.global	setLEDs
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.type	setLEDs, %function
+ 163              	setLEDs:
+ 164              	.LFB65:
+  52:LedControl.c  ****     end = 1;
+ 165              		.loc 1 52 0
+ 166              		.cfi_startproc
+ 167              		@ args = 0, pretend = 0, frame = 0
+ 168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169              	.LVL8:
+ 170 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 171              		.cfi_def_cfa_offset 24
+ 172              		.cfi_offset 3, -24
+ 173              		.cfi_offset 4, -20
+ 174              		.cfi_offset 5, -16
+ 175              		.cfi_offset 6, -12
+ 176              		.cfi_offset 7, -8
+ 177              		.cfi_offset 14, -4
+  53:LedControl.c  ****     for(int i = 0; i < NUM_LEDS; i++)
+ 178              		.loc 1 53 0
+ 179 0002 0122     		movs	r2, #1
+ 180 0004 394B     		ldr	r3, .L27
+ 181 0006 1A60     		str	r2, [r3]
+ 182              	.LVL9:
+ 183              	.LBB2:
+  54:LedControl.c  ****     {
+ 184              		.loc 1 54 0
+ 185 0008 0023     		movs	r3, #0
+ 186 000a 03E0     		b	.L16
+ 187              	.LVL10:
+ 188              	.L17:
+  56:LedControl.c  ****     }
+ 189              		.loc 1 56 0 discriminator 3
+ 190 000c C15C     		ldrb	r1, [r0, r3]	@ zero_extendqisi2
+ 191 000e 384A     		ldr	r2, .L27+4
+ 192 0010 D154     		strb	r1, [r2, r3]
+  54:LedControl.c  ****     {
+ 193              		.loc 1 54 0 discriminator 3
+ 194 0012 0133     		adds	r3, r3, #1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 7
+
+
+ 195              	.LVL11:
+ 196              	.L16:
+  54:LedControl.c  ****     {
+ 197              		.loc 1 54 0 is_stmt 0 discriminator 1
+ 198 0014 3F2B     		cmp	r3, #63
+ 199 0016 F9DD     		ble	.L17
+ 200              	.LBE2:
+  63:LedControl.c  ****     
+ 201              		.loc 1 63 0 is_stmt 1
+ 202 0018 FFF7FEFF 		bl	sensorScan
+ 203              	.LVL12:
+ 204              	.LBB3:
+  65:LedControl.c  ****     {   
+ 205              		.loc 1 65 0
+ 206 001c 0023     		movs	r3, #0
+ 207 001e 5FE0     		b	.L18
+ 208              	.LVL13:
+ 209              	.L25:
+  67:LedControl.c  ****         {
+ 210              		.loc 1 67 0
+ 211 0020 1A46     		mov	r2, r3
+ 212 0022 3449     		ldr	r1, .L27+8
+ 213 0024 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 214 0026 0129     		cmp	r1, #1
+ 215 0028 2CD1     		bne	.L19
+  69:LedControl.c  ****             {    
+ 216              		.loc 1 69 0
+ 217 002a 3149     		ldr	r1, .L27+4
+ 218 002c C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 219 002e 0129     		cmp	r1, #1
+ 220 0030 0DD1     		bne	.L20
+  69:LedControl.c  ****             {    
+ 221              		.loc 1 69 0 is_stmt 0 discriminator 1
+ 222 0032 3148     		ldr	r0, .L27+12
+ 223 0034 C05C     		ldrb	r0, [r0, r3]	@ zero_extendqisi2
+ 224 0036 8142     		cmp	r1, r0
+ 225 0038 09D1     		bne	.L20
+  72:LedControl.c  ****                 ledData[i * 3 + 1] = WHITE_LED_INTESITY;     //Rød
+ 226              		.loc 1 72 0 is_stmt 1
+ 227 003a 03EB4300 		add	r0, r3, r3, lsl #1
+ 228 003e 2F4C     		ldr	r4, .L27+16
+ 229 0040 0025     		movs	r5, #0
+ 230 0042 2554     		strb	r5, [r4, r0]
+  73:LedControl.c  ****                 ledData[i * 3 + 2] = 0;     //Blå
+ 231              		.loc 1 73 0
+ 232 0044 461C     		adds	r6, r0, #1
+ 233 0046 1427     		movs	r7, #20
+ 234 0048 A755     		strb	r7, [r4, r6]
+  74:LedControl.c  ****             }
+ 235              		.loc 1 74 0
+ 236 004a 0230     		adds	r0, r0, #2
+ 237 004c 2554     		strb	r5, [r4, r0]
+ 238              	.L20:
+  76:LedControl.c  ****             {
+ 239              		.loc 1 76 0
+ 240 004e 0129     		cmp	r1, #1
+ 241 0050 0DD1     		bne	.L21
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 8
+
+
+  76:LedControl.c  ****             {
+ 242              		.loc 1 76 0 is_stmt 0 discriminator 1
+ 243 0052 2948     		ldr	r0, .L27+12
+ 244 0054 805C     		ldrb	r0, [r0, r2]	@ zero_extendqisi2
+ 245 0056 8142     		cmp	r1, r0
+ 246 0058 09D0     		beq	.L21
+  79:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød
+ 247              		.loc 1 79 0 is_stmt 1
+ 248 005a 02EB4200 		add	r0, r2, r2, lsl #1
+ 249 005e 274C     		ldr	r4, .L27+16
+ 250 0060 0025     		movs	r5, #0
+ 251 0062 2554     		strb	r5, [r4, r0]
+  80:LedControl.c  ****                 ledData[i * 3 + 2] = WHITE_LED_INTESITY;     //Blå
+ 252              		.loc 1 80 0
+ 253 0064 461C     		adds	r6, r0, #1
+ 254 0066 A555     		strb	r5, [r4, r6]
+  81:LedControl.c  ****             }
+ 255              		.loc 1 81 0
+ 256 0068 0230     		adds	r0, r0, #2
+ 257 006a 1425     		movs	r5, #20
+ 258 006c 2554     		strb	r5, [r4, r0]
+ 259              	.L21:
+  83:LedControl.c  ****             {
+ 260              		.loc 1 83 0
+ 261 006e A9BB     		cbnz	r1, .L22
+  86:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+ 262              		.loc 1 86 0
+ 263 0070 02EB4202 		add	r2, r2, r2, lsl #1
+ 264 0074 2149     		ldr	r1, .L27+16
+ 265 0076 0020     		movs	r0, #0
+ 266 0078 8854     		strb	r0, [r1, r2]
+  87:LedControl.c  ****                 ledData[i * 3 + 2] = 0;       //Blå
+ 267              		.loc 1 87 0
+ 268 007a 541C     		adds	r4, r2, #1
+ 269 007c 0855     		strb	r0, [r1, r4]
+  88:LedControl.c  ****             }
+ 270              		.loc 1 88 0
+ 271 007e 0232     		adds	r2, r2, #2
+ 272 0080 8854     		strb	r0, [r1, r2]
+ 273 0082 2BE0     		b	.L22
+ 274              	.L19:
+  93:LedControl.c  ****             {    
+ 275              		.loc 1 93 0
+ 276 0084 1A49     		ldr	r1, .L27+4
+ 277 0086 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 278 0088 0129     		cmp	r1, #1
+ 279 008a 0DD1     		bne	.L23
+  93:LedControl.c  ****             {    
+ 280              		.loc 1 93 0 is_stmt 0 discriminator 1
+ 281 008c 1A48     		ldr	r0, .L27+12
+ 282 008e C05C     		ldrb	r0, [r0, r3]	@ zero_extendqisi2
+ 283 0090 8142     		cmp	r1, r0
+ 284 0092 09D1     		bne	.L23
+  96:LedControl.c  ****                 ledData[i * 3 + 1] = BLACK_LED_INTESITY;     //Rød
+ 285              		.loc 1 96 0 is_stmt 1
+ 286 0094 03EB4300 		add	r0, r3, r3, lsl #1
+ 287 0098 184C     		ldr	r4, .L27+16
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 9
+
+
+ 288 009a 0025     		movs	r5, #0
+ 289 009c 2554     		strb	r5, [r4, r0]
+  97:LedControl.c  ****                 ledData[i * 3 + 2] = 0;     //Blå
+ 290              		.loc 1 97 0
+ 291 009e 461C     		adds	r6, r0, #1
+ 292 00a0 FF27     		movs	r7, #255
+ 293 00a2 A755     		strb	r7, [r4, r6]
+  98:LedControl.c  ****             }
+ 294              		.loc 1 98 0
+ 295 00a4 0230     		adds	r0, r0, #2
+ 296 00a6 2554     		strb	r5, [r4, r0]
+ 297              	.L23:
+ 100:LedControl.c  ****             {
+ 298              		.loc 1 100 0
+ 299 00a8 0129     		cmp	r1, #1
+ 300 00aa 0DD1     		bne	.L24
+ 100:LedControl.c  ****             {
+ 301              		.loc 1 100 0 is_stmt 0 discriminator 1
+ 302 00ac 1248     		ldr	r0, .L27+12
+ 303 00ae 805C     		ldrb	r0, [r0, r2]	@ zero_extendqisi2
+ 304 00b0 8142     		cmp	r1, r0
+ 305 00b2 09D0     		beq	.L24
+ 103:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød
+ 306              		.loc 1 103 0 is_stmt 1
+ 307 00b4 02EB4200 		add	r0, r2, r2, lsl #1
+ 308 00b8 104C     		ldr	r4, .L27+16
+ 309 00ba 0025     		movs	r5, #0
+ 310 00bc 2554     		strb	r5, [r4, r0]
+ 104:LedControl.c  ****                 ledData[i * 3 + 2] = BLACK_LED_INTESITY;     //Blå
+ 311              		.loc 1 104 0
+ 312 00be 461C     		adds	r6, r0, #1
+ 313 00c0 A555     		strb	r5, [r4, r6]
+ 105:LedControl.c  ****             }
+ 314              		.loc 1 105 0
+ 315 00c2 0230     		adds	r0, r0, #2
+ 316 00c4 FF25     		movs	r5, #255
+ 317 00c6 2554     		strb	r5, [r4, r0]
+ 318              	.L24:
+ 107:LedControl.c  ****             {
+ 319              		.loc 1 107 0
+ 320 00c8 41B9     		cbnz	r1, .L22
+ 110:LedControl.c  ****                 ledData[i * 3 + 1] = 0;       //Rød   // Sluk
+ 321              		.loc 1 110 0
+ 322 00ca 02EB4202 		add	r2, r2, r2, lsl #1
+ 323 00ce 0B49     		ldr	r1, .L27+16
+ 324 00d0 0020     		movs	r0, #0
+ 325 00d2 8854     		strb	r0, [r1, r2]
+ 111:LedControl.c  ****                 ledData[i * 3 + 2] = 0;       //Blå
+ 326              		.loc 1 111 0
+ 327 00d4 541C     		adds	r4, r2, #1
+ 328 00d6 0855     		strb	r0, [r1, r4]
+ 112:LedControl.c  ****             }
+ 329              		.loc 1 112 0
+ 330 00d8 0232     		adds	r2, r2, #2
+ 331 00da 8854     		strb	r0, [r1, r2]
+ 332              	.L22:
+  65:LedControl.c  ****     {   
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 10
+
+
+ 333              		.loc 1 65 0 discriminator 2
+ 334 00dc 0133     		adds	r3, r3, #1
+ 335              	.LVL14:
+ 336 00de DBB2     		uxtb	r3, r3
+ 337              	.LVL15:
+ 338              	.L18:
+  65:LedControl.c  ****     {   
+ 339              		.loc 1 65 0 is_stmt 0 discriminator 1
+ 340 00e0 3F2B     		cmp	r3, #63
+ 341 00e2 9DD9     		bls	.L25
+ 342              	.LBE3:
+ 117:LedControl.c  **** }
+ 343              		.loc 1 117 0 is_stmt 1
+ 344 00e4 FFF7FEFF 		bl	pwmLedInterrupt
+ 345              	.LVL16:
+ 346 00e8 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 347              	.L28:
+ 348 00ea 00BF     		.align	2
+ 349              	.L27:
+ 350 00ec 00000000 		.word	end
+ 351 00f0 00000000 		.word	ledArray
+ 352 00f4 00000000 		.word	.LANCHOR0
+ 353 00f8 00000000 		.word	squareReg
+ 354 00fc 00000000 		.word	ledData
+ 355              		.cfi_endproc
+ 356              	.LFE65:
+ 357              		.size	setLEDs, .-setLEDs
+ 358              		.section	.text.onlyDeadPosLED,"ax",%progbits
+ 359              		.align	2
+ 360              		.global	onlyDeadPosLED
+ 361              		.thumb
+ 362              		.thumb_func
+ 363              		.type	onlyDeadPosLED, %function
+ 364              	onlyDeadPosLED:
+ 365              	.LFB67:
+ 143:LedControl.c  **** 
+ 144:LedControl.c  **** void onlyDeadPosLED(int ledNr)
+ 145:LedControl.c  **** {
+ 366              		.loc 1 145 0
+ 367              		.cfi_startproc
+ 368              		@ args = 0, pretend = 0, frame = 0
+ 369              		@ frame_needed = 0, uses_anonymous_args = 0
+ 370              	.LVL17:
+ 371 0000 70B5     		push	{r4, r5, r6, lr}
+ 372              		.cfi_def_cfa_offset 16
+ 373              		.cfi_offset 4, -16
+ 374              		.cfi_offset 5, -12
+ 375              		.cfi_offset 6, -8
+ 376              		.cfi_offset 14, -4
+ 146:LedControl.c  ****     end = 1;
+ 377              		.loc 1 146 0
+ 378 0002 0122     		movs	r2, #1
+ 379 0004 0E4B     		ldr	r3, .L34
+ 380 0006 1A60     		str	r2, [r3]
+ 381              	.LVL18:
+ 382              	.LBB4:
+ 147:LedControl.c  ****     for (uint8_t i = 0; i < 64; i++)
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 11
+
+
+ 383              		.loc 1 147 0
+ 384 0008 0023     		movs	r3, #0
+ 385 000a 14E0     		b	.L30
+ 386              	.LVL19:
+ 387              	.L32:
+ 148:LedControl.c  ****     {
+ 149:LedControl.c  ****         ledData[i * 3]     = 0;          //Grøn
+ 388              		.loc 1 149 0
+ 389 000c 03EB4302 		add	r2, r3, r3, lsl #1
+ 390 0010 0C49     		ldr	r1, .L34+4
+ 391 0012 0024     		movs	r4, #0
+ 392 0014 8C54     		strb	r4, [r1, r2]
+ 150:LedControl.c  ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 393              		.loc 1 150 0
+ 394 0016 551C     		adds	r5, r2, #1
+ 395 0018 4C55     		strb	r4, [r1, r5]
+ 151:LedControl.c  ****         ledData[i * 3 + 2] = 0;          //Blå
+ 396              		.loc 1 151 0
+ 397 001a 0232     		adds	r2, r2, #2
+ 398 001c 8C54     		strb	r4, [r1, r2]
+ 152:LedControl.c  ****         if(i == ledNr)
+ 399              		.loc 1 152 0
+ 400 001e 8342     		cmp	r3, r0
+ 401 0020 07D1     		bne	.L31
+ 153:LedControl.c  ****         {
+ 154:LedControl.c  ****             ledData[ledNr * 3]     = 0;      //Grøn
+ 402              		.loc 1 154 0
+ 403 0022 00EB4002 		add	r2, r0, r0, lsl #1
+ 404 0026 8C54     		strb	r4, [r1, r2]
+ 155:LedControl.c  ****             ledData[ledNr * 3 + 1] = WHITE_LED_INTESITY;                 //Rød  
+ 405              		.loc 1 155 0
+ 406 0028 551C     		adds	r5, r2, #1
+ 407 002a 1426     		movs	r6, #20
+ 408 002c 4E55     		strb	r6, [r1, r5]
+ 156:LedControl.c  ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 409              		.loc 1 156 0
+ 410 002e 0232     		adds	r2, r2, #2
+ 411 0030 8C54     		strb	r4, [r1, r2]
+ 412              	.L31:
+ 147:LedControl.c  ****     {
+ 413              		.loc 1 147 0 discriminator 2
+ 414 0032 0133     		adds	r3, r3, #1
+ 415              	.LVL20:
+ 416 0034 DBB2     		uxtb	r3, r3
+ 417              	.LVL21:
+ 418              	.L30:
+ 147:LedControl.c  ****     {
+ 419              		.loc 1 147 0 is_stmt 0 discriminator 1
+ 420 0036 3F2B     		cmp	r3, #63
+ 421 0038 E8D9     		bls	.L32
+ 422              	.LBE4:
+ 157:LedControl.c  ****         }
+ 158:LedControl.c  ****     }
+ 159:LedControl.c  ****     
+ 160:LedControl.c  ****     pwmLedInterrupt();
+ 423              		.loc 1 160 0 is_stmt 1
+ 424 003a FFF7FEFF 		bl	pwmLedInterrupt
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 12
+
+
+ 425              	.LVL22:
+ 426 003e 70BD     		pop	{r4, r5, r6, pc}
+ 427              	.L35:
+ 428              		.align	2
+ 429              	.L34:
+ 430 0040 00000000 		.word	end
+ 431 0044 00000000 		.word	ledData
+ 432              		.cfi_endproc
+ 433              	.LFE67:
+ 434              		.size	onlyDeadPosLED, .-onlyDeadPosLED
+ 435              		.section	.text.turnOffLEDs,"ax",%progbits
+ 436              		.align	2
+ 437              		.global	turnOffLEDs
+ 438              		.thumb
+ 439              		.thumb_func
+ 440              		.type	turnOffLEDs, %function
+ 441              	turnOffLEDs:
+ 442              	.LFB70:
+ 161:LedControl.c  **** }
+ 162:LedControl.c  **** 
+ 163:LedControl.c  **** void moveAcceptedLED(int ledNr)
+ 164:LedControl.c  **** {   
+ 165:LedControl.c  ****     end = 1;
+ 166:LedControl.c  ****     for (uint8_t i = 0; i < 64; i++)
+ 167:LedControl.c  ****     {
+ 168:LedControl.c  ****         ledData[i * 3]     = 0;          //Grøn
+ 169:LedControl.c  ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 170:LedControl.c  ****         ledData[i * 3 + 2] = 0;          //Blå
+ 171:LedControl.c  ****         if(i == ledNr)
+ 172:LedControl.c  ****         {
+ 173:LedControl.c  ****             ledData[ledNr * 3]     = WHITE_LED_INTESITY;      //Grøn
+ 174:LedControl.c  ****             ledData[ledNr * 3 + 1] = 0;                 //Rød  
+ 175:LedControl.c  ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 176:LedControl.c  ****         }
+ 177:LedControl.c  ****     }
+ 178:LedControl.c  ****     
+ 179:LedControl.c  ****     pwmLedInterrupt();
+ 180:LedControl.c  ****     
+ 181:LedControl.c  ****     CyDelay(2000);
+ 182:LedControl.c  ****     
+ 183:LedControl.c  ****     turnOffLEDs();
+ 184:LedControl.c  **** }
+ 185:LedControl.c  **** 
+ 186:LedControl.c  **** void initLED()
+ 187:LedControl.c  **** {
+ 188:LedControl.c  ****     isr_PWM_StartEx(PWM_ISR_handler);
+ 189:LedControl.c  ****     bitIndex = 7;
+ 190:LedControl.c  ****     byteIndex = 0;
+ 191:LedControl.c  ****     turnOffLEDs();
+ 192:LedControl.c  **** }
+ 193:LedControl.c  **** 
+ 194:LedControl.c  **** void turnOffLEDs()
+ 195:LedControl.c  **** {
+ 443              		.loc 1 195 0
+ 444              		.cfi_startproc
+ 445              		@ args = 0, pretend = 0, frame = 64
+ 446              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 13
+
+
+ 447 0000 00B5     		push	{lr}
+ 448              		.cfi_def_cfa_offset 4
+ 449              		.cfi_offset 14, -4
+ 450 0002 91B0     		sub	sp, sp, #68
+ 451              		.cfi_def_cfa_offset 72
+ 196:LedControl.c  ****     uint8_t offArray[64] = {0};
+ 452              		.loc 1 196 0
+ 453 0004 4022     		movs	r2, #64
+ 454 0006 0021     		movs	r1, #0
+ 455 0008 6846     		mov	r0, sp
+ 456 000a FFF7FEFF 		bl	memset
+ 457              	.LVL23:
+ 197:LedControl.c  ****     
+ 198:LedControl.c  ****     setLEDs(offArray);
+ 458              		.loc 1 198 0
+ 459 000e 6846     		mov	r0, sp
+ 460 0010 FFF7FEFF 		bl	setLEDs
+ 461              	.LVL24:
+ 199:LedControl.c  **** }
+ 462              		.loc 1 199 0
+ 463 0014 11B0     		add	sp, sp, #68
+ 464              		.cfi_def_cfa_offset 4
+ 465              		@ sp needed
+ 466 0016 5DF804FB 		ldr	pc, [sp], #4
+ 467              		.cfi_endproc
+ 468              	.LFE70:
+ 469              		.size	turnOffLEDs, .-turnOffLEDs
+ 470 001a 00BF     		.section	.text.moveAcceptedLED,"ax",%progbits
+ 471              		.align	2
+ 472              		.global	moveAcceptedLED
+ 473              		.thumb
+ 474              		.thumb_func
+ 475              		.type	moveAcceptedLED, %function
+ 476              	moveAcceptedLED:
+ 477              	.LFB68:
+ 164:LedControl.c  ****     end = 1;
+ 478              		.loc 1 164 0
+ 479              		.cfi_startproc
+ 480              		@ args = 0, pretend = 0, frame = 0
+ 481              		@ frame_needed = 0, uses_anonymous_args = 0
+ 482              	.LVL25:
+ 483 0000 38B5     		push	{r3, r4, r5, lr}
+ 484              		.cfi_def_cfa_offset 16
+ 485              		.cfi_offset 3, -16
+ 486              		.cfi_offset 4, -12
+ 487              		.cfi_offset 5, -8
+ 488              		.cfi_offset 14, -4
+ 165:LedControl.c  ****     for (uint8_t i = 0; i < 64; i++)
+ 489              		.loc 1 165 0
+ 490 0002 0122     		movs	r2, #1
+ 491 0004 124B     		ldr	r3, .L43
+ 492 0006 1A60     		str	r2, [r3]
+ 493              	.LVL26:
+ 494              	.LBB5:
+ 166:LedControl.c  ****     {
+ 495              		.loc 1 166 0
+ 496 0008 0023     		movs	r3, #0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 14
+
+
+ 497 000a 15E0     		b	.L39
+ 498              	.LVL27:
+ 499              	.L41:
+ 168:LedControl.c  ****         ledData[i * 3 + 1] = 0;          //Rød  
+ 500              		.loc 1 168 0
+ 501 000c 03EB4302 		add	r2, r3, r3, lsl #1
+ 502 0010 1049     		ldr	r1, .L43+4
+ 503 0012 0024     		movs	r4, #0
+ 504 0014 8C54     		strb	r4, [r1, r2]
+ 169:LedControl.c  ****         ledData[i * 3 + 2] = 0;          //Blå
+ 505              		.loc 1 169 0
+ 506 0016 551C     		adds	r5, r2, #1
+ 507 0018 4C55     		strb	r4, [r1, r5]
+ 170:LedControl.c  ****         if(i == ledNr)
+ 508              		.loc 1 170 0
+ 509 001a 0232     		adds	r2, r2, #2
+ 510 001c 8C54     		strb	r4, [r1, r2]
+ 171:LedControl.c  ****         {
+ 511              		.loc 1 171 0
+ 512 001e 8342     		cmp	r3, r0
+ 513 0020 08D1     		bne	.L40
+ 173:LedControl.c  ****             ledData[ledNr * 3 + 1] = 0;                 //Rød  
+ 514              		.loc 1 173 0
+ 515 0022 00EB4002 		add	r2, r0, r0, lsl #1
+ 516 0026 1424     		movs	r4, #20
+ 517 0028 8C54     		strb	r4, [r1, r2]
+ 174:LedControl.c  ****             ledData[ledNr * 3 + 2] = 0;                 //Blå
+ 518              		.loc 1 174 0
+ 519 002a 551C     		adds	r5, r2, #1
+ 520 002c 0024     		movs	r4, #0
+ 521 002e 4C55     		strb	r4, [r1, r5]
+ 175:LedControl.c  ****         }
+ 522              		.loc 1 175 0
+ 523 0030 0232     		adds	r2, r2, #2
+ 524 0032 8C54     		strb	r4, [r1, r2]
+ 525              	.L40:
+ 166:LedControl.c  ****     {
+ 526              		.loc 1 166 0 discriminator 2
+ 527 0034 0133     		adds	r3, r3, #1
+ 528              	.LVL28:
+ 529 0036 DBB2     		uxtb	r3, r3
+ 530              	.LVL29:
+ 531              	.L39:
+ 166:LedControl.c  ****     {
+ 532              		.loc 1 166 0 is_stmt 0 discriminator 1
+ 533 0038 3F2B     		cmp	r3, #63
+ 534 003a E7D9     		bls	.L41
+ 535              	.LBE5:
+ 179:LedControl.c  ****     
+ 536              		.loc 1 179 0 is_stmt 1
+ 537 003c FFF7FEFF 		bl	pwmLedInterrupt
+ 538              	.LVL30:
+ 181:LedControl.c  ****     
+ 539              		.loc 1 181 0
+ 540 0040 4FF4FA60 		mov	r0, #2000
+ 541 0044 FFF7FEFF 		bl	CyDelay
+ 542              	.LVL31:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 15
+
+
+ 183:LedControl.c  **** }
+ 543              		.loc 1 183 0
+ 544 0048 FFF7FEFF 		bl	turnOffLEDs
+ 545              	.LVL32:
+ 546 004c 38BD     		pop	{r3, r4, r5, pc}
+ 547              	.L44:
+ 548 004e 00BF     		.align	2
+ 549              	.L43:
+ 550 0050 00000000 		.word	end
+ 551 0054 00000000 		.word	ledData
+ 552              		.cfi_endproc
+ 553              	.LFE68:
+ 554              		.size	moveAcceptedLED, .-moveAcceptedLED
+ 555              		.section	.text.initLED,"ax",%progbits
+ 556              		.align	2
+ 557              		.global	initLED
+ 558              		.thumb
+ 559              		.thumb_func
+ 560              		.type	initLED, %function
+ 561              	initLED:
+ 562              	.LFB69:
+ 187:LedControl.c  ****     isr_PWM_StartEx(PWM_ISR_handler);
+ 563              		.loc 1 187 0
+ 564              		.cfi_startproc
+ 565              		@ args = 0, pretend = 0, frame = 0
+ 566              		@ frame_needed = 0, uses_anonymous_args = 0
+ 567 0000 08B5     		push	{r3, lr}
+ 568              		.cfi_def_cfa_offset 8
+ 569              		.cfi_offset 3, -8
+ 570              		.cfi_offset 14, -4
+ 188:LedControl.c  ****     bitIndex = 7;
+ 571              		.loc 1 188 0
+ 572 0002 0648     		ldr	r0, .L47
+ 573 0004 FFF7FEFF 		bl	isr_PWM_StartEx
+ 574              	.LVL33:
+ 189:LedControl.c  ****     byteIndex = 0;
+ 575              		.loc 1 189 0
+ 576 0008 0722     		movs	r2, #7
+ 577 000a 054B     		ldr	r3, .L47+4
+ 578 000c 1A70     		strb	r2, [r3]
+ 190:LedControl.c  ****     turnOffLEDs();
+ 579              		.loc 1 190 0
+ 580 000e 0022     		movs	r2, #0
+ 581 0010 044B     		ldr	r3, .L47+8
+ 582 0012 1A80     		strh	r2, [r3]	@ movhi
+ 191:LedControl.c  **** }
+ 583              		.loc 1 191 0
+ 584 0014 FFF7FEFF 		bl	turnOffLEDs
+ 585              	.LVL34:
+ 586 0018 08BD     		pop	{r3, pc}
+ 587              	.L48:
+ 588 001a 00BF     		.align	2
+ 589              	.L47:
+ 590 001c 00000000 		.word	PWM_ISR_handler
+ 591 0020 00000000 		.word	bitIndex
+ 592 0024 00000000 		.word	byteIndex
+ 593              		.cfi_endproc
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 16
+
+
+ 594              	.LFE69:
+ 595              		.size	initLED, .-initLED
+ 596              		.section	.text.LEDtest,"ax",%progbits
+ 597              		.align	2
+ 598              		.global	LEDtest
+ 599              		.thumb
+ 600              		.thumb_func
+ 601              		.type	LEDtest, %function
+ 602              	LEDtest:
+ 603              	.LFB71:
+ 200:LedControl.c  **** 
+ 201:LedControl.c  **** 
+ 202:LedControl.c  **** void LEDtest()
+ 203:LedControl.c  **** {
+ 604              		.loc 1 203 0
+ 605              		.cfi_startproc
+ 606              		@ args = 0, pretend = 0, frame = 192
+ 607              		@ frame_needed = 0, uses_anonymous_args = 0
+ 608 0000 00B5     		push	{lr}
+ 609              		.cfi_def_cfa_offset 4
+ 610              		.cfi_offset 14, -4
+ 611 0002 B1B0     		sub	sp, sp, #196
+ 612              		.cfi_def_cfa_offset 200
+ 613              	.LVL35:
+ 614              	.LBB6:
+ 204:LedControl.c  ****     uint8_t array [SIZE * 3];
+ 205:LedControl.c  ****     
+ 206:LedControl.c  ****     //Sluk / Tænd alle Led'er
+ 207:LedControl.c  ****     for(int i = 0; i < SIZE ; i++)
+ 615              		.loc 1 207 0
+ 616 0004 0022     		movs	r2, #0
+ 617 0006 11E0     		b	.L50
+ 618              	.LVL36:
+ 619              	.L51:
+ 208:LedControl.c  ****     {
+ 209:LedControl.c  ****      array[i * 3] = 0;
+ 620              		.loc 1 209 0 discriminator 3
+ 621 0008 02EB4203 		add	r3, r2, r2, lsl #1
+ 622 000c 30A9     		add	r1, sp, #192
+ 623 000e C818     		adds	r0, r1, r3
+ 624 0010 0021     		movs	r1, #0
+ 625 0012 00F8C01C 		strb	r1, [r0, #-192]
+ 210:LedControl.c  ****      array[i * 3 + 1] = 0;
+ 626              		.loc 1 210 0 discriminator 3
+ 627 0016 581C     		adds	r0, r3, #1
+ 628 0018 0DF1C00E 		add	lr, sp, #192
+ 629 001c 7044     		add	r0, r0, lr
+ 630 001e 00F8C01C 		strb	r1, [r0, #-192]
+ 211:LedControl.c  ****      array[i * 3 + 2] = 0;
+ 631              		.loc 1 211 0 discriminator 3
+ 632 0022 0233     		adds	r3, r3, #2
+ 633 0024 7344     		add	r3, r3, lr
+ 634 0026 03F8C01C 		strb	r1, [r3, #-192]
+ 207:LedControl.c  ****     {
+ 635              		.loc 1 207 0 discriminator 3
+ 636 002a 0132     		adds	r2, r2, #1
+ 637              	.LVL37:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 17
+
+
+ 638              	.L50:
+ 207:LedControl.c  ****     {
+ 639              		.loc 1 207 0 is_stmt 0 discriminator 1
+ 640 002c 3F2A     		cmp	r2, #63
+ 641 002e EBDD     		ble	.L51
+ 642              	.LVL38:
+ 643              	.LBE6:
+ 212:LedControl.c  ****     }
+ 213:LedControl.c  ****     
+ 214:LedControl.c  ****     /*     Array:
+ 215:LedControl.c  **** 
+ 216:LedControl.c  ****                   Byte1 Byte2 Byte3               
+ 217:LedControl.c  **** 
+ 218:LedControl.c  ****         Led 1    [[Grøn][Rød][Blå]]
+ 219:LedControl.c  ****         Led 2    [[Grøn][Rød][Blå]]
+ 220:LedControl.c  ****         ...      [...             ]
+ 221:LedControl.c  ****         Led 64   [[Grøn][Rød][Blå]]
+ 222:LedControl.c  ****     */
+ 223:LedControl.c  ****     
+ 224:LedControl.c  ****     //Tænd en LED//
+ 225:LedControl.c  ****     
+ 226:LedControl.c  ****     //Vælg LED nr//
+ 227:LedControl.c  ****     int ledNr = 10;  
+ 228:LedControl.c  ****     
+ 229:LedControl.c  ****     //Vælg Farve//
+ 230:LedControl.c  ****     array[ledNr * 3]     = 0;       //Grøn
+ 644              		.loc 1 230 0 is_stmt 1
+ 645 0030 0023     		movs	r3, #0
+ 646 0032 8DF81E30 		strb	r3, [sp, #30]
+ 231:LedControl.c  ****     array[ledNr * 3 + 1] = 0;     //Rød
+ 647              		.loc 1 231 0
+ 648 0036 8DF81F30 		strb	r3, [sp, #31]
+ 232:LedControl.c  ****     array[ledNr * 3 + 2] = 255;     //Blå
+ 649              		.loc 1 232 0
+ 650 003a FF23     		movs	r3, #255
+ 651 003c 8DF82030 		strb	r3, [sp, #32]
+ 233:LedControl.c  ****     
+ 234:LedControl.c  ****     
+ 235:LedControl.c  ****     setLEDs(array);
+ 652              		.loc 1 235 0
+ 653 0040 6846     		mov	r0, sp
+ 654 0042 FFF7FEFF 		bl	setLEDs
+ 655              	.LVL39:
+ 236:LedControl.c  **** }...
+ 656              		.loc 1 236 0
+ 657 0046 31B0     		add	sp, sp, #196
+ 658              		.cfi_def_cfa_offset 4
+ 659              		@ sp needed
+ 660 0048 5DF804FB 		ldr	pc, [sp], #4
+ 661              		.cfi_endproc
+ 662              	.LFE71:
+ 663              		.size	LEDtest, .-LEDtest
+ 664              		.global	whiteSquareArray
+ 665              		.comm	end,4,4
+ 666              		.comm	byteIndex,2,2
+ 667              		.comm	bitIndex,1,1
+ 668              		.comm	ledData,192,4
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 18
+
+
+ 669              		.comm	ledArray,64,4
+ 670              		.comm	deadLiftPos,1,1
+ 671              		.comm	liftPos,1,1
+ 672              		.comm	newPos,1,1
+ 673              		.comm	deadPieceLifted,1,1
+ 674              		.comm	pieceLifted,1,1
+ 675              		.comm	squareReg,64,4
+ 676              		.comm	lastSquareReg,64,4
+ 677              		.comm	legalMoves,64,4
+ 678              		.comm	startChar,1,1
+ 679              		.comm	stepCase,1,1
+ 680              		.comm	currentSquare,1,1
+ 681              		.data
+ 682              		.align	2
+ 683              		.set	.LANCHOR0,. + 0
+ 684              		.type	whiteSquareArray, %object
+ 685              		.size	whiteSquareArray, 64
+ 686              	whiteSquareArray:
+ 687 0000 00       		.byte	0
+ 688 0001 01       		.byte	1
+ 689 0002 00       		.byte	0
+ 690 0003 01       		.byte	1
+ 691 0004 00       		.byte	0
+ 692 0005 01       		.byte	1
+ 693 0006 00       		.byte	0
+ 694 0007 01       		.byte	1
+ 695 0008 01       		.byte	1
+ 696 0009 00       		.byte	0
+ 697 000a 01       		.byte	1
+ 698 000b 00       		.byte	0
+ 699 000c 01       		.byte	1
+ 700 000d 00       		.byte	0
+ 701 000e 01       		.byte	1
+ 702 000f 00       		.byte	0
+ 703 0010 00       		.byte	0
+ 704 0011 01       		.byte	1
+ 705 0012 00       		.byte	0
+ 706 0013 01       		.byte	1
+ 707 0014 00       		.byte	0
+ 708 0015 01       		.byte	1
+ 709 0016 00       		.byte	0
+ 710 0017 01       		.byte	1
+ 711 0018 01       		.byte	1
+ 712 0019 00       		.byte	0
+ 713 001a 01       		.byte	1
+ 714 001b 00       		.byte	0
+ 715 001c 01       		.byte	1
+ 716 001d 00       		.byte	0
+ 717 001e 01       		.byte	1
+ 718 001f 00       		.byte	0
+ 719 0020 00       		.byte	0
+ 720 0021 01       		.byte	1
+ 721 0022 00       		.byte	0
+ 722 0023 01       		.byte	1
+ 723 0024 00       		.byte	0
+ 724 0025 01       		.byte	1
+ 725 0026 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 19
+
+
+ 726 0027 01       		.byte	1
+ 727 0028 01       		.byte	1
+ 728 0029 00       		.byte	0
+ 729 002a 01       		.byte	1
+ 730 002b 00       		.byte	0
+ 731 002c 01       		.byte	1
+ 732 002d 00       		.byte	0
+ 733 002e 01       		.byte	1
+ 734 002f 00       		.byte	0
+ 735 0030 00       		.byte	0
+ 736 0031 01       		.byte	1
+ 737 0032 00       		.byte	0
+ 738 0033 01       		.byte	1
+ 739 0034 00       		.byte	0
+ 740 0035 01       		.byte	1
+ 741 0036 00       		.byte	0
+ 742 0037 01       		.byte	1
+ 743 0038 01       		.byte	1
+ 744 0039 00       		.byte	0
+ 745 003a 01       		.byte	1
+ 746 003b 00       		.byte	0
+ 747 003c 01       		.byte	1
+ 748 003d 00       		.byte	0
+ 749 003e 01       		.byte	1
+ 750 003f 00       		.byte	0
+ 751              		.text
+ 752              	.Letext0:
+ 753              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 754              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 755              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 756              		.file 5 "XYPlotter.h"
+ 757              		.file 6 "UART.h"
+ 758              		.file 7 "Sensor.h"
+ 759              		.file 8 "LedControl.h"
+ 760              		.file 9 "Generated_Source\\PSoC5/PWM.h"
+ 761              		.file 10 "Generated_Source\\PSoC5/Control_Reg_1.h"
+ 762              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
+ 763              		.file 12 "Generated_Source\\PSoC5/isr_PWM.h"
+ 764              		.section	.debug_info,"",%progbits
+ 765              	.Ldebug_info0:
+ 766 0000 47050000 		.4byte	0x547
+ 767 0004 0400     		.2byte	0x4
+ 768 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 769 000a 04       		.byte	0x4
+ 770 000b 01       		.uleb128 0x1
+ 771 000c 9C020000 		.4byte	.LASF58
+ 772 0010 0C       		.byte	0xc
+ 773 0011 49000000 		.4byte	.LASF59
+ 774 0015 3C030000 		.4byte	.LASF60
+ 775 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 776 001d 00000000 		.4byte	0
+ 777 0021 00000000 		.4byte	.Ldebug_line0
+ 778 0025 02       		.uleb128 0x2
+ 779 0026 FD010000 		.4byte	.LASF0
+ 780 002a 02       		.byte	0x2
+ 781 002b 1B       		.byte	0x1b
+ 782 002c 30000000 		.4byte	0x30
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 20
+
+
+ 783 0030 03       		.uleb128 0x3
+ 784 0031 01       		.byte	0x1
+ 785 0032 06       		.byte	0x6
+ 786 0033 6F010000 		.4byte	.LASF2
+ 787 0037 02       		.uleb128 0x2
+ 788 0038 F8000000 		.4byte	.LASF1
+ 789 003c 02       		.byte	0x2
+ 790 003d 1D       		.byte	0x1d
+ 791 003e 42000000 		.4byte	0x42
+ 792 0042 03       		.uleb128 0x3
+ 793 0043 01       		.byte	0x1
+ 794 0044 08       		.byte	0x8
+ 795 0045 47010000 		.4byte	.LASF3
+ 796 0049 03       		.uleb128 0x3
+ 797 004a 02       		.byte	0x2
+ 798 004b 05       		.byte	0x5
+ 799 004c 26000000 		.4byte	.LASF4
+ 800 0050 02       		.uleb128 0x2
+ 801 0051 64000000 		.4byte	.LASF5
+ 802 0055 02       		.byte	0x2
+ 803 0056 2B       		.byte	0x2b
+ 804 0057 5B000000 		.4byte	0x5b
+ 805 005b 03       		.uleb128 0x3
+ 806 005c 02       		.byte	0x2
+ 807 005d 07       		.byte	0x7
+ 808 005e EA010000 		.4byte	.LASF6
+ 809 0062 02       		.uleb128 0x2
+ 810 0063 54020000 		.4byte	.LASF7
+ 811 0067 02       		.byte	0x2
+ 812 0068 3F       		.byte	0x3f
+ 813 0069 6D000000 		.4byte	0x6d
+ 814 006d 03       		.uleb128 0x3
+ 815 006e 04       		.byte	0x4
+ 816 006f 05       		.byte	0x5
+ 817 0070 EF000000 		.4byte	.LASF8
+ 818 0074 03       		.uleb128 0x3
+ 819 0075 04       		.byte	0x4
+ 820 0076 07       		.byte	0x7
+ 821 0077 2F020000 		.4byte	.LASF9
+ 822 007b 03       		.uleb128 0x3
+ 823 007c 08       		.byte	0x8
+ 824 007d 05       		.byte	0x5
+ 825 007e B5000000 		.4byte	.LASF10
+ 826 0082 03       		.uleb128 0x3
+ 827 0083 08       		.byte	0x8
+ 828 0084 07       		.byte	0x7
+ 829 0085 7B010000 		.4byte	.LASF11
+ 830 0089 04       		.uleb128 0x4
+ 831 008a 04       		.byte	0x4
+ 832 008b 05       		.byte	0x5
+ 833 008c 696E7400 		.ascii	"int\000"
+ 834 0090 03       		.uleb128 0x3
+ 835 0091 04       		.byte	0x4
+ 836 0092 07       		.byte	0x7
+ 837 0093 A3010000 		.4byte	.LASF12
+ 838 0097 02       		.uleb128 0x2
+ 839 0098 13000000 		.4byte	.LASF13
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 21
+
+
+ 840 009c 03       		.byte	0x3
+ 841 009d 14       		.byte	0x14
+ 842 009e 25000000 		.4byte	0x25
+ 843 00a2 02       		.uleb128 0x2
+ 844 00a3 5E020000 		.4byte	.LASF14
+ 845 00a7 03       		.byte	0x3
+ 846 00a8 18       		.byte	0x18
+ 847 00a9 37000000 		.4byte	0x37
+ 848 00ad 02       		.uleb128 0x2
+ 849 00ae B0010000 		.4byte	.LASF15
+ 850 00b2 03       		.byte	0x3
+ 851 00b3 24       		.byte	0x24
+ 852 00b4 50000000 		.4byte	0x50
+ 853 00b8 02       		.uleb128 0x2
+ 854 00b9 1F020000 		.4byte	.LASF16
+ 855 00bd 03       		.byte	0x3
+ 856 00be 2C       		.byte	0x2c
+ 857 00bf 62000000 		.4byte	0x62
+ 858 00c3 03       		.uleb128 0x3
+ 859 00c4 04       		.byte	0x4
+ 860 00c5 04       		.byte	0x4
+ 861 00c6 A5000000 		.4byte	.LASF17
+ 862 00ca 03       		.uleb128 0x3
+ 863 00cb 08       		.byte	0x8
+ 864 00cc 04       		.byte	0x4
+ 865 00cd 41020000 		.4byte	.LASF18
+ 866 00d1 03       		.uleb128 0x3
+ 867 00d2 01       		.byte	0x1
+ 868 00d3 08       		.byte	0x8
+ 869 00d4 12020000 		.4byte	.LASF19
+ 870 00d8 03       		.uleb128 0x3
+ 871 00d9 08       		.byte	0x8
+ 872 00da 04       		.byte	0x4
+ 873 00db 3B010000 		.4byte	.LASF20
+ 874 00df 03       		.uleb128 0x3
+ 875 00e0 04       		.byte	0x4
+ 876 00e1 07       		.byte	0x7
+ 877 00e2 30000000 		.4byte	.LASF21
+ 878 00e6 05       		.uleb128 0x5
+ 879 00e7 DF000000 		.4byte	.LASF22
+ 880 00eb 01       		.byte	0x1
+ 881 00ec 21       		.byte	0x21
+ 882 00ed 00000000 		.4byte	.LFB64
+ 883 00f1 50000000 		.4byte	.LFE64-.LFB64
+ 884 00f5 01       		.uleb128 0x1
+ 885 00f6 9C       		.byte	0x9c
+ 886 00f7 53010000 		.4byte	0x153
+ 887 00fb 06       		.uleb128 0x6
+ 888 00fc 22000000 		.4byte	.LVL0
+ 889 0100 E9040000 		.4byte	0x4e9
+ 890 0104 0F010000 		.4byte	0x10f
+ 891 0108 07       		.uleb128 0x7
+ 892 0109 01       		.uleb128 0x1
+ 893 010a 50       		.byte	0x50
+ 894 010b 02       		.uleb128 0x2
+ 895 010c 08       		.byte	0x8
+ 896 010d 28       		.byte	0x28
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 22
+
+
+ 897 010e 00       		.byte	0
+ 898 010f 06       		.uleb128 0x6
+ 899 0110 28000000 		.4byte	.LVL1
+ 900 0114 F4040000 		.4byte	0x4f4
+ 901 0118 22010000 		.4byte	0x122
+ 902 011c 07       		.uleb128 0x7
+ 903 011d 01       		.uleb128 0x1
+ 904 011e 50       		.byte	0x50
+ 905 011f 01       		.uleb128 0x1
+ 906 0120 31       		.byte	0x31
+ 907 0121 00       		.byte	0
+ 908 0122 06       		.uleb128 0x6
+ 909 0123 30000000 		.4byte	.LVL2
+ 910 0127 E9040000 		.4byte	0x4e9
+ 911 012b 36010000 		.4byte	0x136
+ 912 012f 07       		.uleb128 0x7
+ 913 0130 01       		.uleb128 0x1
+ 914 0131 50       		.byte	0x50
+ 915 0132 02       		.uleb128 0x2
+ 916 0133 08       		.byte	0x8
+ 917 0134 5A       		.byte	0x5a
+ 918 0135 00       		.byte	0
+ 919 0136 06       		.uleb128 0x6
+ 920 0137 36000000 		.4byte	.LVL3
+ 921 013b F4040000 		.4byte	0x4f4
+ 922 013f 49010000 		.4byte	0x149
+ 923 0143 07       		.uleb128 0x7
+ 924 0144 01       		.uleb128 0x1
+ 925 0145 50       		.byte	0x50
+ 926 0146 01       		.uleb128 0x1
+ 927 0147 31       		.byte	0x31
+ 928 0148 00       		.byte	0
+ 929 0149 08       		.uleb128 0x8
+ 930 014a 42000000 		.4byte	.LVL4
+ 931 014e FF040000 		.4byte	0x4ff
+ 932 0152 00       		.byte	0
+ 933 0153 09       		.uleb128 0x9
+ 934 0154 39000000 		.4byte	.LASF27
+ 935 0158 01       		.byte	0x1
+ 936 0159 78       		.byte	0x78
+ 937 015a 00000000 		.4byte	.LFB66
+ 938 015e 50000000 		.4byte	.LFE66-.LFB66
+ 939 0162 01       		.uleb128 0x1
+ 940 0163 9C       		.byte	0x9c
+ 941 0164 8E010000 		.4byte	0x18e
+ 942 0168 08       		.uleb128 0x8
+ 943 0169 06000000 		.4byte	.LVL5
+ 944 016d 0A050000 		.4byte	0x50a
+ 945 0171 06       		.uleb128 0x6
+ 946 0172 0C000000 		.4byte	.LVL6
+ 947 0176 F4040000 		.4byte	0x4f4
+ 948 017a 84010000 		.4byte	0x184
+ 949 017e 07       		.uleb128 0x7
+ 950 017f 01       		.uleb128 0x1
+ 951 0180 50       		.byte	0x50
+ 952 0181 01       		.uleb128 0x1
+ 953 0182 31       		.byte	0x31
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 23
+
+
+ 954 0183 00       		.byte	0
+ 955 0184 08       		.uleb128 0x8
+ 956 0185 30000000 		.4byte	.LVL7
+ 957 0189 15050000 		.4byte	0x515
+ 958 018d 00       		.byte	0
+ 959 018e 05       		.uleb128 0x5
+ 960 018f 27020000 		.4byte	.LASF23
+ 961 0193 01       		.byte	0x1
+ 962 0194 33       		.byte	0x33
+ 963 0195 00000000 		.4byte	.LFB65
+ 964 0199 00010000 		.4byte	.LFE65-.LFB65
+ 965 019d 01       		.uleb128 0x1
+ 966 019e 9C       		.byte	0x9c
+ 967 019f FB010000 		.4byte	0x1fb
+ 968 01a3 0A       		.uleb128 0xa
+ 969 01a4 48020000 		.4byte	.LASF25
+ 970 01a8 01       		.byte	0x1
+ 971 01a9 33       		.byte	0x33
+ 972 01aa FB010000 		.4byte	0x1fb
+ 973 01ae 00000000 		.4byte	.LLST0
+ 974 01b2 0B       		.uleb128 0xb
+ 975 01b3 08000000 		.4byte	.LBB2
+ 976 01b7 10000000 		.4byte	.LBE2-.LBB2
+ 977 01bb CD010000 		.4byte	0x1cd
+ 978 01bf 0C       		.uleb128 0xc
+ 979 01c0 6900     		.ascii	"i\000"
+ 980 01c2 01       		.byte	0x1
+ 981 01c3 36       		.byte	0x36
+ 982 01c4 89000000 		.4byte	0x89
+ 983 01c8 21000000 		.4byte	.LLST1
+ 984 01cc 00       		.byte	0
+ 985 01cd 0B       		.uleb128 0xb
+ 986 01ce 1C000000 		.4byte	.LBB3
+ 987 01d2 C8000000 		.4byte	.LBE3-.LBB3
+ 988 01d6 E8010000 		.4byte	0x1e8
+ 989 01da 0C       		.uleb128 0xc
+ 990 01db 6900     		.ascii	"i\000"
+ 991 01dd 01       		.byte	0x1
+ 992 01de 41       		.byte	0x41
+ 993 01df A2000000 		.4byte	0xa2
+ 994 01e3 40000000 		.4byte	.LLST2
+ 995 01e7 00       		.byte	0
+ 996 01e8 08       		.uleb128 0x8
+ 997 01e9 1C000000 		.4byte	.LVL12
+ 998 01ed 20050000 		.4byte	0x520
+ 999 01f1 08       		.uleb128 0x8
+ 1000 01f2 E8000000 		.4byte	.LVL16
+ 1001 01f6 53010000 		.4byte	0x153
+ 1002 01fa 00       		.byte	0
+ 1003 01fb 0D       		.uleb128 0xd
+ 1004 01fc 04       		.byte	0x4
+ 1005 01fd A2000000 		.4byte	0xa2
+ 1006 0201 05       		.uleb128 0x5
+ 1007 0202 80020000 		.4byte	.LASF24
+ 1008 0206 01       		.byte	0x1
+ 1009 0207 90       		.byte	0x90
+ 1010 0208 00000000 		.4byte	.LFB67
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 24
+
+
+ 1011 020c 48000000 		.4byte	.LFE67-.LFB67
+ 1012 0210 01       		.uleb128 0x1
+ 1013 0211 9C       		.byte	0x9c
+ 1014 0212 4A020000 		.4byte	0x24a
+ 1015 0216 0A       		.uleb128 0xa
+ 1016 0217 4E020000 		.4byte	.LASF26
+ 1017 021b 01       		.byte	0x1
+ 1018 021c 90       		.byte	0x90
+ 1019 021d 89000000 		.4byte	0x89
+ 1020 0221 6A000000 		.4byte	.LLST3
+ 1021 0225 0B       		.uleb128 0xb
+ 1022 0226 08000000 		.4byte	.LBB4
+ 1023 022a 32000000 		.4byte	.LBE4-.LBB4
+ 1024 022e 40020000 		.4byte	0x240
+ 1025 0232 0C       		.uleb128 0xc
+ 1026 0233 6900     		.ascii	"i\000"
+ 1027 0235 01       		.byte	0x1
+ 1028 0236 93       		.byte	0x93
+ 1029 0237 A2000000 		.4byte	0xa2
+ 1030 023b 8B000000 		.4byte	.LLST4
+ 1031 023f 00       		.byte	0
+ 1032 0240 08       		.uleb128 0x8
+ 1033 0241 3E000000 		.4byte	.LVL22
+ 1034 0245 53010000 		.4byte	0x153
+ 1035 0249 00       		.byte	0
+ 1036 024a 09       		.uleb128 0x9
+ 1037 024b 1A000000 		.4byte	.LASF28
+ 1038 024f 01       		.byte	0x1
+ 1039 0250 C2       		.byte	0xc2
+ 1040 0251 00000000 		.4byte	.LFB70
+ 1041 0255 1A000000 		.4byte	.LFE70-.LFB70
+ 1042 0259 01       		.uleb128 0x1
+ 1043 025a 9C       		.byte	0x9c
+ 1044 025b 9E020000 		.4byte	0x29e
+ 1045 025f 0E       		.uleb128 0xe
+ 1046 0260 55010000 		.4byte	.LASF29
+ 1047 0264 01       		.byte	0x1
+ 1048 0265 C4       		.byte	0xc4
+ 1049 0266 9E020000 		.4byte	0x29e
+ 1050 026a 03       		.uleb128 0x3
+ 1051 026b 91       		.byte	0x91
+ 1052 026c B87F     		.sleb128 -72
+ 1053 026e 06       		.uleb128 0x6
+ 1054 026f 0E000000 		.4byte	.LVL23
+ 1055 0273 2B050000 		.4byte	0x52b
+ 1056 0277 8D020000 		.4byte	0x28d
+ 1057 027b 07       		.uleb128 0x7
+ 1058 027c 01       		.uleb128 0x1
+ 1059 027d 50       		.byte	0x50
+ 1060 027e 02       		.uleb128 0x2
+ 1061 027f 7D       		.byte	0x7d
+ 1062 0280 00       		.sleb128 0
+ 1063 0281 07       		.uleb128 0x7
+ 1064 0282 01       		.uleb128 0x1
+ 1065 0283 51       		.byte	0x51
+ 1066 0284 01       		.uleb128 0x1
+ 1067 0285 30       		.byte	0x30
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 25
+
+
+ 1068 0286 07       		.uleb128 0x7
+ 1069 0287 01       		.uleb128 0x1
+ 1070 0288 52       		.byte	0x52
+ 1071 0289 02       		.uleb128 0x2
+ 1072 028a 08       		.byte	0x8
+ 1073 028b 40       		.byte	0x40
+ 1074 028c 00       		.byte	0
+ 1075 028d 0F       		.uleb128 0xf
+ 1076 028e 14000000 		.4byte	.LVL24
+ 1077 0292 8E010000 		.4byte	0x18e
+ 1078 0296 07       		.uleb128 0x7
+ 1079 0297 01       		.uleb128 0x1
+ 1080 0298 50       		.byte	0x50
+ 1081 0299 02       		.uleb128 0x2
+ 1082 029a 7D       		.byte	0x7d
+ 1083 029b 00       		.sleb128 0
+ 1084 029c 00       		.byte	0
+ 1085 029d 00       		.byte	0
+ 1086 029e 10       		.uleb128 0x10
+ 1087 029f A2000000 		.4byte	0xa2
+ 1088 02a3 AE020000 		.4byte	0x2ae
+ 1089 02a7 11       		.uleb128 0x11
+ 1090 02a8 DF000000 		.4byte	0xdf
+ 1091 02ac 3F       		.byte	0x3f
+ 1092 02ad 00       		.byte	0
+ 1093 02ae 05       		.uleb128 0x5
+ 1094 02af 95000000 		.4byte	.LASF30
+ 1095 02b3 01       		.byte	0x1
+ 1096 02b4 A3       		.byte	0xa3
+ 1097 02b5 00000000 		.4byte	.LFB68
+ 1098 02b9 58000000 		.4byte	.LFE68-.LFB68
+ 1099 02bd 01       		.uleb128 0x1
+ 1100 02be 9C       		.byte	0x9c
+ 1101 02bf 15030000 		.4byte	0x315
+ 1102 02c3 0A       		.uleb128 0xa
+ 1103 02c4 4E020000 		.4byte	.LASF26
+ 1104 02c8 01       		.byte	0x1
+ 1105 02c9 A3       		.byte	0xa3
+ 1106 02ca 89000000 		.4byte	0x89
+ 1107 02ce B5000000 		.4byte	.LLST5
+ 1108 02d2 0B       		.uleb128 0xb
+ 1109 02d3 08000000 		.4byte	.LBB5
+ 1110 02d7 34000000 		.4byte	.LBE5-.LBB5
+ 1111 02db ED020000 		.4byte	0x2ed
+ 1112 02df 0C       		.uleb128 0xc
+ 1113 02e0 6900     		.ascii	"i\000"
+ 1114 02e2 01       		.byte	0x1
+ 1115 02e3 A6       		.byte	0xa6
+ 1116 02e4 A2000000 		.4byte	0xa2
+ 1117 02e8 D6000000 		.4byte	.LLST6
+ 1118 02ec 00       		.byte	0
+ 1119 02ed 08       		.uleb128 0x8
+ 1120 02ee 40000000 		.4byte	.LVL30
+ 1121 02f2 53010000 		.4byte	0x153
+ 1122 02f6 06       		.uleb128 0x6
+ 1123 02f7 48000000 		.4byte	.LVL31
+ 1124 02fb 34050000 		.4byte	0x534
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 26
+
+
+ 1125 02ff 0B030000 		.4byte	0x30b
+ 1126 0303 07       		.uleb128 0x7
+ 1127 0304 01       		.uleb128 0x1
+ 1128 0305 50       		.byte	0x50
+ 1129 0306 03       		.uleb128 0x3
+ 1130 0307 0A       		.byte	0xa
+ 1131 0308 D007     		.2byte	0x7d0
+ 1132 030a 00       		.byte	0
+ 1133 030b 08       		.uleb128 0x8
+ 1134 030c 4C000000 		.4byte	.LVL32
+ 1135 0310 4A020000 		.4byte	0x24a
+ 1136 0314 00       		.byte	0
+ 1137 0315 09       		.uleb128 0x9
+ 1138 0316 5E010000 		.4byte	.LASF31
+ 1139 031a 01       		.byte	0x1
+ 1140 031b BA       		.byte	0xba
+ 1141 031c 00000000 		.4byte	.LFB69
+ 1142 0320 28000000 		.4byte	.LFE69-.LFB69
+ 1143 0324 01       		.uleb128 0x1
+ 1144 0325 9C       		.byte	0x9c
+ 1145 0326 4B030000 		.4byte	0x34b
+ 1146 032a 06       		.uleb128 0x6
+ 1147 032b 08000000 		.4byte	.LVL33
+ 1148 032f 3F050000 		.4byte	0x53f
+ 1149 0333 41030000 		.4byte	0x341
+ 1150 0337 07       		.uleb128 0x7
+ 1151 0338 01       		.uleb128 0x1
+ 1152 0339 50       		.byte	0x50
+ 1153 033a 05       		.uleb128 0x5
+ 1154 033b 03       		.byte	0x3
+ 1155 033c 00000000 		.4byte	PWM_ISR_handler
+ 1156 0340 00       		.byte	0
+ 1157 0341 08       		.uleb128 0x8
+ 1158 0342 18000000 		.4byte	.LVL34
+ 1159 0346 4A020000 		.4byte	0x24a
+ 1160 034a 00       		.byte	0
+ 1161 034b 09       		.uleb128 0x9
+ 1162 034c 17020000 		.4byte	.LASF32
+ 1163 0350 01       		.byte	0x1
+ 1164 0351 CA       		.byte	0xca
+ 1165 0352 00000000 		.4byte	.LFB71
+ 1166 0356 4C000000 		.4byte	.LFE71-.LFB71
+ 1167 035a 01       		.uleb128 0x1
+ 1168 035b 9C       		.byte	0x9c
+ 1169 035c A7030000 		.4byte	0x3a7
+ 1170 0360 0E       		.uleb128 0xe
+ 1171 0361 48020000 		.4byte	.LASF25
+ 1172 0365 01       		.byte	0x1
+ 1173 0366 CC       		.byte	0xcc
+ 1174 0367 A7030000 		.4byte	0x3a7
+ 1175 036b 03       		.uleb128 0x3
+ 1176 036c 91       		.byte	0x91
+ 1177 036d B87E     		.sleb128 -200
+ 1178 036f 12       		.uleb128 0x12
+ 1179 0370 4E020000 		.4byte	.LASF26
+ 1180 0374 01       		.byte	0x1
+ 1181 0375 E3       		.byte	0xe3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 27
+
+
+ 1182 0376 89000000 		.4byte	0x89
+ 1183 037a 0A       		.byte	0xa
+ 1184 037b 0B       		.uleb128 0xb
+ 1185 037c 04000000 		.4byte	.LBB6
+ 1186 0380 2C000000 		.4byte	.LBE6-.LBB6
+ 1187 0384 96030000 		.4byte	0x396
+ 1188 0388 0C       		.uleb128 0xc
+ 1189 0389 6900     		.ascii	"i\000"
+ 1190 038b 01       		.byte	0x1
+ 1191 038c CF       		.byte	0xcf
+ 1192 038d 89000000 		.4byte	0x89
+ 1193 0391 00010000 		.4byte	.LLST7
+ 1194 0395 00       		.byte	0
+ 1195 0396 0F       		.uleb128 0xf
+ 1196 0397 46000000 		.4byte	.LVL39
+ 1197 039b 8E010000 		.4byte	0x18e
+ 1198 039f 07       		.uleb128 0x7
+ 1199 03a0 01       		.uleb128 0x1
+ 1200 03a1 50       		.byte	0x50
+ 1201 03a2 02       		.uleb128 0x2
+ 1202 03a3 7D       		.byte	0x7d
+ 1203 03a4 00       		.sleb128 0
+ 1204 03a5 00       		.byte	0
+ 1205 03a6 00       		.byte	0
+ 1206 03a7 10       		.uleb128 0x10
+ 1207 03a8 A2000000 		.4byte	0xa2
+ 1208 03ac B7030000 		.4byte	0x3b7
+ 1209 03b0 11       		.uleb128 0x11
+ 1210 03b1 DF000000 		.4byte	0xdf
+ 1211 03b5 BF       		.byte	0xbf
+ 1212 03b6 00       		.byte	0
+ 1213 03b7 13       		.uleb128 0x13
+ 1214 03b8 8F020000 		.4byte	.LASF33
+ 1215 03bc 04       		.byte	0x4
+ 1216 03bd 1207     		.2byte	0x712
+ 1217 03bf C3030000 		.4byte	0x3c3
+ 1218 03c3 14       		.uleb128 0x14
+ 1219 03c4 B8000000 		.4byte	0xb8
+ 1220 03c8 15       		.uleb128 0x15
+ 1221 03c9 56000000 		.4byte	.LASF34
+ 1222 03cd 05       		.byte	0x5
+ 1223 03ce 23       		.byte	0x23
+ 1224 03cf A2000000 		.4byte	0xa2
+ 1225 03d3 05       		.uleb128 0x5
+ 1226 03d4 03       		.byte	0x3
+ 1227 03d5 00000000 		.4byte	currentSquare
+ 1228 03d9 15       		.uleb128 0x15
+ 1229 03da 32010000 		.4byte	.LASF35
+ 1230 03de 05       		.byte	0x5
+ 1231 03df 24       		.byte	0x24
+ 1232 03e0 A2000000 		.4byte	0xa2
+ 1233 03e4 05       		.uleb128 0x5
+ 1234 03e5 03       		.byte	0x3
+ 1235 03e6 00000000 		.4byte	stepCase
+ 1236 03ea 15       		.uleb128 0x15
+ 1237 03eb AB000000 		.4byte	.LASF36
+ 1238 03ef 06       		.byte	0x6
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 28
+
+
+ 1239 03f0 16       		.byte	0x16
+ 1240 03f1 A2000000 		.4byte	0xa2
+ 1241 03f5 05       		.uleb128 0x5
+ 1242 03f6 03       		.byte	0x3
+ 1243 03f7 00000000 		.4byte	startChar
+ 1244 03fb 15       		.uleb128 0x15
+ 1245 03fc 08000000 		.4byte	.LASF37
+ 1246 0400 06       		.byte	0x6
+ 1247 0401 17       		.byte	0x17
+ 1248 0402 9E020000 		.4byte	0x29e
+ 1249 0406 05       		.uleb128 0x5
+ 1250 0407 03       		.byte	0x3
+ 1251 0408 00000000 		.4byte	legalMoves
+ 1252 040c 15       		.uleb128 0x15
+ 1253 040d 02010000 		.4byte	.LASF38
+ 1254 0411 07       		.byte	0x7
+ 1255 0412 16       		.byte	0x16
+ 1256 0413 9E020000 		.4byte	0x29e
+ 1257 0417 05       		.uleb128 0x5
+ 1258 0418 03       		.byte	0x3
+ 1259 0419 00000000 		.4byte	lastSquareReg
+ 1260 041d 15       		.uleb128 0x15
+ 1261 041e C3000000 		.4byte	.LASF39
+ 1262 0422 07       		.byte	0x7
+ 1263 0423 17       		.byte	0x17
+ 1264 0424 9E020000 		.4byte	0x29e
+ 1265 0428 05       		.uleb128 0x5
+ 1266 0429 03       		.byte	0x3
+ 1267 042a 00000000 		.4byte	squareReg
+ 1268 042e 15       		.uleb128 0x15
+ 1269 042f 06020000 		.4byte	.LASF40
+ 1270 0433 07       		.byte	0x7
+ 1271 0434 18       		.byte	0x18
+ 1272 0435 A2000000 		.4byte	0xa2
+ 1273 0439 05       		.uleb128 0x5
+ 1274 043a 03       		.byte	0x3
+ 1275 043b 00000000 		.4byte	pieceLifted
+ 1276 043f 15       		.uleb128 0x15
+ 1277 0440 19010000 		.4byte	.LASF41
+ 1278 0444 07       		.byte	0x7
+ 1279 0445 19       		.byte	0x19
+ 1280 0446 A2000000 		.4byte	0xa2
+ 1281 044a 05       		.uleb128 0x5
+ 1282 044b 03       		.byte	0x3
+ 1283 044c 00000000 		.4byte	deadPieceLifted
+ 1284 0450 15       		.uleb128 0x15
+ 1285 0451 86000000 		.4byte	.LASF42
+ 1286 0455 07       		.byte	0x7
+ 1287 0456 1A       		.byte	0x1a
+ 1288 0457 97000000 		.4byte	0x97
+ 1289 045b 05       		.uleb128 0x5
+ 1290 045c 03       		.byte	0x3
+ 1291 045d 00000000 		.4byte	newPos
+ 1292 0461 15       		.uleb128 0x15
+ 1293 0462 00000000 		.4byte	.LASF43
+ 1294 0466 07       		.byte	0x7
+ 1295 0467 1B       		.byte	0x1b
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 29
+
+
+ 1296 0468 97000000 		.4byte	0x97
+ 1297 046c 05       		.uleb128 0x5
+ 1298 046d 03       		.byte	0x3
+ 1299 046e 00000000 		.4byte	liftPos
+ 1300 0472 15       		.uleb128 0x15
+ 1301 0473 B9010000 		.4byte	.LASF44
+ 1302 0477 07       		.byte	0x7
+ 1303 0478 1C       		.byte	0x1c
+ 1304 0479 97000000 		.4byte	0x97
+ 1305 047d 05       		.uleb128 0x5
+ 1306 047e 03       		.byte	0x3
+ 1307 047f 00000000 		.4byte	deadLiftPos
+ 1308 0483 15       		.uleb128 0x15
+ 1309 0484 10010000 		.4byte	.LASF45
+ 1310 0488 08       		.byte	0x8
+ 1311 0489 12       		.byte	0x12
+ 1312 048a 9E020000 		.4byte	0x29e
+ 1313 048e 05       		.uleb128 0x5
+ 1314 048f 03       		.byte	0x3
+ 1315 0490 00000000 		.4byte	ledArray
+ 1316 0494 15       		.uleb128 0x15
+ 1317 0495 8D000000 		.4byte	.LASF46
+ 1318 0499 08       		.byte	0x8
+ 1319 049a 13       		.byte	0x13
+ 1320 049b A7030000 		.4byte	0x3a7
+ 1321 049f 05       		.uleb128 0x5
+ 1322 04a0 03       		.byte	0x3
+ 1323 04a1 00000000 		.4byte	ledData
+ 1324 04a5 15       		.uleb128 0x15
+ 1325 04a6 66010000 		.4byte	.LASF47
+ 1326 04aa 08       		.byte	0x8
+ 1327 04ab 14       		.byte	0x14
+ 1328 04ac 97000000 		.4byte	0x97
+ 1329 04b0 05       		.uleb128 0x5
+ 1330 04b1 03       		.byte	0x3
+ 1331 04b2 00000000 		.4byte	bitIndex
+ 1332 04b6 15       		.uleb128 0x15
+ 1333 04b7 32030000 		.4byte	.LASF48
+ 1334 04bb 08       		.byte	0x8
+ 1335 04bc 15       		.byte	0x15
+ 1336 04bd AD000000 		.4byte	0xad
+ 1337 04c1 05       		.uleb128 0x5
+ 1338 04c2 03       		.byte	0x3
+ 1339 04c3 00000000 		.4byte	byteIndex
+ 1340 04c7 16       		.uleb128 0x16
+ 1341 04c8 656E6400 		.ascii	"end\000"
+ 1342 04cc 08       		.byte	0x8
+ 1343 04cd 16       		.byte	0x16
+ 1344 04ce 89000000 		.4byte	0x89
+ 1345 04d2 05       		.uleb128 0x5
+ 1346 04d3 03       		.byte	0x3
+ 1347 04d4 00000000 		.4byte	end
+ 1348 04d8 15       		.uleb128 0x15
+ 1349 04d9 92010000 		.4byte	.LASF49
+ 1350 04dd 01       		.byte	0x1
+ 1351 04de 04       		.byte	0x4
+ 1352 04df 9E020000 		.4byte	0x29e
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 30
+
+
+ 1353 04e3 05       		.uleb128 0x5
+ 1354 04e4 03       		.byte	0x3
+ 1355 04e5 00000000 		.4byte	whiteSquareArray
+ 1356 04e9 17       		.uleb128 0x17
+ 1357 04ea C5010000 		.4byte	.LASF50
+ 1358 04ee C5010000 		.4byte	.LASF50
+ 1359 04f2 09       		.byte	0x9
+ 1360 04f3 C3       		.byte	0xc3
+ 1361 04f4 17       		.uleb128 0x17
+ 1362 04f5 D6010000 		.4byte	.LASF51
+ 1363 04f9 D6010000 		.4byte	.LASF51
+ 1364 04fd 0A       		.byte	0xa
+ 1365 04fe 2F       		.byte	0x2f
+ 1366 04ff 17       		.uleb128 0x17
+ 1367 0500 6F000000 		.4byte	.LASF52
+ 1368 0504 6F000000 		.4byte	.LASF52
+ 1369 0508 09       		.byte	0x9
+ 1370 0509 97       		.byte	0x97
+ 1371 050a 17       		.uleb128 0x17
+ 1372 050b 66020000 		.4byte	.LASF53
+ 1373 050f 66020000 		.4byte	.LASF53
+ 1374 0513 09       		.byte	0x9
+ 1375 0514 92       		.byte	0x92
+ 1376 0515 17       		.uleb128 0x17
+ 1377 0516 29010000 		.4byte	.LASF54
+ 1378 051a 29010000 		.4byte	.LASF54
+ 1379 051e 09       		.byte	0x9
+ 1380 051f 93       		.byte	0x93
+ 1381 0520 17       		.uleb128 0x17
+ 1382 0521 CD000000 		.4byte	.LASF55
+ 1383 0525 CD000000 		.4byte	.LASF55
+ 1384 0529 07       		.byte	0x7
+ 1385 052a 25       		.byte	0x25
+ 1386 052b 18       		.uleb128 0x18
+ 1387 052c D8000000 		.4byte	.LASF61
+ 1388 0530 D8000000 		.4byte	.LASF61
+ 1389 0534 17       		.uleb128 0x17
+ 1390 0535 2A030000 		.4byte	.LASF56
+ 1391 0539 2A030000 		.4byte	.LASF56
+ 1392 053d 0B       		.byte	0xb
+ 1393 053e 76       		.byte	0x76
+ 1394 053f 17       		.uleb128 0x17
+ 1395 0540 70020000 		.4byte	.LASF57
+ 1396 0544 70020000 		.4byte	.LASF57
+ 1397 0548 0C       		.byte	0xc
+ 1398 0549 18       		.byte	0x18
+ 1399 054a 00       		.byte	0
+ 1400              		.section	.debug_abbrev,"",%progbits
+ 1401              	.Ldebug_abbrev0:
+ 1402 0000 01       		.uleb128 0x1
+ 1403 0001 11       		.uleb128 0x11
+ 1404 0002 01       		.byte	0x1
+ 1405 0003 25       		.uleb128 0x25
+ 1406 0004 0E       		.uleb128 0xe
+ 1407 0005 13       		.uleb128 0x13
+ 1408 0006 0B       		.uleb128 0xb
+ 1409 0007 03       		.uleb128 0x3
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 31
+
+
+ 1410 0008 0E       		.uleb128 0xe
+ 1411 0009 1B       		.uleb128 0x1b
+ 1412 000a 0E       		.uleb128 0xe
+ 1413 000b 55       		.uleb128 0x55
+ 1414 000c 17       		.uleb128 0x17
+ 1415 000d 11       		.uleb128 0x11
+ 1416 000e 01       		.uleb128 0x1
+ 1417 000f 10       		.uleb128 0x10
+ 1418 0010 17       		.uleb128 0x17
+ 1419 0011 00       		.byte	0
+ 1420 0012 00       		.byte	0
+ 1421 0013 02       		.uleb128 0x2
+ 1422 0014 16       		.uleb128 0x16
+ 1423 0015 00       		.byte	0
+ 1424 0016 03       		.uleb128 0x3
+ 1425 0017 0E       		.uleb128 0xe
+ 1426 0018 3A       		.uleb128 0x3a
+ 1427 0019 0B       		.uleb128 0xb
+ 1428 001a 3B       		.uleb128 0x3b
+ 1429 001b 0B       		.uleb128 0xb
+ 1430 001c 49       		.uleb128 0x49
+ 1431 001d 13       		.uleb128 0x13
+ 1432 001e 00       		.byte	0
+ 1433 001f 00       		.byte	0
+ 1434 0020 03       		.uleb128 0x3
+ 1435 0021 24       		.uleb128 0x24
+ 1436 0022 00       		.byte	0
+ 1437 0023 0B       		.uleb128 0xb
+ 1438 0024 0B       		.uleb128 0xb
+ 1439 0025 3E       		.uleb128 0x3e
+ 1440 0026 0B       		.uleb128 0xb
+ 1441 0027 03       		.uleb128 0x3
+ 1442 0028 0E       		.uleb128 0xe
+ 1443 0029 00       		.byte	0
+ 1444 002a 00       		.byte	0
+ 1445 002b 04       		.uleb128 0x4
+ 1446 002c 24       		.uleb128 0x24
+ 1447 002d 00       		.byte	0
+ 1448 002e 0B       		.uleb128 0xb
+ 1449 002f 0B       		.uleb128 0xb
+ 1450 0030 3E       		.uleb128 0x3e
+ 1451 0031 0B       		.uleb128 0xb
+ 1452 0032 03       		.uleb128 0x3
+ 1453 0033 08       		.uleb128 0x8
+ 1454 0034 00       		.byte	0
+ 1455 0035 00       		.byte	0
+ 1456 0036 05       		.uleb128 0x5
+ 1457 0037 2E       		.uleb128 0x2e
+ 1458 0038 01       		.byte	0x1
+ 1459 0039 3F       		.uleb128 0x3f
+ 1460 003a 19       		.uleb128 0x19
+ 1461 003b 03       		.uleb128 0x3
+ 1462 003c 0E       		.uleb128 0xe
+ 1463 003d 3A       		.uleb128 0x3a
+ 1464 003e 0B       		.uleb128 0xb
+ 1465 003f 3B       		.uleb128 0x3b
+ 1466 0040 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 32
+
+
+ 1467 0041 27       		.uleb128 0x27
+ 1468 0042 19       		.uleb128 0x19
+ 1469 0043 11       		.uleb128 0x11
+ 1470 0044 01       		.uleb128 0x1
+ 1471 0045 12       		.uleb128 0x12
+ 1472 0046 06       		.uleb128 0x6
+ 1473 0047 40       		.uleb128 0x40
+ 1474 0048 18       		.uleb128 0x18
+ 1475 0049 9742     		.uleb128 0x2117
+ 1476 004b 19       		.uleb128 0x19
+ 1477 004c 01       		.uleb128 0x1
+ 1478 004d 13       		.uleb128 0x13
+ 1479 004e 00       		.byte	0
+ 1480 004f 00       		.byte	0
+ 1481 0050 06       		.uleb128 0x6
+ 1482 0051 898201   		.uleb128 0x4109
+ 1483 0054 01       		.byte	0x1
+ 1484 0055 11       		.uleb128 0x11
+ 1485 0056 01       		.uleb128 0x1
+ 1486 0057 31       		.uleb128 0x31
+ 1487 0058 13       		.uleb128 0x13
+ 1488 0059 01       		.uleb128 0x1
+ 1489 005a 13       		.uleb128 0x13
+ 1490 005b 00       		.byte	0
+ 1491 005c 00       		.byte	0
+ 1492 005d 07       		.uleb128 0x7
+ 1493 005e 8A8201   		.uleb128 0x410a
+ 1494 0061 00       		.byte	0
+ 1495 0062 02       		.uleb128 0x2
+ 1496 0063 18       		.uleb128 0x18
+ 1497 0064 9142     		.uleb128 0x2111
+ 1498 0066 18       		.uleb128 0x18
+ 1499 0067 00       		.byte	0
+ 1500 0068 00       		.byte	0
+ 1501 0069 08       		.uleb128 0x8
+ 1502 006a 898201   		.uleb128 0x4109
+ 1503 006d 00       		.byte	0
+ 1504 006e 11       		.uleb128 0x11
+ 1505 006f 01       		.uleb128 0x1
+ 1506 0070 31       		.uleb128 0x31
+ 1507 0071 13       		.uleb128 0x13
+ 1508 0072 00       		.byte	0
+ 1509 0073 00       		.byte	0
+ 1510 0074 09       		.uleb128 0x9
+ 1511 0075 2E       		.uleb128 0x2e
+ 1512 0076 01       		.byte	0x1
+ 1513 0077 3F       		.uleb128 0x3f
+ 1514 0078 19       		.uleb128 0x19
+ 1515 0079 03       		.uleb128 0x3
+ 1516 007a 0E       		.uleb128 0xe
+ 1517 007b 3A       		.uleb128 0x3a
+ 1518 007c 0B       		.uleb128 0xb
+ 1519 007d 3B       		.uleb128 0x3b
+ 1520 007e 0B       		.uleb128 0xb
+ 1521 007f 11       		.uleb128 0x11
+ 1522 0080 01       		.uleb128 0x1
+ 1523 0081 12       		.uleb128 0x12
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 33
+
+
+ 1524 0082 06       		.uleb128 0x6
+ 1525 0083 40       		.uleb128 0x40
+ 1526 0084 18       		.uleb128 0x18
+ 1527 0085 9742     		.uleb128 0x2117
+ 1528 0087 19       		.uleb128 0x19
+ 1529 0088 01       		.uleb128 0x1
+ 1530 0089 13       		.uleb128 0x13
+ 1531 008a 00       		.byte	0
+ 1532 008b 00       		.byte	0
+ 1533 008c 0A       		.uleb128 0xa
+ 1534 008d 05       		.uleb128 0x5
+ 1535 008e 00       		.byte	0
+ 1536 008f 03       		.uleb128 0x3
+ 1537 0090 0E       		.uleb128 0xe
+ 1538 0091 3A       		.uleb128 0x3a
+ 1539 0092 0B       		.uleb128 0xb
+ 1540 0093 3B       		.uleb128 0x3b
+ 1541 0094 0B       		.uleb128 0xb
+ 1542 0095 49       		.uleb128 0x49
+ 1543 0096 13       		.uleb128 0x13
+ 1544 0097 02       		.uleb128 0x2
+ 1545 0098 17       		.uleb128 0x17
+ 1546 0099 00       		.byte	0
+ 1547 009a 00       		.byte	0
+ 1548 009b 0B       		.uleb128 0xb
+ 1549 009c 0B       		.uleb128 0xb
+ 1550 009d 01       		.byte	0x1
+ 1551 009e 11       		.uleb128 0x11
+ 1552 009f 01       		.uleb128 0x1
+ 1553 00a0 12       		.uleb128 0x12
+ 1554 00a1 06       		.uleb128 0x6
+ 1555 00a2 01       		.uleb128 0x1
+ 1556 00a3 13       		.uleb128 0x13
+ 1557 00a4 00       		.byte	0
+ 1558 00a5 00       		.byte	0
+ 1559 00a6 0C       		.uleb128 0xc
+ 1560 00a7 34       		.uleb128 0x34
+ 1561 00a8 00       		.byte	0
+ 1562 00a9 03       		.uleb128 0x3
+ 1563 00aa 08       		.uleb128 0x8
+ 1564 00ab 3A       		.uleb128 0x3a
+ 1565 00ac 0B       		.uleb128 0xb
+ 1566 00ad 3B       		.uleb128 0x3b
+ 1567 00ae 0B       		.uleb128 0xb
+ 1568 00af 49       		.uleb128 0x49
+ 1569 00b0 13       		.uleb128 0x13
+ 1570 00b1 02       		.uleb128 0x2
+ 1571 00b2 17       		.uleb128 0x17
+ 1572 00b3 00       		.byte	0
+ 1573 00b4 00       		.byte	0
+ 1574 00b5 0D       		.uleb128 0xd
+ 1575 00b6 0F       		.uleb128 0xf
+ 1576 00b7 00       		.byte	0
+ 1577 00b8 0B       		.uleb128 0xb
+ 1578 00b9 0B       		.uleb128 0xb
+ 1579 00ba 49       		.uleb128 0x49
+ 1580 00bb 13       		.uleb128 0x13
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 34
+
+
+ 1581 00bc 00       		.byte	0
+ 1582 00bd 00       		.byte	0
+ 1583 00be 0E       		.uleb128 0xe
+ 1584 00bf 34       		.uleb128 0x34
+ 1585 00c0 00       		.byte	0
+ 1586 00c1 03       		.uleb128 0x3
+ 1587 00c2 0E       		.uleb128 0xe
+ 1588 00c3 3A       		.uleb128 0x3a
+ 1589 00c4 0B       		.uleb128 0xb
+ 1590 00c5 3B       		.uleb128 0x3b
+ 1591 00c6 0B       		.uleb128 0xb
+ 1592 00c7 49       		.uleb128 0x49
+ 1593 00c8 13       		.uleb128 0x13
+ 1594 00c9 02       		.uleb128 0x2
+ 1595 00ca 18       		.uleb128 0x18
+ 1596 00cb 00       		.byte	0
+ 1597 00cc 00       		.byte	0
+ 1598 00cd 0F       		.uleb128 0xf
+ 1599 00ce 898201   		.uleb128 0x4109
+ 1600 00d1 01       		.byte	0x1
+ 1601 00d2 11       		.uleb128 0x11
+ 1602 00d3 01       		.uleb128 0x1
+ 1603 00d4 31       		.uleb128 0x31
+ 1604 00d5 13       		.uleb128 0x13
+ 1605 00d6 00       		.byte	0
+ 1606 00d7 00       		.byte	0
+ 1607 00d8 10       		.uleb128 0x10
+ 1608 00d9 01       		.uleb128 0x1
+ 1609 00da 01       		.byte	0x1
+ 1610 00db 49       		.uleb128 0x49
+ 1611 00dc 13       		.uleb128 0x13
+ 1612 00dd 01       		.uleb128 0x1
+ 1613 00de 13       		.uleb128 0x13
+ 1614 00df 00       		.byte	0
+ 1615 00e0 00       		.byte	0
+ 1616 00e1 11       		.uleb128 0x11
+ 1617 00e2 21       		.uleb128 0x21
+ 1618 00e3 00       		.byte	0
+ 1619 00e4 49       		.uleb128 0x49
+ 1620 00e5 13       		.uleb128 0x13
+ 1621 00e6 2F       		.uleb128 0x2f
+ 1622 00e7 0B       		.uleb128 0xb
+ 1623 00e8 00       		.byte	0
+ 1624 00e9 00       		.byte	0
+ 1625 00ea 12       		.uleb128 0x12
+ 1626 00eb 34       		.uleb128 0x34
+ 1627 00ec 00       		.byte	0
+ 1628 00ed 03       		.uleb128 0x3
+ 1629 00ee 0E       		.uleb128 0xe
+ 1630 00ef 3A       		.uleb128 0x3a
+ 1631 00f0 0B       		.uleb128 0xb
+ 1632 00f1 3B       		.uleb128 0x3b
+ 1633 00f2 0B       		.uleb128 0xb
+ 1634 00f3 49       		.uleb128 0x49
+ 1635 00f4 13       		.uleb128 0x13
+ 1636 00f5 1C       		.uleb128 0x1c
+ 1637 00f6 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 35
+
+
+ 1638 00f7 00       		.byte	0
+ 1639 00f8 00       		.byte	0
+ 1640 00f9 13       		.uleb128 0x13
+ 1641 00fa 34       		.uleb128 0x34
+ 1642 00fb 00       		.byte	0
+ 1643 00fc 03       		.uleb128 0x3
+ 1644 00fd 0E       		.uleb128 0xe
+ 1645 00fe 3A       		.uleb128 0x3a
+ 1646 00ff 0B       		.uleb128 0xb
+ 1647 0100 3B       		.uleb128 0x3b
+ 1648 0101 05       		.uleb128 0x5
+ 1649 0102 49       		.uleb128 0x49
+ 1650 0103 13       		.uleb128 0x13
+ 1651 0104 3F       		.uleb128 0x3f
+ 1652 0105 19       		.uleb128 0x19
+ 1653 0106 3C       		.uleb128 0x3c
+ 1654 0107 19       		.uleb128 0x19
+ 1655 0108 00       		.byte	0
+ 1656 0109 00       		.byte	0
+ 1657 010a 14       		.uleb128 0x14
+ 1658 010b 35       		.uleb128 0x35
+ 1659 010c 00       		.byte	0
+ 1660 010d 49       		.uleb128 0x49
+ 1661 010e 13       		.uleb128 0x13
+ 1662 010f 00       		.byte	0
+ 1663 0110 00       		.byte	0
+ 1664 0111 15       		.uleb128 0x15
+ 1665 0112 34       		.uleb128 0x34
+ 1666 0113 00       		.byte	0
+ 1667 0114 03       		.uleb128 0x3
+ 1668 0115 0E       		.uleb128 0xe
+ 1669 0116 3A       		.uleb128 0x3a
+ 1670 0117 0B       		.uleb128 0xb
+ 1671 0118 3B       		.uleb128 0x3b
+ 1672 0119 0B       		.uleb128 0xb
+ 1673 011a 49       		.uleb128 0x49
+ 1674 011b 13       		.uleb128 0x13
+ 1675 011c 3F       		.uleb128 0x3f
+ 1676 011d 19       		.uleb128 0x19
+ 1677 011e 02       		.uleb128 0x2
+ 1678 011f 18       		.uleb128 0x18
+ 1679 0120 00       		.byte	0
+ 1680 0121 00       		.byte	0
+ 1681 0122 16       		.uleb128 0x16
+ 1682 0123 34       		.uleb128 0x34
+ 1683 0124 00       		.byte	0
+ 1684 0125 03       		.uleb128 0x3
+ 1685 0126 08       		.uleb128 0x8
+ 1686 0127 3A       		.uleb128 0x3a
+ 1687 0128 0B       		.uleb128 0xb
+ 1688 0129 3B       		.uleb128 0x3b
+ 1689 012a 0B       		.uleb128 0xb
+ 1690 012b 49       		.uleb128 0x49
+ 1691 012c 13       		.uleb128 0x13
+ 1692 012d 3F       		.uleb128 0x3f
+ 1693 012e 19       		.uleb128 0x19
+ 1694 012f 02       		.uleb128 0x2
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 36
+
+
+ 1695 0130 18       		.uleb128 0x18
+ 1696 0131 00       		.byte	0
+ 1697 0132 00       		.byte	0
+ 1698 0133 17       		.uleb128 0x17
+ 1699 0134 2E       		.uleb128 0x2e
+ 1700 0135 00       		.byte	0
+ 1701 0136 3F       		.uleb128 0x3f
+ 1702 0137 19       		.uleb128 0x19
+ 1703 0138 3C       		.uleb128 0x3c
+ 1704 0139 19       		.uleb128 0x19
+ 1705 013a 6E       		.uleb128 0x6e
+ 1706 013b 0E       		.uleb128 0xe
+ 1707 013c 03       		.uleb128 0x3
+ 1708 013d 0E       		.uleb128 0xe
+ 1709 013e 3A       		.uleb128 0x3a
+ 1710 013f 0B       		.uleb128 0xb
+ 1711 0140 3B       		.uleb128 0x3b
+ 1712 0141 0B       		.uleb128 0xb
+ 1713 0142 00       		.byte	0
+ 1714 0143 00       		.byte	0
+ 1715 0144 18       		.uleb128 0x18
+ 1716 0145 2E       		.uleb128 0x2e
+ 1717 0146 00       		.byte	0
+ 1718 0147 3F       		.uleb128 0x3f
+ 1719 0148 19       		.uleb128 0x19
+ 1720 0149 3C       		.uleb128 0x3c
+ 1721 014a 19       		.uleb128 0x19
+ 1722 014b 6E       		.uleb128 0x6e
+ 1723 014c 0E       		.uleb128 0xe
+ 1724 014d 03       		.uleb128 0x3
+ 1725 014e 0E       		.uleb128 0xe
+ 1726 014f 00       		.byte	0
+ 1727 0150 00       		.byte	0
+ 1728 0151 00       		.byte	0
+ 1729              		.section	.debug_loc,"",%progbits
+ 1730              	.Ldebug_loc0:
+ 1731              	.LLST0:
+ 1732 0000 00000000 		.4byte	.LVL8
+ 1733 0004 1B000000 		.4byte	.LVL12-1
+ 1734 0008 0100     		.2byte	0x1
+ 1735 000a 50       		.byte	0x50
+ 1736 000b 1B000000 		.4byte	.LVL12-1
+ 1737 000f 00010000 		.4byte	.LFE65
+ 1738 0013 0400     		.2byte	0x4
+ 1739 0015 F3       		.byte	0xf3
+ 1740 0016 01       		.uleb128 0x1
+ 1741 0017 50       		.byte	0x50
+ 1742 0018 9F       		.byte	0x9f
+ 1743 0019 00000000 		.4byte	0
+ 1744 001d 00000000 		.4byte	0
+ 1745              	.LLST1:
+ 1746 0021 08000000 		.4byte	.LVL9
+ 1747 0025 0C000000 		.4byte	.LVL10
+ 1748 0029 0200     		.2byte	0x2
+ 1749 002b 30       		.byte	0x30
+ 1750 002c 9F       		.byte	0x9f
+ 1751 002d 0C000000 		.4byte	.LVL10
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 37
+
+
+ 1752 0031 1B000000 		.4byte	.LVL12-1
+ 1753 0035 0100     		.2byte	0x1
+ 1754 0037 53       		.byte	0x53
+ 1755 0038 00000000 		.4byte	0
+ 1756 003c 00000000 		.4byte	0
+ 1757              	.LLST2:
+ 1758 0040 1C000000 		.4byte	.LVL12
+ 1759 0044 20000000 		.4byte	.LVL13
+ 1760 0048 0200     		.2byte	0x2
+ 1761 004a 30       		.byte	0x30
+ 1762 004b 9F       		.byte	0x9f
+ 1763 004c 20000000 		.4byte	.LVL13
+ 1764 0050 DE000000 		.4byte	.LVL14
+ 1765 0054 0100     		.2byte	0x1
+ 1766 0056 53       		.byte	0x53
+ 1767 0057 E0000000 		.4byte	.LVL15
+ 1768 005b E7000000 		.4byte	.LVL16-1
+ 1769 005f 0100     		.2byte	0x1
+ 1770 0061 53       		.byte	0x53
+ 1771 0062 00000000 		.4byte	0
+ 1772 0066 00000000 		.4byte	0
+ 1773              	.LLST3:
+ 1774 006a 00000000 		.4byte	.LVL17
+ 1775 006e 3D000000 		.4byte	.LVL22-1
+ 1776 0072 0100     		.2byte	0x1
+ 1777 0074 50       		.byte	0x50
+ 1778 0075 3D000000 		.4byte	.LVL22-1
+ 1779 0079 48000000 		.4byte	.LFE67
+ 1780 007d 0400     		.2byte	0x4
+ 1781 007f F3       		.byte	0xf3
+ 1782 0080 01       		.uleb128 0x1
+ 1783 0081 50       		.byte	0x50
+ 1784 0082 9F       		.byte	0x9f
+ 1785 0083 00000000 		.4byte	0
+ 1786 0087 00000000 		.4byte	0
+ 1787              	.LLST4:
+ 1788 008b 08000000 		.4byte	.LVL18
+ 1789 008f 0C000000 		.4byte	.LVL19
+ 1790 0093 0200     		.2byte	0x2
+ 1791 0095 30       		.byte	0x30
+ 1792 0096 9F       		.byte	0x9f
+ 1793 0097 0C000000 		.4byte	.LVL19
+ 1794 009b 34000000 		.4byte	.LVL20
+ 1795 009f 0100     		.2byte	0x1
+ 1796 00a1 53       		.byte	0x53
+ 1797 00a2 36000000 		.4byte	.LVL21
+ 1798 00a6 3D000000 		.4byte	.LVL22-1
+ 1799 00aa 0100     		.2byte	0x1
+ 1800 00ac 53       		.byte	0x53
+ 1801 00ad 00000000 		.4byte	0
+ 1802 00b1 00000000 		.4byte	0
+ 1803              	.LLST5:
+ 1804 00b5 00000000 		.4byte	.LVL25
+ 1805 00b9 3F000000 		.4byte	.LVL30-1
+ 1806 00bd 0100     		.2byte	0x1
+ 1807 00bf 50       		.byte	0x50
+ 1808 00c0 3F000000 		.4byte	.LVL30-1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 38
+
+
+ 1809 00c4 58000000 		.4byte	.LFE68
+ 1810 00c8 0400     		.2byte	0x4
+ 1811 00ca F3       		.byte	0xf3
+ 1812 00cb 01       		.uleb128 0x1
+ 1813 00cc 50       		.byte	0x50
+ 1814 00cd 9F       		.byte	0x9f
+ 1815 00ce 00000000 		.4byte	0
+ 1816 00d2 00000000 		.4byte	0
+ 1817              	.LLST6:
+ 1818 00d6 08000000 		.4byte	.LVL26
+ 1819 00da 0C000000 		.4byte	.LVL27
+ 1820 00de 0200     		.2byte	0x2
+ 1821 00e0 30       		.byte	0x30
+ 1822 00e1 9F       		.byte	0x9f
+ 1823 00e2 0C000000 		.4byte	.LVL27
+ 1824 00e6 36000000 		.4byte	.LVL28
+ 1825 00ea 0100     		.2byte	0x1
+ 1826 00ec 53       		.byte	0x53
+ 1827 00ed 38000000 		.4byte	.LVL29
+ 1828 00f1 3F000000 		.4byte	.LVL30-1
+ 1829 00f5 0100     		.2byte	0x1
+ 1830 00f7 53       		.byte	0x53
+ 1831 00f8 00000000 		.4byte	0
+ 1832 00fc 00000000 		.4byte	0
+ 1833              	.LLST7:
+ 1834 0100 04000000 		.4byte	.LVL35
+ 1835 0104 08000000 		.4byte	.LVL36
+ 1836 0108 0200     		.2byte	0x2
+ 1837 010a 30       		.byte	0x30
+ 1838 010b 9F       		.byte	0x9f
+ 1839 010c 08000000 		.4byte	.LVL36
+ 1840 0110 45000000 		.4byte	.LVL39-1
+ 1841 0114 0100     		.2byte	0x1
+ 1842 0116 52       		.byte	0x52
+ 1843 0117 00000000 		.4byte	0
+ 1844 011b 00000000 		.4byte	0
+ 1845              		.section	.debug_aranges,"",%progbits
+ 1846 0000 54000000 		.4byte	0x54
+ 1847 0004 0200     		.2byte	0x2
+ 1848 0006 00000000 		.4byte	.Ldebug_info0
+ 1849 000a 04       		.byte	0x4
+ 1850 000b 00       		.byte	0
+ 1851 000c 0000     		.2byte	0
+ 1852 000e 0000     		.2byte	0
+ 1853 0010 00000000 		.4byte	.LFB64
+ 1854 0014 50000000 		.4byte	.LFE64-.LFB64
+ 1855 0018 00000000 		.4byte	.LFB66
+ 1856 001c 50000000 		.4byte	.LFE66-.LFB66
+ 1857 0020 00000000 		.4byte	.LFB65
+ 1858 0024 00010000 		.4byte	.LFE65-.LFB65
+ 1859 0028 00000000 		.4byte	.LFB67
+ 1860 002c 48000000 		.4byte	.LFE67-.LFB67
+ 1861 0030 00000000 		.4byte	.LFB70
+ 1862 0034 1A000000 		.4byte	.LFE70-.LFB70
+ 1863 0038 00000000 		.4byte	.LFB68
+ 1864 003c 58000000 		.4byte	.LFE68-.LFB68
+ 1865 0040 00000000 		.4byte	.LFB69
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 39
+
+
+ 1866 0044 28000000 		.4byte	.LFE69-.LFB69
+ 1867 0048 00000000 		.4byte	.LFB71
+ 1868 004c 4C000000 		.4byte	.LFE71-.LFB71
+ 1869 0050 00000000 		.4byte	0
+ 1870 0054 00000000 		.4byte	0
+ 1871              		.section	.debug_ranges,"",%progbits
+ 1872              	.Ldebug_ranges0:
+ 1873 0000 00000000 		.4byte	.LFB64
+ 1874 0004 50000000 		.4byte	.LFE64
+ 1875 0008 00000000 		.4byte	.LFB66
+ 1876 000c 50000000 		.4byte	.LFE66
+ 1877 0010 00000000 		.4byte	.LFB65
+ 1878 0014 00010000 		.4byte	.LFE65
+ 1879 0018 00000000 		.4byte	.LFB67
+ 1880 001c 48000000 		.4byte	.LFE67
+ 1881 0020 00000000 		.4byte	.LFB70
+ 1882 0024 1A000000 		.4byte	.LFE70
+ 1883 0028 00000000 		.4byte	.LFB68
+ 1884 002c 58000000 		.4byte	.LFE68
+ 1885 0030 00000000 		.4byte	.LFB69
+ 1886 0034 28000000 		.4byte	.LFE69
+ 1887 0038 00000000 		.4byte	.LFB71
+ 1888 003c 4C000000 		.4byte	.LFE71
+ 1889 0040 00000000 		.4byte	0
+ 1890 0044 00000000 		.4byte	0
+ 1891              		.section	.debug_line,"",%progbits
+ 1892              	.Ldebug_line0:
+ 1893 0000 0D030000 		.section	.debug_str,"MS",%progbits,1
+ 1893      0200AE01 
+ 1893      00000201 
+ 1893      FB0E0D00 
+ 1893      01010101 
+ 1894              	.LASF43:
+ 1895 0000 6C696674 		.ascii	"liftPos\000"
+ 1895      506F7300 
+ 1896              	.LASF37:
+ 1897 0008 6C656761 		.ascii	"legalMoves\000"
+ 1897      6C4D6F76 
+ 1897      657300
+ 1898              	.LASF13:
+ 1899 0013 696E7438 		.ascii	"int8_t\000"
+ 1899      5F7400
+ 1900              	.LASF28:
+ 1901 001a 7475726E 		.ascii	"turnOffLEDs\000"
+ 1901      4F66664C 
+ 1901      45447300 
+ 1902              	.LASF4:
+ 1903 0026 73686F72 		.ascii	"short int\000"
+ 1903      7420696E 
+ 1903      7400
+ 1904              	.LASF21:
+ 1905 0030 73697A65 		.ascii	"sizetype\000"
+ 1905      74797065 
+ 1905      00
+ 1906              	.LASF27:
+ 1907 0039 70776D4C 		.ascii	"pwmLedInterrupt\000"
+ 1907      6564496E 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 40
+
+
+ 1907      74657272 
+ 1907      75707400 
+ 1908              	.LASF59:
+ 1909 0049 4C656443 		.ascii	"LedControl.c\000"
+ 1909      6F6E7472 
+ 1909      6F6C2E63 
+ 1909      00
+ 1910              	.LASF34:
+ 1911 0056 63757272 		.ascii	"currentSquare\000"
+ 1911      656E7453 
+ 1911      71756172 
+ 1911      6500
+ 1912              	.LASF5:
+ 1913 0064 5F5F7569 		.ascii	"__uint16_t\000"
+ 1913      6E743136 
+ 1913      5F7400
+ 1914              	.LASF52:
+ 1915 006f 50574D5F 		.ascii	"PWM_ReadStatusRegister\000"
+ 1915      52656164 
+ 1915      53746174 
+ 1915      75735265 
+ 1915      67697374 
+ 1916              	.LASF42:
+ 1917 0086 6E657750 		.ascii	"newPos\000"
+ 1917      6F7300
+ 1918              	.LASF46:
+ 1919 008d 6C656444 		.ascii	"ledData\000"
+ 1919      61746100 
+ 1920              	.LASF30:
+ 1921 0095 6D6F7665 		.ascii	"moveAcceptedLED\000"
+ 1921      41636365 
+ 1921      70746564 
+ 1921      4C454400 
+ 1922              	.LASF17:
+ 1923 00a5 666C6F61 		.ascii	"float\000"
+ 1923      7400
+ 1924              	.LASF36:
+ 1925 00ab 73746172 		.ascii	"startChar\000"
+ 1925      74436861 
+ 1925      7200
+ 1926              	.LASF10:
+ 1927 00b5 6C6F6E67 		.ascii	"long long int\000"
+ 1927      206C6F6E 
+ 1927      6720696E 
+ 1927      7400
+ 1928              	.LASF39:
+ 1929 00c3 73717561 		.ascii	"squareReg\000"
+ 1929      72655265 
+ 1929      6700
+ 1930              	.LASF55:
+ 1931 00cd 73656E73 		.ascii	"sensorScan\000"
+ 1931      6F725363 
+ 1931      616E00
+ 1932              	.LASF61:
+ 1933 00d8 6D656D73 		.ascii	"memset\000"
+ 1933      657400
+ 1934              	.LASF22:
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 41
+
+
+ 1935 00df 50574D5F 		.ascii	"PWM_ISR_handler\000"
+ 1935      4953525F 
+ 1935      68616E64 
+ 1935      6C657200 
+ 1936              	.LASF8:
+ 1937 00ef 6C6F6E67 		.ascii	"long int\000"
+ 1937      20696E74 
+ 1937      00
+ 1938              	.LASF1:
+ 1939 00f8 5F5F7569 		.ascii	"__uint8_t\000"
+ 1939      6E74385F 
+ 1939      7400
+ 1940              	.LASF38:
+ 1941 0102 6C617374 		.ascii	"lastSquareReg\000"
+ 1941      53717561 
+ 1941      72655265 
+ 1941      6700
+ 1942              	.LASF45:
+ 1943 0110 6C656441 		.ascii	"ledArray\000"
+ 1943      72726179 
+ 1943      00
+ 1944              	.LASF41:
+ 1945 0119 64656164 		.ascii	"deadPieceLifted\000"
+ 1945      50696563 
+ 1945      654C6966 
+ 1945      74656400 
+ 1946              	.LASF54:
+ 1947 0129 50574D5F 		.ascii	"PWM_Stop\000"
+ 1947      53746F70 
+ 1947      00
+ 1948              	.LASF35:
+ 1949 0132 73746570 		.ascii	"stepCase\000"
+ 1949      43617365 
+ 1949      00
+ 1950              	.LASF20:
+ 1951 013b 6C6F6E67 		.ascii	"long double\000"
+ 1951      20646F75 
+ 1951      626C6500 
+ 1952              	.LASF3:
+ 1953 0147 756E7369 		.ascii	"unsigned char\000"
+ 1953      676E6564 
+ 1953      20636861 
+ 1953      7200
+ 1954              	.LASF29:
+ 1955 0155 6F666641 		.ascii	"offArray\000"
+ 1955      72726179 
+ 1955      00
+ 1956              	.LASF31:
+ 1957 015e 696E6974 		.ascii	"initLED\000"
+ 1957      4C454400 
+ 1958              	.LASF47:
+ 1959 0166 62697449 		.ascii	"bitIndex\000"
+ 1959      6E646578 
+ 1959      00
+ 1960              	.LASF2:
+ 1961 016f 7369676E 		.ascii	"signed char\000"
+ 1961      65642063 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 42
+
+
+ 1961      68617200 
+ 1962              	.LASF11:
+ 1963 017b 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1963      206C6F6E 
+ 1963      6720756E 
+ 1963      7369676E 
+ 1963      65642069 
+ 1964              	.LASF49:
+ 1965 0192 77686974 		.ascii	"whiteSquareArray\000"
+ 1965      65537175 
+ 1965      61726541 
+ 1965      72726179 
+ 1965      00
+ 1966              	.LASF12:
+ 1967 01a3 756E7369 		.ascii	"unsigned int\000"
+ 1967      676E6564 
+ 1967      20696E74 
+ 1967      00
+ 1968              	.LASF15:
+ 1969 01b0 75696E74 		.ascii	"uint16_t\000"
+ 1969      31365F74 
+ 1969      00
+ 1970              	.LASF44:
+ 1971 01b9 64656164 		.ascii	"deadLiftPos\000"
+ 1971      4C696674 
+ 1971      506F7300 
+ 1972              	.LASF50:
+ 1973 01c5 50574D5F 		.ascii	"PWM_WriteCompare\000"
+ 1973      57726974 
+ 1973      65436F6D 
+ 1973      70617265 
+ 1973      00
+ 1974              	.LASF51:
+ 1975 01d6 436F6E74 		.ascii	"Control_Reg_1_Write\000"
+ 1975      726F6C5F 
+ 1975      5265675F 
+ 1975      315F5772 
+ 1975      69746500 
+ 1976              	.LASF6:
+ 1977 01ea 73686F72 		.ascii	"short unsigned int\000"
+ 1977      7420756E 
+ 1977      7369676E 
+ 1977      65642069 
+ 1977      6E7400
+ 1978              	.LASF0:
+ 1979 01fd 5F5F696E 		.ascii	"__int8_t\000"
+ 1979      74385F74 
+ 1979      00
+ 1980              	.LASF40:
+ 1981 0206 70696563 		.ascii	"pieceLifted\000"
+ 1981      654C6966 
+ 1981      74656400 
+ 1982              	.LASF19:
+ 1983 0212 63686172 		.ascii	"char\000"
+ 1983      00
+ 1984              	.LASF32:
+ 1985 0217 4C454474 		.ascii	"LEDtest\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 43
+
+
+ 1985      65737400 
+ 1986              	.LASF16:
+ 1987 021f 696E7433 		.ascii	"int32_t\000"
+ 1987      325F7400 
+ 1988              	.LASF23:
+ 1989 0227 7365744C 		.ascii	"setLEDs\000"
+ 1989      45447300 
+ 1990              	.LASF9:
+ 1991 022f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1991      20756E73 
+ 1991      69676E65 
+ 1991      6420696E 
+ 1991      7400
+ 1992              	.LASF18:
+ 1993 0241 646F7562 		.ascii	"double\000"
+ 1993      6C6500
+ 1994              	.LASF25:
+ 1995 0248 61727261 		.ascii	"array\000"
+ 1995      7900
+ 1996              	.LASF26:
+ 1997 024e 6C65644E 		.ascii	"ledNr\000"
+ 1997      7200
+ 1998              	.LASF7:
+ 1999 0254 5F5F696E 		.ascii	"__int32_t\000"
+ 1999      7433325F 
+ 1999      7400
+ 2000              	.LASF14:
+ 2001 025e 75696E74 		.ascii	"uint8_t\000"
+ 2001      385F7400 
+ 2002              	.LASF53:
+ 2003 0266 50574D5F 		.ascii	"PWM_Start\000"
+ 2003      53746172 
+ 2003      7400
+ 2004              	.LASF57:
+ 2005 0270 6973725F 		.ascii	"isr_PWM_StartEx\000"
+ 2005      50574D5F 
+ 2005      53746172 
+ 2005      74457800 
+ 2006              	.LASF24:
+ 2007 0280 6F6E6C79 		.ascii	"onlyDeadPosLED\000"
+ 2007      44656164 
+ 2007      506F734C 
+ 2007      454400
+ 2008              	.LASF33:
+ 2009 028f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2009      52784275 
+ 2009      66666572 
+ 2009      00
+ 2010              	.LASF58:
+ 2011 029c 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2011      43313120 
+ 2011      352E342E 
+ 2011      31203230 
+ 2011      31363036 
+ 2012 02cf 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2012      20726576 
+ 2012      6973696F 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccWaoNZX.s 			page 44
+
+
+ 2012      6E203233 
+ 2012      37373135 
+ 2013 0302 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2013      66756E63 
+ 2013      74696F6E 
+ 2013      2D736563 
+ 2013      74696F6E 
+ 2014              	.LASF56:
+ 2015 032a 43794465 		.ascii	"CyDelay\000"
+ 2015      6C617900 
+ 2016              	.LASF48:
+ 2017 0332 62797465 		.ascii	"byteIndex\000"
+ 2017      496E6465 
+ 2017      7800
+ 2018              	.LASF60:
+ 2019 033c 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 2019      49545C52 
+ 2019      6F626F4D 
+ 2019      6174655C 
+ 2019      50536F43 
+ 2020 036a 726F6C6C 		.ascii	"roller.cydsn\000"
+ 2020      65722E63 
+ 2020      7964736E 
+ 2020      00
+ 2021              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

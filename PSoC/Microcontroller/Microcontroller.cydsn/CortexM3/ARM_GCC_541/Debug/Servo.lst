@@ -1,0 +1,679 @@
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Servo.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.servoOn,"ax",%progbits
+  20              		.align	2
+  21              		.global	servoOn
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	servoOn, %function
+  25              	servoOn:
+  26              	.LFB63:
+  27              		.file 1 "Servo.c"
+   1:Servo.c       **** /* ========================================
+   2:Servo.c       ****  *
+   3:Servo.c       ****  * Copyright YOUR COMPANY, THE YEAR
+   4:Servo.c       ****  * All Rights Reserved
+   5:Servo.c       ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:Servo.c       ****  *
+   7:Servo.c       ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:Servo.c       ****  * WHICH IS THE PROPERTY OF your company.
+   9:Servo.c       ****  *
+  10:Servo.c       ****  * ========================================
+  11:Servo.c       **** */
+  12:Servo.c       **** #include "Servo.h"
+  13:Servo.c       **** 
+  14:Servo.c       **** void servoOn()
+  15:Servo.c       **** {
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  16:Servo.c       ****     ServoPWM_WriteCompare(on_position);
+  36              		.loc 1 16 0
+  37 0002 40F2DC50 		movw	r0, #1500
+  38 0006 FFF7FEFF 		bl	ServoPWM_WriteCompare
+  39              	.LVL0:
+  17:Servo.c       ****     CyDelay(500);
+  40              		.loc 1 17 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 2
+
+
+  41 000a 4FF4FA70 		mov	r0, #500
+  42 000e FFF7FEFF 		bl	CyDelay
+  43              	.LVL1:
+  44 0012 08BD     		pop	{r3, pc}
+  45              		.cfi_endproc
+  46              	.LFE63:
+  47              		.size	servoOn, .-servoOn
+  48              		.section	.text.servoOff,"ax",%progbits
+  49              		.align	2
+  50              		.global	servoOff
+  51              		.thumb
+  52              		.thumb_func
+  53              		.type	servoOff, %function
+  54              	servoOff:
+  55              	.LFB64:
+  18:Servo.c       **** }
+  19:Servo.c       **** 
+  20:Servo.c       **** void servoOff()
+  21:Servo.c       **** {
+  56              		.loc 1 21 0
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60 0000 08B5     		push	{r3, lr}
+  61              		.cfi_def_cfa_offset 8
+  62              		.cfi_offset 3, -8
+  63              		.cfi_offset 14, -4
+  22:Servo.c       ****     ServoPWM_WriteCompare(off_position);
+  64              		.loc 1 22 0
+  65 0002 4FF42F70 		mov	r0, #700
+  66 0006 FFF7FEFF 		bl	ServoPWM_WriteCompare
+  67              	.LVL2:
+  23:Servo.c       ****     CyDelay(500);
+  68              		.loc 1 23 0
+  69 000a 4FF4FA70 		mov	r0, #500
+  70 000e FFF7FEFF 		bl	CyDelay
+  71              	.LVL3:
+  72 0012 08BD     		pop	{r3, pc}
+  73              		.cfi_endproc
+  74              	.LFE64:
+  75              		.size	servoOff, .-servoOff
+  76              		.section	.text.initServo,"ax",%progbits
+  77              		.align	2
+  78              		.global	initServo
+  79              		.thumb
+  80              		.thumb_func
+  81              		.type	initServo, %function
+  82              	initServo:
+  83              	.LFB65:
+  24:Servo.c       **** }
+  25:Servo.c       **** 
+  26:Servo.c       **** void initServo()
+  27:Servo.c       **** {
+  84              		.loc 1 27 0
+  85              		.cfi_startproc
+  86              		@ args = 0, pretend = 0, frame = 0
+  87              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 3
+
+
+  88 0000 08B5     		push	{r3, lr}
+  89              		.cfi_def_cfa_offset 8
+  90              		.cfi_offset 3, -8
+  91              		.cfi_offset 14, -4
+  28:Servo.c       ****     ServoPWM_Start();
+  92              		.loc 1 28 0
+  93 0002 FFF7FEFF 		bl	ServoPWM_Start
+  94              	.LVL4:
+  29:Servo.c       ****     servoOff();
+  95              		.loc 1 29 0
+  96 0006 FFF7FEFF 		bl	servoOff
+  97              	.LVL5:
+  98 000a 08BD     		pop	{r3, pc}
+  99              		.cfi_endproc
+ 100              	.LFE65:
+ 101              		.size	initServo, .-initServo
+ 102              		.text
+ 103              	.Letext0:
+ 104              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 105              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 106              		.file 4 "Generated_Source\\PSoC5/ServoPWM.h"
+ 107              		.file 5 "Generated_Source\\PSoC5/CyLib.h"
+ 108              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 109              		.section	.debug_info,"",%progbits
+ 110              	.Ldebug_info0:
+ 111 0000 73010000 		.4byte	0x173
+ 112 0004 0400     		.2byte	0x4
+ 113 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 114 000a 04       		.byte	0x4
+ 115 000b 01       		.uleb128 0x1
+ 116 000c 78000000 		.4byte	.LASF22
+ 117 0010 0C       		.byte	0xc
+ 118 0011 DB010000 		.4byte	.LASF23
+ 119 0015 3D000000 		.4byte	.LASF24
+ 120 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 121 001d 00000000 		.4byte	0
+ 122 0021 00000000 		.4byte	.Ldebug_line0
+ 123 0025 02       		.uleb128 0x2
+ 124 0026 01       		.byte	0x1
+ 125 0027 06       		.byte	0x6
+ 126 0028 8F010000 		.4byte	.LASF0
+ 127 002c 02       		.uleb128 0x2
+ 128 002d 01       		.byte	0x1
+ 129 002e 08       		.byte	0x8
+ 130 002f 55010000 		.4byte	.LASF1
+ 131 0033 02       		.uleb128 0x2
+ 132 0034 02       		.byte	0x2
+ 133 0035 05       		.byte	0x5
+ 134 0036 71010000 		.4byte	.LASF2
+ 135 003a 02       		.uleb128 0x2
+ 136 003b 02       		.byte	0x2
+ 137 003c 07       		.byte	0x7
+ 138 003d 0E000000 		.4byte	.LASF3
+ 139 0041 03       		.uleb128 0x3
+ 140 0042 B0010000 		.4byte	.LASF9
+ 141 0046 02       		.byte	0x2
+ 142 0047 3F       		.byte	0x3f
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 4
+
+
+ 143 0048 4C000000 		.4byte	0x4c
+ 144 004c 02       		.uleb128 0x2
+ 145 004d 04       		.byte	0x4
+ 146 004e 05       		.byte	0x5
+ 147 004f 68010000 		.4byte	.LASF4
+ 148 0053 02       		.uleb128 0x2
+ 149 0054 04       		.byte	0x4
+ 150 0055 07       		.byte	0x7
+ 151 0056 16010000 		.4byte	.LASF5
+ 152 005a 02       		.uleb128 0x2
+ 153 005b 08       		.byte	0x8
+ 154 005c 05       		.byte	0x5
+ 155 005d 00000000 		.4byte	.LASF6
+ 156 0061 02       		.uleb128 0x2
+ 157 0062 08       		.byte	0x8
+ 158 0063 07       		.byte	0x7
+ 159 0064 28010000 		.4byte	.LASF7
+ 160 0068 04       		.uleb128 0x4
+ 161 0069 04       		.byte	0x4
+ 162 006a 05       		.byte	0x5
+ 163 006b 696E7400 		.ascii	"int\000"
+ 164 006f 02       		.uleb128 0x2
+ 165 0070 04       		.byte	0x4
+ 166 0071 07       		.byte	0x7
+ 167 0072 21000000 		.4byte	.LASF8
+ 168 0076 03       		.uleb128 0x3
+ 169 0077 0E010000 		.4byte	.LASF10
+ 170 007b 03       		.byte	0x3
+ 171 007c 2C       		.byte	0x2c
+ 172 007d 41000000 		.4byte	0x41
+ 173 0081 02       		.uleb128 0x2
+ 174 0082 04       		.byte	0x4
+ 175 0083 04       		.byte	0x4
+ 176 0084 BA010000 		.4byte	.LASF11
+ 177 0088 02       		.uleb128 0x2
+ 178 0089 08       		.byte	0x8
+ 179 008a 04       		.byte	0x4
+ 180 008b 7B010000 		.4byte	.LASF12
+ 181 008f 02       		.uleb128 0x2
+ 182 0090 01       		.byte	0x1
+ 183 0091 08       		.byte	0x8
+ 184 0092 63010000 		.4byte	.LASF13
+ 185 0096 02       		.uleb128 0x2
+ 186 0097 08       		.byte	0x8
+ 187 0098 04       		.byte	0x4
+ 188 0099 9B010000 		.4byte	.LASF14
+ 189 009d 02       		.uleb128 0x2
+ 190 009e 04       		.byte	0x4
+ 191 009f 07       		.byte	0x7
+ 192 00a0 D2010000 		.4byte	.LASF15
+ 193 00a4 05       		.uleb128 0x5
+ 194 00a5 C0010000 		.4byte	.LASF16
+ 195 00a9 01       		.byte	0x1
+ 196 00aa 0E       		.byte	0xe
+ 197 00ab 00000000 		.4byte	.LFB63
+ 198 00af 14000000 		.4byte	.LFE63-.LFB63
+ 199 00b3 01       		.uleb128 0x1
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 5
+
+
+ 200 00b4 9C       		.byte	0x9c
+ 201 00b5 E0000000 		.4byte	0xe0
+ 202 00b9 06       		.uleb128 0x6
+ 203 00ba 0A000000 		.4byte	.LVL0
+ 204 00be 55010000 		.4byte	0x155
+ 205 00c2 CE000000 		.4byte	0xce
+ 206 00c6 07       		.uleb128 0x7
+ 207 00c7 01       		.uleb128 0x1
+ 208 00c8 50       		.byte	0x50
+ 209 00c9 03       		.uleb128 0x3
+ 210 00ca 0A       		.byte	0xa
+ 211 00cb DC05     		.2byte	0x5dc
+ 212 00cd 00       		.byte	0
+ 213 00ce 08       		.uleb128 0x8
+ 214 00cf 12000000 		.4byte	.LVL1
+ 215 00d3 60010000 		.4byte	0x160
+ 216 00d7 07       		.uleb128 0x7
+ 217 00d8 01       		.uleb128 0x1
+ 218 00d9 50       		.byte	0x50
+ 219 00da 03       		.uleb128 0x3
+ 220 00db 0A       		.byte	0xa
+ 221 00dc F401     		.2byte	0x1f4
+ 222 00de 00       		.byte	0
+ 223 00df 00       		.byte	0
+ 224 00e0 05       		.uleb128 0x5
+ 225 00e1 A7010000 		.4byte	.LASF17
+ 226 00e5 01       		.byte	0x1
+ 227 00e6 14       		.byte	0x14
+ 228 00e7 00000000 		.4byte	.LFB64
+ 229 00eb 14000000 		.4byte	.LFE64-.LFB64
+ 230 00ef 01       		.uleb128 0x1
+ 231 00f0 9C       		.byte	0x9c
+ 232 00f1 1C010000 		.4byte	0x11c
+ 233 00f5 06       		.uleb128 0x6
+ 234 00f6 0A000000 		.4byte	.LVL2
+ 235 00fa 55010000 		.4byte	0x155
+ 236 00fe 0A010000 		.4byte	0x10a
+ 237 0102 07       		.uleb128 0x7
+ 238 0103 01       		.uleb128 0x1
+ 239 0104 50       		.byte	0x50
+ 240 0105 03       		.uleb128 0x3
+ 241 0106 0A       		.byte	0xa
+ 242 0107 BC02     		.2byte	0x2bc
+ 243 0109 00       		.byte	0
+ 244 010a 08       		.uleb128 0x8
+ 245 010b 12000000 		.4byte	.LVL3
+ 246 010f 60010000 		.4byte	0x160
+ 247 0113 07       		.uleb128 0x7
+ 248 0114 01       		.uleb128 0x1
+ 249 0115 50       		.byte	0x50
+ 250 0116 03       		.uleb128 0x3
+ 251 0117 0A       		.byte	0xa
+ 252 0118 F401     		.2byte	0x1f4
+ 253 011a 00       		.byte	0
+ 254 011b 00       		.byte	0
+ 255 011c 05       		.uleb128 0x5
+ 256 011d C8010000 		.4byte	.LASF18
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 6
+
+
+ 257 0121 01       		.byte	0x1
+ 258 0122 1A       		.byte	0x1a
+ 259 0123 00000000 		.4byte	.LFB65
+ 260 0127 0C000000 		.4byte	.LFE65-.LFB65
+ 261 012b 01       		.uleb128 0x1
+ 262 012c 9C       		.byte	0x9c
+ 263 012d 44010000 		.4byte	0x144
+ 264 0131 09       		.uleb128 0x9
+ 265 0132 06000000 		.4byte	.LVL4
+ 266 0136 6B010000 		.4byte	0x16b
+ 267 013a 09       		.uleb128 0x9
+ 268 013b 0A000000 		.4byte	.LVL5
+ 269 013f E0000000 		.4byte	0xe0
+ 270 0143 00       		.byte	0
+ 271 0144 0A       		.uleb128 0xa
+ 272 0145 82010000 		.4byte	.LASF25
+ 273 0149 06       		.byte	0x6
+ 274 014a 1207     		.2byte	0x712
+ 275 014c 50010000 		.4byte	0x150
+ 276 0150 0B       		.uleb128 0xb
+ 277 0151 76000000 		.4byte	0x76
+ 278 0155 0C       		.uleb128 0xc
+ 279 0156 3F010000 		.4byte	.LASF19
+ 280 015a 3F010000 		.4byte	.LASF19
+ 281 015e 04       		.byte	0x4
+ 282 015f C3       		.byte	0xc3
+ 283 0160 0C       		.uleb128 0xc
+ 284 0161 06010000 		.4byte	.LASF20
+ 285 0165 06010000 		.4byte	.LASF20
+ 286 0169 05       		.byte	0x5
+ 287 016a 76       		.byte	0x76
+ 288 016b 0C       		.uleb128 0xc
+ 289 016c 2E000000 		.4byte	.LASF21
+ 290 0170 2E000000 		.4byte	.LASF21
+ 291 0174 04       		.byte	0x4
+ 292 0175 92       		.byte	0x92
+ 293 0176 00       		.byte	0
+ 294              		.section	.debug_abbrev,"",%progbits
+ 295              	.Ldebug_abbrev0:
+ 296 0000 01       		.uleb128 0x1
+ 297 0001 11       		.uleb128 0x11
+ 298 0002 01       		.byte	0x1
+ 299 0003 25       		.uleb128 0x25
+ 300 0004 0E       		.uleb128 0xe
+ 301 0005 13       		.uleb128 0x13
+ 302 0006 0B       		.uleb128 0xb
+ 303 0007 03       		.uleb128 0x3
+ 304 0008 0E       		.uleb128 0xe
+ 305 0009 1B       		.uleb128 0x1b
+ 306 000a 0E       		.uleb128 0xe
+ 307 000b 55       		.uleb128 0x55
+ 308 000c 17       		.uleb128 0x17
+ 309 000d 11       		.uleb128 0x11
+ 310 000e 01       		.uleb128 0x1
+ 311 000f 10       		.uleb128 0x10
+ 312 0010 17       		.uleb128 0x17
+ 313 0011 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 7
+
+
+ 314 0012 00       		.byte	0
+ 315 0013 02       		.uleb128 0x2
+ 316 0014 24       		.uleb128 0x24
+ 317 0015 00       		.byte	0
+ 318 0016 0B       		.uleb128 0xb
+ 319 0017 0B       		.uleb128 0xb
+ 320 0018 3E       		.uleb128 0x3e
+ 321 0019 0B       		.uleb128 0xb
+ 322 001a 03       		.uleb128 0x3
+ 323 001b 0E       		.uleb128 0xe
+ 324 001c 00       		.byte	0
+ 325 001d 00       		.byte	0
+ 326 001e 03       		.uleb128 0x3
+ 327 001f 16       		.uleb128 0x16
+ 328 0020 00       		.byte	0
+ 329 0021 03       		.uleb128 0x3
+ 330 0022 0E       		.uleb128 0xe
+ 331 0023 3A       		.uleb128 0x3a
+ 332 0024 0B       		.uleb128 0xb
+ 333 0025 3B       		.uleb128 0x3b
+ 334 0026 0B       		.uleb128 0xb
+ 335 0027 49       		.uleb128 0x49
+ 336 0028 13       		.uleb128 0x13
+ 337 0029 00       		.byte	0
+ 338 002a 00       		.byte	0
+ 339 002b 04       		.uleb128 0x4
+ 340 002c 24       		.uleb128 0x24
+ 341 002d 00       		.byte	0
+ 342 002e 0B       		.uleb128 0xb
+ 343 002f 0B       		.uleb128 0xb
+ 344 0030 3E       		.uleb128 0x3e
+ 345 0031 0B       		.uleb128 0xb
+ 346 0032 03       		.uleb128 0x3
+ 347 0033 08       		.uleb128 0x8
+ 348 0034 00       		.byte	0
+ 349 0035 00       		.byte	0
+ 350 0036 05       		.uleb128 0x5
+ 351 0037 2E       		.uleb128 0x2e
+ 352 0038 01       		.byte	0x1
+ 353 0039 3F       		.uleb128 0x3f
+ 354 003a 19       		.uleb128 0x19
+ 355 003b 03       		.uleb128 0x3
+ 356 003c 0E       		.uleb128 0xe
+ 357 003d 3A       		.uleb128 0x3a
+ 358 003e 0B       		.uleb128 0xb
+ 359 003f 3B       		.uleb128 0x3b
+ 360 0040 0B       		.uleb128 0xb
+ 361 0041 11       		.uleb128 0x11
+ 362 0042 01       		.uleb128 0x1
+ 363 0043 12       		.uleb128 0x12
+ 364 0044 06       		.uleb128 0x6
+ 365 0045 40       		.uleb128 0x40
+ 366 0046 18       		.uleb128 0x18
+ 367 0047 9742     		.uleb128 0x2117
+ 368 0049 19       		.uleb128 0x19
+ 369 004a 01       		.uleb128 0x1
+ 370 004b 13       		.uleb128 0x13
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 8
+
+
+ 371 004c 00       		.byte	0
+ 372 004d 00       		.byte	0
+ 373 004e 06       		.uleb128 0x6
+ 374 004f 898201   		.uleb128 0x4109
+ 375 0052 01       		.byte	0x1
+ 376 0053 11       		.uleb128 0x11
+ 377 0054 01       		.uleb128 0x1
+ 378 0055 31       		.uleb128 0x31
+ 379 0056 13       		.uleb128 0x13
+ 380 0057 01       		.uleb128 0x1
+ 381 0058 13       		.uleb128 0x13
+ 382 0059 00       		.byte	0
+ 383 005a 00       		.byte	0
+ 384 005b 07       		.uleb128 0x7
+ 385 005c 8A8201   		.uleb128 0x410a
+ 386 005f 00       		.byte	0
+ 387 0060 02       		.uleb128 0x2
+ 388 0061 18       		.uleb128 0x18
+ 389 0062 9142     		.uleb128 0x2111
+ 390 0064 18       		.uleb128 0x18
+ 391 0065 00       		.byte	0
+ 392 0066 00       		.byte	0
+ 393 0067 08       		.uleb128 0x8
+ 394 0068 898201   		.uleb128 0x4109
+ 395 006b 01       		.byte	0x1
+ 396 006c 11       		.uleb128 0x11
+ 397 006d 01       		.uleb128 0x1
+ 398 006e 31       		.uleb128 0x31
+ 399 006f 13       		.uleb128 0x13
+ 400 0070 00       		.byte	0
+ 401 0071 00       		.byte	0
+ 402 0072 09       		.uleb128 0x9
+ 403 0073 898201   		.uleb128 0x4109
+ 404 0076 00       		.byte	0
+ 405 0077 11       		.uleb128 0x11
+ 406 0078 01       		.uleb128 0x1
+ 407 0079 31       		.uleb128 0x31
+ 408 007a 13       		.uleb128 0x13
+ 409 007b 00       		.byte	0
+ 410 007c 00       		.byte	0
+ 411 007d 0A       		.uleb128 0xa
+ 412 007e 34       		.uleb128 0x34
+ 413 007f 00       		.byte	0
+ 414 0080 03       		.uleb128 0x3
+ 415 0081 0E       		.uleb128 0xe
+ 416 0082 3A       		.uleb128 0x3a
+ 417 0083 0B       		.uleb128 0xb
+ 418 0084 3B       		.uleb128 0x3b
+ 419 0085 05       		.uleb128 0x5
+ 420 0086 49       		.uleb128 0x49
+ 421 0087 13       		.uleb128 0x13
+ 422 0088 3F       		.uleb128 0x3f
+ 423 0089 19       		.uleb128 0x19
+ 424 008a 3C       		.uleb128 0x3c
+ 425 008b 19       		.uleb128 0x19
+ 426 008c 00       		.byte	0
+ 427 008d 00       		.byte	0
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 9
+
+
+ 428 008e 0B       		.uleb128 0xb
+ 429 008f 35       		.uleb128 0x35
+ 430 0090 00       		.byte	0
+ 431 0091 49       		.uleb128 0x49
+ 432 0092 13       		.uleb128 0x13
+ 433 0093 00       		.byte	0
+ 434 0094 00       		.byte	0
+ 435 0095 0C       		.uleb128 0xc
+ 436 0096 2E       		.uleb128 0x2e
+ 437 0097 00       		.byte	0
+ 438 0098 3F       		.uleb128 0x3f
+ 439 0099 19       		.uleb128 0x19
+ 440 009a 3C       		.uleb128 0x3c
+ 441 009b 19       		.uleb128 0x19
+ 442 009c 6E       		.uleb128 0x6e
+ 443 009d 0E       		.uleb128 0xe
+ 444 009e 03       		.uleb128 0x3
+ 445 009f 0E       		.uleb128 0xe
+ 446 00a0 3A       		.uleb128 0x3a
+ 447 00a1 0B       		.uleb128 0xb
+ 448 00a2 3B       		.uleb128 0x3b
+ 449 00a3 0B       		.uleb128 0xb
+ 450 00a4 00       		.byte	0
+ 451 00a5 00       		.byte	0
+ 452 00a6 00       		.byte	0
+ 453              		.section	.debug_aranges,"",%progbits
+ 454 0000 2C000000 		.4byte	0x2c
+ 455 0004 0200     		.2byte	0x2
+ 456 0006 00000000 		.4byte	.Ldebug_info0
+ 457 000a 04       		.byte	0x4
+ 458 000b 00       		.byte	0
+ 459 000c 0000     		.2byte	0
+ 460 000e 0000     		.2byte	0
+ 461 0010 00000000 		.4byte	.LFB63
+ 462 0014 14000000 		.4byte	.LFE63-.LFB63
+ 463 0018 00000000 		.4byte	.LFB64
+ 464 001c 14000000 		.4byte	.LFE64-.LFB64
+ 465 0020 00000000 		.4byte	.LFB65
+ 466 0024 0C000000 		.4byte	.LFE65-.LFB65
+ 467 0028 00000000 		.4byte	0
+ 468 002c 00000000 		.4byte	0
+ 469              		.section	.debug_ranges,"",%progbits
+ 470              	.Ldebug_ranges0:
+ 471 0000 00000000 		.4byte	.LFB63
+ 472 0004 14000000 		.4byte	.LFE63
+ 473 0008 00000000 		.4byte	.LFB64
+ 474 000c 14000000 		.4byte	.LFE64
+ 475 0010 00000000 		.4byte	.LFB65
+ 476 0014 0C000000 		.4byte	.LFE65
+ 477 0018 00000000 		.4byte	0
+ 478 001c 00000000 		.4byte	0
+ 479              		.section	.debug_line,"",%progbits
+ 480              	.Ldebug_line0:
+ 481 0000 92010000 		.section	.debug_str,"MS",%progbits,1
+ 481      02005901 
+ 481      00000201 
+ 481      FB0E0D00 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 10
+
+
+ 481      01010101 
+ 482              	.LASF6:
+ 483 0000 6C6F6E67 		.ascii	"long long int\000"
+ 483      206C6F6E 
+ 483      6720696E 
+ 483      7400
+ 484              	.LASF3:
+ 485 000e 73686F72 		.ascii	"short unsigned int\000"
+ 485      7420756E 
+ 485      7369676E 
+ 485      65642069 
+ 485      6E7400
+ 486              	.LASF8:
+ 487 0021 756E7369 		.ascii	"unsigned int\000"
+ 487      676E6564 
+ 487      20696E74 
+ 487      00
+ 488              	.LASF21:
+ 489 002e 53657276 		.ascii	"ServoPWM_Start\000"
+ 489      6F50574D 
+ 489      5F537461 
+ 489      727400
+ 490              	.LASF24:
+ 491 003d 433A5C47 		.ascii	"C:\\GIT\\RoboMate\\PSoC\\Microcontroller\\Microcont"
+ 491      49545C52 
+ 491      6F626F4D 
+ 491      6174655C 
+ 491      50536F43 
+ 492 006b 726F6C6C 		.ascii	"roller.cydsn\000"
+ 492      65722E63 
+ 492      7964736E 
+ 492      00
+ 493              	.LASF22:
+ 494 0078 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 494      43313120 
+ 494      352E342E 
+ 494      31203230 
+ 494      31363036 
+ 495 00ab 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 495      20726576 
+ 495      6973696F 
+ 495      6E203233 
+ 495      37373135 
+ 496 00de 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 496      66756E63 
+ 496      74696F6E 
+ 496      2D736563 
+ 496      74696F6E 
+ 497              	.LASF20:
+ 498 0106 43794465 		.ascii	"CyDelay\000"
+ 498      6C617900 
+ 499              	.LASF10:
+ 500 010e 696E7433 		.ascii	"int32_t\000"
+ 500      325F7400 
+ 501              	.LASF5:
+ 502 0116 6C6F6E67 		.ascii	"long unsigned int\000"
+ 502      20756E73 
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 11
+
+
+ 502      69676E65 
+ 502      6420696E 
+ 502      7400
+ 503              	.LASF7:
+ 504 0128 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 504      206C6F6E 
+ 504      6720756E 
+ 504      7369676E 
+ 504      65642069 
+ 505              	.LASF19:
+ 506 013f 53657276 		.ascii	"ServoPWM_WriteCompare\000"
+ 506      6F50574D 
+ 506      5F577269 
+ 506      7465436F 
+ 506      6D706172 
+ 507              	.LASF1:
+ 508 0155 756E7369 		.ascii	"unsigned char\000"
+ 508      676E6564 
+ 508      20636861 
+ 508      7200
+ 509              	.LASF13:
+ 510 0163 63686172 		.ascii	"char\000"
+ 510      00
+ 511              	.LASF4:
+ 512 0168 6C6F6E67 		.ascii	"long int\000"
+ 512      20696E74 
+ 512      00
+ 513              	.LASF2:
+ 514 0171 73686F72 		.ascii	"short int\000"
+ 514      7420696E 
+ 514      7400
+ 515              	.LASF12:
+ 516 017b 646F7562 		.ascii	"double\000"
+ 516      6C6500
+ 517              	.LASF25:
+ 518 0182 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 518      52784275 
+ 518      66666572 
+ 518      00
+ 519              	.LASF0:
+ 520 018f 7369676E 		.ascii	"signed char\000"
+ 520      65642063 
+ 520      68617200 
+ 521              	.LASF14:
+ 522 019b 6C6F6E67 		.ascii	"long double\000"
+ 522      20646F75 
+ 522      626C6500 
+ 523              	.LASF17:
+ 524 01a7 73657276 		.ascii	"servoOff\000"
+ 524      6F4F6666 
+ 524      00
+ 525              	.LASF9:
+ 526 01b0 5F5F696E 		.ascii	"__int32_t\000"
+ 526      7433325F 
+ 526      7400
+ 527              	.LASF11:
+ 528 01ba 666C6F61 		.ascii	"float\000"
+ARM GAS  C:\Users\Simon\AppData\Local\Temp\ccw9tSlc.s 			page 12
+
+
+ 528      7400
+ 529              	.LASF16:
+ 530 01c0 73657276 		.ascii	"servoOn\000"
+ 530      6F4F6E00 
+ 531              	.LASF18:
+ 532 01c8 696E6974 		.ascii	"initServo\000"
+ 532      53657276 
+ 532      6F00
+ 533              	.LASF15:
+ 534 01d2 73697A65 		.ascii	"sizetype\000"
+ 534      74797065 
+ 534      00
+ 535              	.LASF23:
+ 536 01db 53657276 		.ascii	"Servo.c\000"
+ 536      6F2E6300 
+ 537              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

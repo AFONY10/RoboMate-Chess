@@ -1,0 +1,2 @@
+GUI kan ikke åbnes fra VS COde, da det er et Qt Projekt.
+Derfor kan mappem virke tom
